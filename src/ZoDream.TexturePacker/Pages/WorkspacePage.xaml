@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ZoDream.TexturePacker.Pages.WorkspacePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ZoDream.TexturePacker.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:skia="using:SkiaSharp.Views.Windows"
+    xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
+    xmlns:ctl="using:ZoDream.TexturePacker.Controls"
+    xmlns:bhv="using:ZoDream.TexturePacker.Behaviors"
+    xmlns:ivy="using:Microsoft.Xaml.Interactivity"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:WorkspaceViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <DataTemplate x:Key="LayerTemplate" x:DataType="vm:LayerViewModel">
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name}">
+                <Grid Height="60">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{x:Bind PreviewImage}" Stretch="UniformToFill"/>
+                    <TextBlock Text="{x:Bind Name}" 
+                               Grid.Column="1" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{x:Bind IsVisible, Mode=TwoWay}" Grid.Column="2" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{x:Bind IsLocked, Mode=TwoWay}" Grid.Column="3" VerticalAlignment="Center"/>
+                </Grid>
+            </TreeViewItem>
+        </DataTemplate>
+        <ctl:LayerItemTemplateSelector x:Key="LayerItemTemplateSelector" LayerTemplate="{StaticResource LayerTemplate}"/>
+    </Page.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <MenuBar>
+            <MenuBarItem Title="文件">
+                <MenuFlyoutItem Text="新建"/>
+                <MenuFlyoutItem Text="打开"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="退出"/>
+            </MenuBarItem>
+            <MenuBarItem Title="编辑"/>
+        </MenuBar>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="打开项目"/>
+                <Button Content="保存项目"/>
+                <Button Content="添加精灵"/>
+                <Button Content="删除精灵"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            <skia:SKXamlCanvas x:Name="CanvasTarget" 
+                               AllowDrop="True"
+                               PaintSurface="CanvasTarget_PaintSurface">
+                <ivy:Interaction.Behaviors>
+                    <bhv:DragFileBehavior Command="{Binding DragImageCommand}"/>
+                </ivy:Interaction.Behaviors>
+            </skia:SKXamlCanvas>
+
+            <TreeView Grid.Column="1" ItemsSource="{Binding LayerItems}" ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"/>
+        </Grid>
+        
+        <Grid Grid.Row="3">
+            
+        </Grid>
+    </Grid>
+</Page>

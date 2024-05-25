@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ZoDream.TexturePacker (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ZoDream.TexturePacker (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
