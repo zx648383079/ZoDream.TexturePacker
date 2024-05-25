@@ -32,7 +32,6 @@ namespace ZoDream.TexturePacker.Pages
             ViewModel.Editor.RegisterInvalidate(() => {
                 CanvasTarget.Invalidate();
             });
-            
         }
 
         public WorkspaceViewModel ViewModel => (WorkspaceViewModel)DataContext;
@@ -46,6 +45,13 @@ namespace ZoDream.TexturePacker.Pages
         private void CanvasTarget_PaintSurface(object sender, SkiaSharp.Views.Windows.SKPaintSurfaceEventArgs e)
         {
             ViewModel.Editor.Paint(e.Surface.Canvas, e.Info);
+        }
+
+        private void CanvasTarget_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var point = e.GetPosition(CanvasTarget);
+            var scale = App.ViewModel.GetDpiScaleFactorFromWindow();
+            ViewModel.Editor.Tap((float)(point.X * scale), (float)(point.Y * scale));
         }
     }
 }

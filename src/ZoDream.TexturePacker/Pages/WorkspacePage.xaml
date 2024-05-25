@@ -49,7 +49,10 @@
                 <MenuFlyoutItem Text="新建"/>
                 <MenuFlyoutItem Text="打开"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="退出"/>
+                <MenuFlyoutItem Text="导入"/>
+                <MenuFlyoutItem Text="导出"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="退出" Command="{Binding ExitCommand}"/>
             </MenuBarItem>
             <MenuBarItem Title="编辑"/>
         </MenuBar>
@@ -72,7 +75,8 @@
             </Grid.ColumnDefinitions>
             <skia:SKXamlCanvas x:Name="CanvasTarget" 
                                AllowDrop="True"
-                               PaintSurface="CanvasTarget_PaintSurface">
+                               PaintSurface="CanvasTarget_PaintSurface"
+                               Tapped="CanvasTarget_Tapped">
                 <ivy:Interaction.Behaviors>
                     <bhv:DragFileBehavior Command="{Binding DragImageCommand}"/>
                 </ivy:Interaction.Behaviors>

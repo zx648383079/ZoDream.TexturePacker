@@ -1,31 +1,33 @@
 ﻿using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class BitmapImageLayer(SKBitmap bitmap): IImageLayer
+    public class BitmapImageLayer: BaseImageLayer
     {
 
-        public BitmapImageLayer(string fileName): this(SKBitmap.Decode(fileName))
+        public BitmapImageLayer(string fileName, Editor editor) : this(SKBitmap.Decode(fileName), editor)
         {
             
         }
-        public int X { get; set; }
 
-        public int Y { get; set; }
-
-        public SKBitmap Source { get; set; } = bitmap;
-
-        public void Paint(SKCanvas canvas, SKImageInfo info)
+        public BitmapImageLayer(SKBitmap bitmap, Editor editor): base(editor)
         {
-            canvas.DrawBitmap(Source, X, Y);
+            Source = bitmap;
+            Width = bitmap.Width;
+            Height = bitmap.Height;
         }
 
-        public void Dispose()
+        public SKBitmap Source { get; set; }
+
+        public override void Paint(SKCanvas canvas)
+        {
+            // 设置插值质量为高质量
+            using var paint = new SKPaint();
+            paint.FilterQuality = SKFilterQuality.High;
+            canvas.DrawBitmap(Source, X, Y/*, paint*/);
+        }
+
+        public override void Dispose()
         {
             Source.Dispose();
         }

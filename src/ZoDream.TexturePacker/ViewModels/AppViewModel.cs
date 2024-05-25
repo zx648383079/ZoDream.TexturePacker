@@ -48,5 +48,10 @@ namespace ZoDream.TexturePacker.ViewModels
             _rootFrame = frame;
             Navigate<StartupPage>();
         }
+
+        public double GetDpiScaleFactorFromWindow()
+        {
+            return BaseXamlRoot.RasterizationScale;
+        }
     }
 }

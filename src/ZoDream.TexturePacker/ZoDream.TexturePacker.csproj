@@ -16,6 +16,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Dialogs\ConfirmDialog.xaml" />
+    <None Remove="Dialogs\CreateProjectDialog.xaml" />
+    <None Remove="Dialogs\OpenProjectDialog.xaml" />
     <None Remove="Pages\StartupPage.xaml" />
     <None Remove="Pages\WorkspacePage.xaml" />
     <None Remove="Themes\BaseStyle.xaml" />
@@ -40,6 +42,7 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
     <PackageReference Include="SkiaSharp.Views.WinUI" Version="2.88.8" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -53,6 +56,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\shared\ZoDream.Shared\ZoDream.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\OpenProjectDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\CreateProjectDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\WorkspacePage.xaml">

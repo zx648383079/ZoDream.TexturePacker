@@ -2,11 +2,8 @@
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class TextImageLayer(string text): IImageLayer
+    public class TextImageLayer(string text, Editor editor): BaseImageLayer(editor)
     {
-        public int X { get; set; }
-
-        public int Y { get; set; }
 
         public string Text { get; set; } = text;
 
@@ -18,7 +15,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public SKTextAlign TextAlign { get; set; } = SKTextAlign.Left;
 
-        public void Paint(SKCanvas canvas, SKImageInfo info)
+        public override void Paint(SKCanvas canvas)
         {
             //FontFamily = SKTypeface.FromFile(Path.Combine(AppContext.BaseDirectory, "DroidSansFallback.ttf"));
             //FontFamily = SKTypeface.FromFamilyName("微软雅黑");
@@ -32,9 +29,5 @@ namespace ZoDream.TexturePacker.ImageEditor
             canvas.DrawText(Text, X, Y, paint);
         }
 
-        public void Dispose()
-        {
-
-        }
     }
 }

@@ -2,14 +2,41 @@
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class TransparentImageLayer(int width, int height, int size = 10) : IImageLayer
+    public class TransparentImageLayer : BaseImageLayer, ICommandImageLayer
     {
+        public TransparentImageLayer(Editor editor): base(editor)
+        {
+            Invalidate();
+        }
+
+        public TransparentImageLayer(int size, Editor editor) : this(editor)
+        {
+            _gridSize = size;
+        }
+
+        private int _gridSize = 10;
 
         private SKSurface? _surface;
 
+        public void Resize(int width, int height)
+        {
+            Invalidate();
+        }
+
+        public void Resize(IImageLayer layer)
+        {
+        }
+        public void Invalidate()
+        {
+            Width = Editor.Width;
+            Height = Editor.Height;
+            _surface?.Dispose();
+            _surface = null;
+        }
+
         private void RenderSurface()
         {
-            var info = new SKImageInfo(width, height);
+            var info = new SKImageInfo(Width, Height);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
             canvas.Clear(SKColors.White);
@@ -19,8 +46,8 @@ namespace ZoDream.TexturePacker.ImageEditor
                 Style = SKPaintStyle.Fill,
                 StrokeWidth = 0,
             };
-            var columnCount = width / size;
-            var rowCount = height / size;
+            var columnCount = Width / _gridSize;
+            var rowCount = Height / _gridSize;
             for (var i = 0; i < columnCount; i++)
             {
                 for (var j = 0; j < rowCount; j ++)
@@ -29,12 +56,12 @@ namespace ZoDream.TexturePacker.ImageEditor
                     {
                         continue;
                     }
-                    canvas.DrawRect(i * size, j * size, size, size, grayPaint);
+                    canvas.DrawRect(i * _gridSize, j * _gridSize, _gridSize, _gridSize, grayPaint);
                 }
             }
         }
 
-        public void Paint(SKCanvas canvas, SKImageInfo info)
+        public override void Paint(SKCanvas canvas)
         {
             if (_surface == null) 
             {
@@ -43,7 +70,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             canvas.DrawSurface(_surface, 0, 0);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _surface?.Dispose();
         }

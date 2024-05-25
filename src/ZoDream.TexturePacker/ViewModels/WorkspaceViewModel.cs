@@ -13,6 +13,7 @@ namespace ZoDream.TexturePacker.ViewModels
     {
         public WorkspaceViewModel()
         {
+            ExitCommand = new RelayCommand(TapExit);
             DragImageCommand = new RelayCommand<IReadOnlyList<IStorageItem>>(OnDragImage);
         }
     }
