@@ -4,12 +4,12 @@ namespace ZoDream.TexturePacker.ImageEditor
 {
     public class TransparentImageLayer : BaseImageLayer, ICommandImageLayer
     {
-        public TransparentImageLayer(Editor editor): base(editor)
+        public TransparentImageLayer(IImageEditor editor): base(editor)
         {
             Invalidate();
         }
 
-        public TransparentImageLayer(int size, Editor editor) : this(editor)
+        public TransparentImageLayer(int size, IImageEditor editor) : this(editor)
         {
             _gridSize = size;
         }
@@ -28,8 +28,8 @@ namespace ZoDream.TexturePacker.ImageEditor
         }
         public void Invalidate()
         {
-            Width = Editor.Width;
-            Height = Editor.Height;
+            Width = Editor.ActualWidthI;
+            Height = Editor.ActualHeightI;
             _surface?.Dispose();
             _surface = null;
         }

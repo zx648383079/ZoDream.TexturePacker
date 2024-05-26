@@ -5,23 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.TexturePacker.ImageEditor;
 
-namespace ZoDream.TexturePacker.ImageEditor
+namespace ZoDream.TexturePacker.Controls
 {
-    public class Editor : IDisposable
+    public partial class ImageEditor : IImageEditor
     {
-        public Editor(int width, int height)
-        {
-            Resize(width, height);
-        }
-        public int Width { get; set; }
-        public int Height { get; set; }
-
         private int _idGenerator = 0;
-        private Action? InvalidateFn;
-
-        private SKSurface? _surface;
-
+        /// <summary>
+        /// 预先的尺寸
+        /// </summary>
+        private int _widthI = 0;
+        private int _heightI = 0;
         private TransparentImageLayer? _transparentBackgound;
 
         private ICommandImageLayer? _commandLayer;
@@ -30,13 +25,14 @@ namespace ZoDream.TexturePacker.ImageEditor
         public SKColor? Backgound { get; set; }
 
 
-        public event SelectionChangedEventHandler? SelectionChanged;
+        public int ActualHeightI => _heightI;
+        public int ActualWidthI => _widthI;
 
         public IImageLayer? this[int id] => Get<IImageLayer>(id);
 
 
         public T? Get<T>(int id)
-            where T: IImageLayer
+            where T : IImageLayer
         {
             foreach (var item in LayerItems)
             {
@@ -123,11 +119,12 @@ namespace ZoDream.TexturePacker.ImageEditor
         }
         public void Resize(int width, int height)
         {
-            Width = width;
-            Height = height;
+            _widthI = width; 
+            _heightI = height;
+            ResizeWithControl(width, height);
             _transparentBackgound?.Invalidate();
-            _surface?.Dispose();
-            _surface = null;
+            //_surface?.Dispose();
+            //_surface = null;
         }
 
         /// <summary>
@@ -135,7 +132,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void Tap(float x,  float y)
+        public void Tap(float x, float y)
         {
             var items = LayerItems.Where(item => item.Visible).OrderByDescending(item => item.Depth);
             foreach (var item in items)
@@ -151,7 +148,7 @@ namespace ZoDream.TexturePacker.ImageEditor
                     continue;
                 }
                 Select(item);
-                SelectionChanged?.Invoke(item.Id);
+                SelectedCommand?.Execute(item.Id);
                 return;
             }
         }
@@ -170,11 +167,19 @@ namespace ZoDream.TexturePacker.ImageEditor
             Invalidate();
         }
 
-
-        private void RenderSurface()
+        public void Unselect()
         {
-            _surface ??= SKSurface.Create(new SKImageInfo(Width, Height));
-            var canvas = _surface.Canvas;
+            if (_commandLayer is null)
+            {
+                return;
+            }
+            _commandLayer?.Dispose();
+            _commandLayer = null;
+            Invalidate();
+        }
+
+        public void Paint(SKCanvas canvas, SKImageInfo info)
+        {
             canvas.Clear(Backgound ?? SKColors.Transparent);
             if (Backgound is null)
             {
@@ -188,22 +193,11 @@ namespace ZoDream.TexturePacker.ImageEditor
             _commandLayer?.Paint(canvas);
         }
 
-        public void Paint(SKCanvas canvas, SKImageInfo info)
-        {
-            RenderSurface();
-            canvas.Clear(SKColors.Transparent);
-            canvas.DrawSurface(_surface, 0, 0);
-        }
-
         public void Invalidate()
         {
-            InvalidateFn?.Invoke();
+            CanvasTarget.Invalidate();
         }
 
-        public void RegisterInvalidate(Action fn)
-        {
-            InvalidateFn = fn;
-        }
 
         public void Dispose()
         {

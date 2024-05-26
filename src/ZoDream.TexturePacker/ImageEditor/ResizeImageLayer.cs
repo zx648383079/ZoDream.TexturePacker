@@ -5,7 +5,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     /// <summary>
     /// 改变尺寸框
     /// </summary>
-    public class ResizeImageLayer(Editor editor) : BaseImageLayer(editor), ICommandImageLayer
+    public class ResizeImageLayer(IImageEditor editor) : BaseImageLayer(editor), ICommandImageLayer
     {
         private int _dotSize = 10;
         private SKSurface? _surface;

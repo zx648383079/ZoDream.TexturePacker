@@ -15,6 +15,7 @@
 	  <Nullable>Enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\ImageEditor.xaml" />
     <None Remove="Dialogs\ConfirmDialog.xaml" />
     <None Remove="Dialogs\CreateProjectDialog.xaml" />
     <None Remove="Dialogs\OpenProjectDialog.xaml" />
@@ -102,4 +103,10 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Controls\ImageEditor.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Remove="Controls\ImageEditor.xaml" />
+  </ItemGroup>
 </Project>

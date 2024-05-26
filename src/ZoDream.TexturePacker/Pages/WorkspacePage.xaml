@@ -47,15 +47,79 @@
         </Grid.RowDefinitions>
         <MenuBar>
             <MenuBarItem Title="文件">
-                <MenuFlyoutItem Text="新建"/>
-                <MenuFlyoutItem Text="打开"/>
+                <MenuFlyoutItem Text="新建" Command="{Binding NewCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="N"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="打开" Command="{Binding OpenCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="O"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="导入"/>
-                <MenuFlyoutItem Text="导出"/>
+                <MenuFlyoutItem Text="保存" Command="{Binding SaveCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="退出" Command="{Binding ExitCommand}"/>
+                <MenuFlyoutItem Text="导入" Command="{Binding ImportCommand}"/>
+                <MenuFlyoutItem Text="导出" Command="{Binding ExportCommand}"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="退出" Command="{Binding ExitCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="E"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
             </MenuBarItem>
-            <MenuBarItem Title="编辑"/>
+            <MenuBarItem Title="编辑">
+                <MenuFlyoutItem Text="取消选中" Command="{Binding UnselectCommand}"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="撤销" Command="{Binding UndoCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="Z"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="重做" Command="{Binding RedoCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="Y"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="剪切" Command="{Binding CutCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="X"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="复制" Command="{Binding CopyCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="C"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="粘贴" Command="{Binding PasteCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="V"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="属性" Command="{Binding PropertyCommand}"/>
+                <RadioMenuFlyoutItem Text="透明背景" IsChecked="True" Command="{Binding TransparentCommand}"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutSubItem Text="排列">
+                    <MenuFlyoutItem Text="上下布局" Command="{Binding OrderCommand}" CommandParameter="TopDown"/>
+                    <MenuFlyoutItem Text="左右布局" Command="{Binding OrderCommand}" CommandParameter="LeftRight"/>
+                    <MenuFlyoutItem Text="对角布局" Command="{Binding OrderCommand}" CommandParameter="Diagonal"/>
+                    <MenuFlyoutItem Text="斜对角布局" Command="{Binding OrderCommand}" CommandParameter="AltDiagonal"/>
+                    <MenuFlyoutItem Text="二叉树布局" Command="{Binding OrderCommand}" CommandParameter="BinaryTree"/>
+                </MenuFlyoutSubItem>
+            </MenuBarItem>
+            <MenuBarItem Title="帮助">
+                <MenuFlyoutItem Text="关于" Command="{Binding AboutCommand}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="I"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+            </MenuBarItem>
         </MenuBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -74,14 +138,12 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
-            <skia:SKXamlCanvas x:Name="CanvasTarget" 
-                               AllowDrop="True"
-                               PaintSurface="CanvasTarget_PaintSurface"
-                               Tapped="CanvasTarget_Tapped">
+            <ctl:ImageEditor x:Name="Editor" AllowDrop="True"
+                             SelectedCommand="{Binding EditorSelectedCommand}">
                 <ivy:Interaction.Behaviors>
                     <bhv:DragFileBehavior Command="{Binding DragImageCommand}"/>
                 </ivy:Interaction.Behaviors>
-            </skia:SKXamlCanvas>
+            </ctl:ImageEditor>
 
             <TreeView Grid.Column="1" ItemsSource="{Binding LayerItems}" 
                       ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"

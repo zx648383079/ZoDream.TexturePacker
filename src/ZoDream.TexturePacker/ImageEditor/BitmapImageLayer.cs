@@ -10,12 +10,12 @@ namespace ZoDream.TexturePacker.ImageEditor
     public class BitmapImageLayer: BaseImageLayer
     {
 
-        public BitmapImageLayer(string fileName, Editor editor) : this(SKBitmap.Decode(fileName), editor)
+        public BitmapImageLayer(string fileName, IImageEditor editor) : this(SKBitmap.Decode(fileName), editor)
         {
             
         }
 
-        public BitmapImageLayer(SKBitmap bitmap, Editor editor): base(editor)
+        public BitmapImageLayer(SKBitmap bitmap, IImageEditor editor): base(editor)
         {
             Source = bitmap;
             Width = bitmap.Width;

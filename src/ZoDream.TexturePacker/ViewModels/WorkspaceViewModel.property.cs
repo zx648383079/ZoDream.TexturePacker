@@ -2,15 +2,15 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
     public partial class WorkspaceViewModel
     {
 
-        public ImageEditor.Editor Editor { get; private set; } = new(300, 700);
+        public IImageEditor? Editor { get; set; }
 
 
         private ObservableCollection<LayerViewModel> _layerItems = [];

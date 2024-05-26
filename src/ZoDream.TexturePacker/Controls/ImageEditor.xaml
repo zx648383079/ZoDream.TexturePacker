@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ZoDream.TexturePacker.Controls.ImageEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ZoDream.TexturePacker.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:skia="using:SkiaSharp.Views.Windows"
+    mc:Ignorable="d"
+    x:Name="root">
+
+    <ScrollViewer 
+        ZoomMode="Enabled"
+        HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
+        VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+        <skia:SKXamlCanvas x:Name="CanvasTarget"
+                   PaintSurface="CanvasTarget_PaintSurface"
+                   Tapped="CanvasTarget_Tapped"/>
+    </ScrollViewer>
+</UserControl>

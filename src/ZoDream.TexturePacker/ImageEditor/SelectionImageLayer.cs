@@ -5,7 +5,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     /// <summary>
     /// 选择高亮
     /// </summary>
-    public class SelectionImageLayer(Editor editor): BaseImageLayer(editor), ICommandImageLayer
+    public class SelectionImageLayer(IImageEditor editor): BaseImageLayer(editor), ICommandImageLayer
     {
         private SKSurface? _surface;
 
@@ -30,7 +30,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         private void RenderSurface()
         {
-            var info = new SKImageInfo(Editor.Width, Editor.Height);
+            var info = new SKImageInfo(Editor.ActualWidthI, Editor.ActualHeightI);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
             canvas.Clear(SKColors.Transparent);
@@ -42,21 +42,21 @@ namespace ZoDream.TexturePacker.ImageEditor
             };
             if (X > 0)
             {
-                canvas.DrawRect(0, 0, X, Editor.Height, paint);
+                canvas.DrawRect(0, 0, X, info.Height, paint);
             }
             var right = X + Width;
-            if (right < Editor.Width)
+            if (right < info.Width)
             {
-                canvas.DrawRect(right, 0, Editor.Width - right, Editor.Height, paint);
+                canvas.DrawRect(right, 0, info.Width - right, info.Height, paint);
             }
             if (Y > 0)
             {
                 canvas.DrawRect(X, 0, Width, Y, paint);
             }
             var bottom = Y + Height;
-            if (bottom < Editor.Height) 
+            if (bottom < info.Height) 
             {
-                canvas.DrawRect(X, bottom, Width, Editor.Height - bottom, paint);
+                canvas.DrawRect(X, bottom, Width, info.Height - bottom, paint);
             }
         }
 

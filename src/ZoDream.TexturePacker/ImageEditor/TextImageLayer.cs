@@ -2,7 +2,7 @@
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class TextImageLayer(string text, Editor editor): BaseImageLayer(editor)
+    public class TextImageLayer(string text, IImageEditor editor): BaseImageLayer(editor)
     {
 
         public string Text { get; set; } = text;

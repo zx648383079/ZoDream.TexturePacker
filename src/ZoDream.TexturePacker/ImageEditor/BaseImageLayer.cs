@@ -3,10 +3,10 @@ using SkiaSharp;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public abstract class BaseImageLayer(Editor editor) : IImageLayer
+    public abstract class BaseImageLayer(IImageEditor editor) : IImageLayer
     {
 
-        protected Editor Editor { get; private set; } = editor;
+        protected IImageEditor Editor { get; private set; } = editor;
         public int Id { get; set; }
 
         public int X { get; set; }
