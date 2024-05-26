@@ -1,4 +1,6 @@
-﻿using SkiaSharp;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using SkiaSharp;
+using SkiaSharp.Views.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.TexturePacker.Models;
@@ -39,6 +41,28 @@ namespace ZoDream.TexturePacker.ImageEditor
                     Y = item.Y,
                 };
             }).ToArray();
+        }
+
+        public BitmapImageLayer Split(LayerItem item)
+        {
+            using var paint = new SKPaint()
+            {
+                FilterQuality = SKFilterQuality.High
+            };
+            var bitmap = new SKBitmap(item.Width, item.Height);
+            using var canvas = new SKCanvas(bitmap);
+            // canvas.Clear(SKColors.Transparent);
+            canvas.DrawBitmap(Source, SKRect.Create(item.X, item.Y, item.Width, item.Height), SKRect.Create(0, 0, item.Width, item.Height), paint);
+            return new BitmapImageLayer(bitmap, Editor)
+            {
+                X = item.X,
+                Y = item.Y,
+            };
+        }
+
+        public override BitmapSource? GetPreviewSource()
+        {
+            return Source.ToWriteableBitmap();
         }
 
         public override void Paint(SKCanvas canvas)

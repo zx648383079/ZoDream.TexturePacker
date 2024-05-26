@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ZoDream.TexturePacker.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -18,6 +20,26 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _layerItems, value);
         }
 
+        private LayerViewModel? _selectedLayer;
+
+        public LayerViewModel? SelectedLayer {
+            get => _selectedLayer;
+            set => Set(ref _selectedLayer, value);
+        }
+
+
+        public LayerViewModel? GetLayer(int id)
+        {
+            foreach (var item in LayerItems)
+            {
+                var layer = item.Get(id);
+                if (layer is not null)
+                {
+                    return layer;
+                }
+            }
+            return null;
+        }
 
         public void AddLayer(LayerGroupItem data)
         {
@@ -28,6 +50,16 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     Name = item.Name
                 })]
+            });
+        }
+
+        public void AddLayer(int id, string name, BitmapSource? image)
+        {
+            LayerItems.Insert(0, new LayerViewModel()
+            {
+                Id = id,
+                Name = name,
+                PreviewImage = image
             });
         }
     }

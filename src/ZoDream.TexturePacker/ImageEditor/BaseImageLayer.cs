@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using SkiaSharp;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -6,6 +7,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     {
 
         protected Editor Editor { get; private set; } = editor;
+        public int Id { get; set; }
 
         public int X { get; set; }
         public int Y { get; set; }
@@ -15,6 +17,10 @@ namespace ZoDream.TexturePacker.ImageEditor
         public bool Visible { get; set; } = true;
         public abstract void Paint(SKCanvas canvas);
 
+        public virtual BitmapSource? GetPreviewSource()
+        {
+            return null;
+        }
         public virtual void Dispose()
         {
 

@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -17,6 +16,8 @@ namespace ZoDream.TexturePacker.ImageEditor
         }
         public int Width { get; set; }
         public int Height { get; set; }
+
+        private int _idGenerator = 0;
         private Action? InvalidateFn;
 
         private SKSurface? _surface;
@@ -27,6 +28,25 @@ namespace ZoDream.TexturePacker.ImageEditor
         public IList<IImageLayer> LayerItems { get; private set; } = [];
 
         public SKColor? Backgound { get; set; }
+
+
+        public event SelectionChangedEventHandler? SelectionChanged;
+
+        public IImageLayer? this[int id] => Get<IImageLayer>(id);
+
+
+        public T? Get<T>(int id)
+            where T: IImageLayer
+        {
+            foreach (var item in LayerItems)
+            {
+                if (item.Id == id)
+                {
+                    return (T)item;
+                }
+            }
+            return default;
+        }
 
         public BitmapImageLayer AddImage(string fileName)
         {
@@ -66,8 +86,25 @@ namespace ZoDream.TexturePacker.ImageEditor
             {
                 layer.Depth = LayerItems.MaxBy(item => item.Depth)!.Depth + 1;
             }
+            layer.Id = ++_idGenerator;
             LayerItems.Add(layer);
             return layer;
+        }
+
+        public void Remove(int id)
+        {
+            for (var i = LayerItems.Count - 1; i >= 0; i--)
+            {
+                if (LayerItems[i].Id == id)
+                {
+                    LayerItems.RemoveAt(i);
+                }
+            }
+        }
+
+        public void Remove(IImageLayer layer)
+        {
+            LayerItems.Remove(layer);
         }
 
         /// <summary>
@@ -114,10 +151,18 @@ namespace ZoDream.TexturePacker.ImageEditor
                     continue;
                 }
                 Select(item);
+                SelectionChanged?.Invoke(item.Id);
                 return;
             }
         }
-
+        public void Select(int id)
+        {
+            var layer = Get<IImageLayer>(id);
+            if (layer is not null)
+            {
+                Select(layer);
+            }
+        }
         public void Select(IImageLayer layer)
         {
             _commandLayer ??= new SelectionImageLayer(this);
@@ -146,6 +191,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
             RenderSurface();
+            canvas.Clear(SKColors.Transparent);
             canvas.DrawSurface(_surface, 0, 0);
         }
 

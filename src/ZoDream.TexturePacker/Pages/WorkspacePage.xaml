@@ -83,7 +83,13 @@
                 </ivy:Interaction.Behaviors>
             </skia:SKXamlCanvas>
 
-            <TreeView Grid.Column="1" ItemsSource="{Binding LayerItems}" ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"/>
+            <TreeView Grid.Column="1" ItemsSource="{Binding LayerItems}" 
+                      ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"
+                      SelectedItem="{Binding SelectedLayer,Mode=TwoWay}">
+                <ivy:Interaction.Behaviors>
+                    <bhv:SelectionChangedBehavior Command="{Binding LayerSelectedCommand}"/>
+                </ivy:Interaction.Behaviors>
+            </TreeView>
         </Grid>
         
         <Grid Grid.Row="3">

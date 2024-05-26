@@ -1,13 +1,15 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ZoDream.Shared.ViewModel;
+using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
     public class LayerViewModel: BindableBase
     {
+        public int Id { get; set; }
+
         private string _name = string.Empty;
 
         public string Name {
@@ -15,9 +17,9 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _name, value);
         }
 
-        private BitmapImage _previewImage = new();
+        private BitmapSource? _previewImage;
 
-        public BitmapImage PreviewImage {
+        public BitmapSource? PreviewImage {
             get => _previewImage;
             set => Set(ref _previewImage, value);
         }
@@ -43,5 +45,21 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _children, value);
         }
 
+        public LayerViewModel? Get(int id)
+        {
+            if (id == Id)
+            {
+                return this;
+            }
+            foreach (var item in Children)
+            {
+                var layer = item.Get(id);
+                if (layer is not null)
+                {
+                    return layer;
+                }
+            }
+            return null;
+        }
     }
 }
