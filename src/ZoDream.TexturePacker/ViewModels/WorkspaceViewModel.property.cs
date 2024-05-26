@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -15,5 +18,17 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _layerItems, value);
         }
 
+
+        public void AddLayer(LayerGroupItem data)
+        {
+            LayerItems.Add(new LayerViewModel()
+            {
+                Name = data.Name,
+                Children = [..data.Items.Select(item => new LayerViewModel()
+                {
+                    Name = item.Name
+                })]
+            });
+        }
     }
 }

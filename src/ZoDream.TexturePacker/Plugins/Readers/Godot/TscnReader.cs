@@ -15,7 +15,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             throw new NotImplementedException();
         }
 
-        public Task<LayerGroupItem?> ReadAsync(StorageFile file)
+        public Task<LayerGroupItem?> ReadAsync(IStorageFile file)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             throw new NotImplementedException();
         }
 
-        public Task WriteAsync(StorageFile file, LayerGroupItem data)
+        public Task WriteAsync(IStorageFile file, LayerGroupItem data)
         {
             throw new NotImplementedException();
         }

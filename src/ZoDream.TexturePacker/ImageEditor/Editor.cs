@@ -1,7 +1,11 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -24,9 +28,15 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public SKColor? Backgound { get; set; }
 
-        public void AddImage(string fileName)
+        public BitmapImageLayer AddImage(string fileName)
         {
-            Add(new BitmapImageLayer(fileName, this));
+            return Add(new BitmapImageLayer(fileName, this));
+        }
+
+        public async Task<BitmapImageLayer> AddImageAsync(IStorageFile file)
+        {
+            var fs = await file.OpenStreamForReadAsync();
+            return Add(new BitmapImageLayer(SKBitmap.Decode(fs), this));
         }
 
         public void Clear()
@@ -34,24 +44,46 @@ namespace ZoDream.TexturePacker.ImageEditor
             LayerItems.Clear();
         }
 
-        public void AddText(string text)
+        public TextImageLayer AddText(string text)
         {
-            Add(new TextImageLayer(text, this));
+            return Add(new TextImageLayer(text, this));
         }
-
-        public void Add(IImageLayer layer)
+        public void Add(IEnumerable<IImageLayer> items)
+        {
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+        public T Add<T>(T layer)
+            where T : IImageLayer
         {
             if (LayerItems.Contains(layer))
             {
-                return;
+                return layer;
             }
             if (LayerItems.Count > 0)
             {
                 layer.Depth = LayerItems.MaxBy(item => item.Depth)!.Depth + 1;
             }
             LayerItems.Add(layer);
+            return layer;
         }
 
+        /// <summary>
+        /// 自动变更尺寸，显示全部内容
+        /// </summary>
+        public void Resize()
+        {
+            var outerWidth = 0;
+            var outerHeight = 0;
+            foreach (var item in LayerItems)
+            {
+                outerWidth = Math.Max(outerWidth, item.X + item.Width);
+                outerHeight = Math.Max(outerHeight, item.Y + item.Height);
+            }
+            Resize(outerWidth, outerHeight);
+        }
         public void Resize(int width, int height)
         {
             Width = width;
