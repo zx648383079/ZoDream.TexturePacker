@@ -82,9 +82,18 @@ namespace ZoDream.TexturePacker.Controls
             {
                 layer.Depth = LayerItems.MaxBy(item => item.Depth)!.Depth + 1;
             }
-            layer.Id = ++_idGenerator;
+            GenerateLayerId(layer);
             LayerItems.Add(layer);
             return layer;
+        }
+
+        public void GenerateLayerId(IImageLayer layer)
+        {
+            if (layer.Id > 0)
+            {
+                return;
+            }
+            layer.Id = ++_idGenerator;
         }
 
         public void Remove(int id)
@@ -188,6 +197,10 @@ namespace ZoDream.TexturePacker.Controls
             }
             foreach (var item in LayerItems)
             {
+                if (!item.Visible)
+                {
+                    continue;
+                }
                 item.Paint(canvas);
             }
             _commandLayer?.Paint(canvas);

@@ -33,7 +33,33 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand PasteCommand { get; private set; }
         public ICommand TransparentCommand { get; private set; }
         public ICommand OrderCommand { get; private set; }
+        public ICommand AddLayerCommand { get; private set; }
+
+        public ICommand ImportFolderCommand { get; private set; }
+        public ICommand DeleteLayerCommand { get; private set; }
+
+        public ICommand LayerPropertyCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
+
+        private void TapAddLayer(object? _)
+        {
+
+        }
+
+        private void TapLayerProperty(object? _)
+        {
+
+        }
+
+        private void TapDeleteLayer(object? _)
+        {
+
+        }
+
+        private void TapImportFolder(object? _)
+        {
+
+        }
 
         private void TapAbout(object? _)
         {

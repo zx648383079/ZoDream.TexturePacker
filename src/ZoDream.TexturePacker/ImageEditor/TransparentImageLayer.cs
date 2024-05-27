@@ -46,8 +46,8 @@ namespace ZoDream.TexturePacker.ImageEditor
                 Style = SKPaintStyle.Fill,
                 StrokeWidth = 0,
             };
-            var columnCount = Width / _gridSize;
-            var rowCount = Height / _gridSize;
+            var columnCount = Width / _gridSize + 1;
+            var rowCount = Height / _gridSize + 1;
             for (var i = 0; i < columnCount; i++)
             {
                 for (var j = 0; j < rowCount; j ++)

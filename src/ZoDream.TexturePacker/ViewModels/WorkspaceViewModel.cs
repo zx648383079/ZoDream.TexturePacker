@@ -24,6 +24,10 @@ namespace ZoDream.TexturePacker.ViewModels
             TransparentCommand = new RelayCommand(TapTransparent);
             OrderCommand = new RelayCommand(TapOrder);
             AboutCommand = new RelayCommand(TapAbout);
+            AddLayerCommand = new RelayCommand(TapAddLayer);
+            DeleteLayerCommand = new RelayCommand(TapDeleteLayer);
+            ImportFolderCommand = new RelayCommand(TapImportFolder);
+            LayerPropertyCommand = new RelayCommand(TapLayerProperty);
             ExitCommand = new RelayCommand(TapExit);
             LayerSelectedCommand = new RelayCommand<LayerViewModel>(OnLayerSelected);
             EditorSelectedCommand = new RelayCommand<int>(OnEditorSelected);

@@ -8,6 +8,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 {
     public interface IImageEditor: IDisposable
     {
+
         public int ActualHeightI { get; }
         public int ActualWidthI { get; }
 
@@ -15,6 +16,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public IList<IImageLayer> LayerItems { get; }
 
+        public void GenerateLayerId(IImageLayer layer);
 
         public IImageLayer? this[int id] { get; }
 

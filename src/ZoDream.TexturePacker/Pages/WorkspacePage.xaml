@@ -76,12 +76,12 @@
             <MenuBarItem Title="编辑">
                 <MenuFlyoutItem Text="取消选中" Command="{Binding UnselectCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="撤销" Command="{Binding UndoCommand}">
+                <MenuFlyoutItem Text="撤销" IsEnabled="{Binding UndoEnabled}" Command="{Binding UndoCommand}">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="Z"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
-                <MenuFlyoutItem Text="重做" Command="{Binding RedoCommand}">
+                <MenuFlyoutItem Text="重做" IsEnabled="{Binding RedoEnabled}" Command="{Binding RedoCommand}">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="Y"/>
                     </MenuFlyoutItem.KeyboardAccelerators>
@@ -113,6 +113,49 @@
                     <MenuFlyoutItem Text="二叉树布局" Command="{Binding OrderCommand}" CommandParameter="BinaryTree"/>
                 </MenuFlyoutSubItem>
             </MenuBarItem>
+            <MenuBarItem Title="图层">
+                <MenuFlyoutItem Text="新建图层" Command="{Binding AddLayerCommand}"/>
+                <MenuFlyoutItem Text="新建组"/>
+                <MenuFlyoutItem Text="重命名图层"/>
+                <MenuFlyoutItem Text="删除图层" Command="{Binding DeleteLayerCommand}"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="锁定"/>
+                <MenuFlyoutItem Text="解锁"/>
+                <MenuFlyoutItem Text="全部解锁"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="隐藏"/>
+                <MenuFlyoutItem Text="显示"/>
+                <MenuFlyoutItem Text="全部显示"/>
+                <MenuFlyoutItem Text="隐藏其他"/>
+                <MenuFlyoutItem Text="显示其他"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="取消选择图层"/>
+                <MenuFlyoutItem Text="选择上一层"/>
+                <MenuFlyoutItem Text="选择下一层"/>
+                <MenuFlyoutItem Text="选择父层"/>
+                <MenuFlyoutItem Text="选择顶层"/>
+                <MenuFlyoutItem Text="选择底层"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="图层属性" Command="{Binding LayerPropertyCommand}"/>
+            </MenuBarItem>
+            <MenuBarItem Title="排列">
+                <MenuFlyoutItem Text="移至顶层"/>
+                <MenuFlyoutItem Text="上移一层"/>
+                <MenuFlyoutItem Text="下移一层"/>
+                <MenuFlyoutItem Text="移至底层"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="左对齐"/>
+                <MenuFlyoutItem Text="居中对齐"/>
+                <MenuFlyoutItem Text="右对齐"/>
+                <MenuFlyoutItem Text="顶部对齐"/>
+                <MenuFlyoutItem Text="中间对齐"/>
+                <MenuFlyoutItem Text="底部对齐"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="水平翻转"/>
+                <MenuFlyoutItem Text="垂直翻转"/>
+                <MenuFlyoutItem Text="顺时针旋转90°"/>
+                <MenuFlyoutItem Text="逆时针旋转90°"/>
+            </MenuBarItem>
             <MenuBarItem Title="帮助">
                 <MenuFlyoutItem Text="关于" Command="{Binding AboutCommand}">
                     <MenuFlyoutItem.KeyboardAccelerators>
@@ -123,15 +166,21 @@
         </MenuBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal">
-                <Button Content="打开项目"/>
-                <Button Content="保存项目"/>
-                <Button Content="添加精灵"/>
-                <Button Content="删除精灵"/>
-            </StackPanel>
+            <CommandBar>
+                <AppBarButton Icon="Undo" Label="撤销" IsEnabled="{Binding UndoEnabled}" Command="{Binding UndoCommand}"/>
+                <AppBarButton Icon="Redo" Label="重做" IsEnabled="{Binding RedoEnabled}" Command="{Binding RedoCommand}"/>
+                <AppBarSeparator/>
+                <AppBarButton Icon="Save" Label="保存" Command="{Binding SaveCommand}"/>
+                <AppBarButton Icon="OpenFile" Label="添加图层" Command="{Binding AddLayerCommand}"/>
+                <AppBarButton Icon="Delete" Label="删除图层" Command="{Binding DeleteLayerCommand}"/>
+                <AppBarButton Icon="OpenLocal" Label="导入文件夹" Command="{Binding ImportFolderCommand}"/>
+                <AppBarSeparator/>
+                <AppBarButton Icon="Setting" Label="图层属性" Command="{Binding LayerPropertyCommand}"/>
+                <AppBarButton Icon="Download" Label="导出" Command="{Binding ExportCommand}"/>
+            </CommandBar>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
