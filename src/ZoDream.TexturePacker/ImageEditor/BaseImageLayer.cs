@@ -25,5 +25,22 @@ namespace ZoDream.TexturePacker.ImageEditor
         {
 
         }
+
+        protected void Rotate(SKCanvas canvas, float deg)
+        {
+            canvas.RotateDegrees(deg);
+        }
+
+        protected void Flip(SKCanvas canvas, bool isHorizontal = true)
+        {
+            if (isHorizontal)
+            {
+                canvas.Scale(1, -1);
+            } else
+            {
+                canvas.Scale(-1, 1);
+            }
+        }
+
     }
 }

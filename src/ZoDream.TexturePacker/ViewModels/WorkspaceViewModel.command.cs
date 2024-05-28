@@ -28,6 +28,11 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand RedoCommand { get; private set; }
         public ICommand PropertyCommand { get; private set; }
         public ICommand UnselectCommand { get; private set; }
+        public ICommand SelectTopCommand { get; private set; }
+        public ICommand SelectBottomCommand { get; private set; }
+        public ICommand SelectParentCommand { get; private set; }
+        public ICommand SelectPreviousCommand { get; private set; }
+        public ICommand SelectNextCommand { get; private set; }
         public ICommand CutCommand { get; private set; }
         public ICommand CopyCommand { get; private set; }
         public ICommand PasteCommand { get; private set; }
@@ -39,6 +44,32 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand DeleteLayerCommand { get; private set; }
 
         public ICommand LayerPropertyCommand { get; private set; }
+        public ICommand LayerRotateCommand { get; private set; }
+        public ICommand LayerScaleCommand { get; private set; }
+        public ICommand LayerScaleXCommand { get; private set; }
+        public ICommand LayerScaleYCommand { get; private set; }
+        public ICommand LayerVisibleCommand { get; private set; }
+        public ICommand LayerHiddenCommand { get; private set; }
+        public ICommand AllVisibleCommand { get; private set; }
+        public ICommand OtherHiddenCommand { get; private set; }
+        public ICommand OtherVisibleCommand { get; private set; }
+        public ICommand LayerLockCommand { get; private set; }
+        public ICommand LayerUnlockCommand { get; private set; }
+        public ICommand AllUnlockCommand { get; private set; }
+        public ICommand LayerRenameCommand { get; private set; }
+        public ICommand LayerHorizontalLeftCommand { get; private set; }
+        public ICommand LayerHorizontalCenterCommand { get; private set; }
+        public ICommand LayerHorizontalRightCommand { get; private set; }
+
+        public ICommand LayerVerticalTopCommand { get; private set; }
+        public ICommand LayerVerticalMidCommand { get; private set; }
+        public ICommand LayerVerticalBottomCommand { get; private set; }
+        public ICommand LayerHorizontalFlipCommand { get; private set; }
+        public ICommand LayerVerticalFlipCommand { get; private set; }
+        public ICommand LayerMoveTopCommand { get; private set; }
+        public ICommand LayerMoveUpCommand { get; private set; }
+        public ICommand LayerMoveDownCommand { get; private set; }
+        public ICommand LayerMoveBottomCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
         private void TapAddLayer(object? _)
@@ -139,6 +170,159 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             Editor?.Select(layer.Id);
         }
+
+
+
+        private void TapSelectTop(object? _)
+        {
+
+        }
+
+        private void TapSelectBottom(object? _)
+        {
+
+        }
+
+        private void TapSelectParent(object? _)
+        {
+
+        }
+
+        private void TapSelectPrevious(object? _)
+        {
+
+        }
+
+        private void TapSelectNext(object? _)
+        {
+
+        }
+
+        private void TapLayerRotate(object? _)
+        {
+
+        }
+
+        private void TapLayerScale(object? _)
+        {
+
+        }
+
+        private void TapLayerScaleX(object? _)
+        {
+
+        }
+
+        private void TapLayerScaleY(object? _)
+        {
+
+        }
+
+        private void TapLayerVisible(object? _)
+        {
+
+        }
+
+        private void TapLayerHidden(object? _)
+        {
+
+        }
+
+        private void TapAllVisible(object? _)
+        {
+
+        }
+
+        private void TapOtherHidden(object? _)
+        {
+
+        }
+
+        private void TapOtherVisible(object? _)
+        {
+
+        }
+
+        private void TapLayerLock(object? _)
+        {
+
+        }
+
+        private void TapLayerUnlock(object? _)
+        {
+
+        }
+
+        private void TapAllUnlock(object? _)
+        {
+
+        }
+
+        private void TapLayerRename(object? _)
+        {
+
+        }
+
+        private void TapLayerHorizontalLeft(object? _)
+        {
+
+        }
+
+        private void TapLayerHorizontalCenter(object? _)
+        {
+
+        }
+
+        private void TapLayerHorizontalRight(object? _)
+        {
+
+        }
+
+        private void TapLayerVerticalTop(object? _)
+        {
+
+        }
+
+        private void TapLayerVerticalMid(object? _)
+        {
+
+        }
+
+        private void TapLayerVerticalBottom(object? _)
+        {
+
+        }
+
+        private void TapLayerHorizontalFlip(object? _)
+        {
+
+        }
+
+        private void TapLayerVerticalFlip(object? _)
+        {
+
+        }
+
+        private void TapLayerMoveTop(object? _)
+        {
+
+        }
+
+        private void TapLayerMoveUp(object? _)
+        {
+
+        }
+
+        private void TapLayerMoveDown(object? _)
+        {
+
+        }
+        private void TapLayerMoveBottom(object? _)
+        {
+
+        }
+
+
 
         private async void OnDragImage(IReadOnlyList<IStorageItem> items)
         {

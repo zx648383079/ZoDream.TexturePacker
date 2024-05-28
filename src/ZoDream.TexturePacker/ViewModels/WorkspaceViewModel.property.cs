@@ -27,7 +27,7 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _redoEnabled, value);
         }
 
-
+        public bool IsSelectedLayer => SelectedLayer != null;
 
         private ObservableCollection<LayerViewModel> _layerItems = [];
 
@@ -40,7 +40,10 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public LayerViewModel? SelectedLayer {
             get => _selectedLayer;
-            set => Set(ref _selectedLayer, value);
+            set {
+                Set(ref _selectedLayer, value);
+                OnPropertyChanged(nameof(IsSelectedLayer));
+            }
         }
 
 

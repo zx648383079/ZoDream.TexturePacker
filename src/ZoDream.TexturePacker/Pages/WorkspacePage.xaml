@@ -74,7 +74,7 @@
                 </MenuFlyoutItem>
             </MenuBarItem>
             <MenuBarItem Title="编辑">
-                <MenuFlyoutItem Text="取消选中" Command="{Binding UnselectCommand}"/>
+                <MenuFlyoutItem Text="取消选中" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding UnselectCommand}"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="撤销" IsEnabled="{Binding UndoEnabled}" Command="{Binding UndoCommand}">
                     <MenuFlyoutItem.KeyboardAccelerators>
@@ -116,45 +116,45 @@
             <MenuBarItem Title="图层">
                 <MenuFlyoutItem Text="新建图层" Command="{Binding AddLayerCommand}"/>
                 <MenuFlyoutItem Text="新建组"/>
-                <MenuFlyoutItem Text="重命名图层"/>
-                <MenuFlyoutItem Text="删除图层" Command="{Binding DeleteLayerCommand}"/>
+                <MenuFlyoutItem Text="重命名图层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerRenameCommand}"/>
+                <MenuFlyoutItem Text="删除图层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding DeleteLayerCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="锁定"/>
-                <MenuFlyoutItem Text="解锁"/>
-                <MenuFlyoutItem Text="全部解锁"/>
+                <MenuFlyoutItem Text="锁定" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerLockCommand}"/>
+                <MenuFlyoutItem Text="解锁" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerUnlockCommand}"/>
+                <MenuFlyoutItem Text="全部解锁" Command="{Binding AllUnlockCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="隐藏"/>
-                <MenuFlyoutItem Text="显示"/>
-                <MenuFlyoutItem Text="全部显示"/>
-                <MenuFlyoutItem Text="隐藏其他"/>
-                <MenuFlyoutItem Text="显示其他"/>
+                <MenuFlyoutItem Text="隐藏" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerHiddenCommand}"/>
+                <MenuFlyoutItem Text="显示" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerVisibleCommand}"/>
+                <MenuFlyoutItem Text="全部显示" Command="{Binding AllVisibleCommand}"/>
+                <MenuFlyoutItem Text="隐藏其他" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding OtherHiddenCommand}"/>
+                <MenuFlyoutItem Text="显示其他" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding OtherVisibleCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="取消选择图层"/>
-                <MenuFlyoutItem Text="选择上一层"/>
-                <MenuFlyoutItem Text="选择下一层"/>
-                <MenuFlyoutItem Text="选择父层"/>
-                <MenuFlyoutItem Text="选择顶层"/>
-                <MenuFlyoutItem Text="选择底层"/>
+                <MenuFlyoutItem Text="取消选择图层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding UnselectCommand}"/>
+                <MenuFlyoutItem Text="选择上一层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding SelectPreviousCommand}"/>
+                <MenuFlyoutItem Text="选择下一层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding SelectNextCommand}"/>
+                <MenuFlyoutItem Text="选择父层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding SelectParentCommand}"/>
+                <MenuFlyoutItem Text="选择顶层" Command="{Binding SelectTopCommand}"/>
+                <MenuFlyoutItem Text="选择底层" Command="{Binding SelectBottomCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="图层属性" Command="{Binding LayerPropertyCommand}"/>
+                <MenuFlyoutItem Text="图层属性" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerPropertyCommand}"/>
             </MenuBarItem>
             <MenuBarItem Title="排列">
-                <MenuFlyoutItem Text="移至顶层"/>
-                <MenuFlyoutItem Text="上移一层"/>
-                <MenuFlyoutItem Text="下移一层"/>
-                <MenuFlyoutItem Text="移至底层"/>
+                <MenuFlyoutItem Text="移至顶层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerMoveTopCommand}"/>
+                <MenuFlyoutItem Text="上移一层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerMoveUpCommand}"/>
+                <MenuFlyoutItem Text="下移一层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerMoveDownCommand}"/>
+                <MenuFlyoutItem Text="移至底层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerMoveBottomCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="左对齐"/>
-                <MenuFlyoutItem Text="居中对齐"/>
-                <MenuFlyoutItem Text="右对齐"/>
-                <MenuFlyoutItem Text="顶部对齐"/>
-                <MenuFlyoutItem Text="中间对齐"/>
-                <MenuFlyoutItem Text="底部对齐"/>
+                <MenuFlyoutItem Text="左对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerHorizontalLeftCommand}"/>
+                <MenuFlyoutItem Text="居中对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerHorizontalCenterCommand}"/>
+                <MenuFlyoutItem Text="右对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerHorizontalRightCommand}"/>
+                <MenuFlyoutItem Text="顶部对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerVerticalTopCommand}"/>
+                <MenuFlyoutItem Text="中间对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerVerticalMidCommand}"/>
+                <MenuFlyoutItem Text="底部对齐" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerVerticalBottomCommand}"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="水平翻转"/>
-                <MenuFlyoutItem Text="垂直翻转"/>
-                <MenuFlyoutItem Text="顺时针旋转90°"/>
-                <MenuFlyoutItem Text="逆时针旋转90°"/>
+                <MenuFlyoutItem Text="水平翻转" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerHorizontalFlipCommand}"/>
+                <MenuFlyoutItem Text="垂直翻转" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerVerticalFlipCommand}"/>
+                <MenuFlyoutItem Text="顺时针旋转90°" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerRotateCommand}" CommandParameter="90"/>
+                <MenuFlyoutItem Text="逆时针旋转90°" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerRotateCommand}" CommandParameter="-90"/>
             </MenuBarItem>
             <MenuBarItem Title="帮助">
                 <MenuFlyoutItem Text="关于" Command="{Binding AboutCommand}">
@@ -175,10 +175,10 @@
                 <AppBarSeparator/>
                 <AppBarButton Icon="Save" Label="保存" Command="{Binding SaveCommand}"/>
                 <AppBarButton Icon="OpenFile" Label="添加图层" Command="{Binding AddLayerCommand}"/>
-                <AppBarButton Icon="Delete" Label="删除图层" Command="{Binding DeleteLayerCommand}"/>
+                <AppBarButton Icon="Delete" Label="删除图层" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding DeleteLayerCommand}"/>
                 <AppBarButton Icon="OpenLocal" Label="导入文件夹" Command="{Binding ImportFolderCommand}"/>
                 <AppBarSeparator/>
-                <AppBarButton Icon="Setting" Label="图层属性" Command="{Binding LayerPropertyCommand}"/>
+                <AppBarButton Icon="Setting" Label="图层属性" IsEnabled="{Binding IsSelectedLayer}" Command="{Binding LayerPropertyCommand}"/>
                 <AppBarButton Icon="Download" Label="导出" Command="{Binding ExportCommand}"/>
             </CommandBar>
         </Grid>
