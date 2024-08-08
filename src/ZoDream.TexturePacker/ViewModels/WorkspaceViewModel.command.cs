@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.Storage.Search;
+using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins;
@@ -44,6 +45,9 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand TransparentCommand { get; private set; }
         public ICommand OrderCommand { get; private set; }
         public ICommand AddLayerCommand { get; private set; }
+        public ICommand AddGroupCommand { get; private set; }
+        public ICommand UngroupCommand { get; private set; }
+
 
         public ICommand ImportFolderCommand { get; private set; }
         public ICommand DeleteLayerCommand { get; private set; }
@@ -77,14 +81,26 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand LayerMoveBottomCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
-        private void TapAddLayer(object? _)
+        private async void TapAddLayer(object? _)
         {
-
+            var dialog = new LayerDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
 
-        private void TapLayerProperty(object? _)
+        private async void TapAddGroup(object? _)
         {
+            var dialog = new GroupDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
+        }
 
+        private void TapUngroup(object? _)
+        {
+        }
+
+        private async void TapLayerProperty(object? _)
+        {
+            var dialog = new LayerPropertyDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
 
         private void TapDeleteLayer(object? _)
@@ -97,9 +113,10 @@ namespace ZoDream.TexturePacker.ViewModels
 
         }
 
-        private void TapAbout(object? _)
+        private async void TapAbout(object? _)
         {
-
+            var dialog = new AboutDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
 
         private void TapNew(object? _)
@@ -117,11 +134,18 @@ namespace ZoDream.TexturePacker.ViewModels
         private void TapSaveAs(object? _)
         {
         }
-        private void TapImport(object? _) 
+        private async void TapImport(object? _) 
         {
+            var dialog = new ImportDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
-        private void TapExport(object? _) 
+        private async void TapExport(object? _) 
         {
+            var dialog = new ExportDialog();
+            if (await App.ViewModel.OpenDialogAsync(dialog) != ContentDialogResult.Primary)
+            {
+                return;
+            }
         }
         private void TapUndo(object? _)
         {
@@ -138,8 +162,10 @@ namespace ZoDream.TexturePacker.ViewModels
         private void TapPaste(object? _) 
         {
         }
-        private void TapProperty(object? _)
+        private async void TapProperty(object? _)
         {
+            var dialog = new PropertyDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
         private void TapUnselect(object? _)
         {

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Window
-    x:Class="ZoDream.TexturePacker.MainWindow"
+<ContentDialog
+    x:Class="ZoDream.TexturePacker.Dialogs.GroupDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:ZoDream.TexturePacker"
+    xmlns:local="using:ZoDream.TexturePacker.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="TexturePacker"
+    Title="新建分组"
+    PrimaryButtonText="确认"
+    SecondaryButtonText="取消"
     mc:Ignorable="d">
-    <Window.SystemBackdrop>
-        <DesktopAcrylicBackdrop />
-    </Window.SystemBackdrop>
 
-    <Grid>
-        <Frame x:Name="RootFrame" />
-    </Grid>
-</Window>
+    <StackPanel>
+        <TextBox Header="名称" />
+    </StackPanel>
+</ContentDialog>

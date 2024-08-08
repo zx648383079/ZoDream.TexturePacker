@@ -32,14 +32,27 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
                 FileName = data.Meta.Image,
                 Width = data.Meta.Size.W,
                 Height = data.Meta.Size.H,
-                Items = data.Frames.Select(item => new LayerItem()
-                {
-                    Name = item.Filename,
-                    X = item.Frame.X,
-                    Y = item.Frame.Y,
-                    Width = item.Frame.W,
-                    Height = item.Frame.H,
-                    Rotate = item.Rotated ? 90: 0,
+                Items = data.Frames.Select(item => {
+                    if (item.Rotated)
+                    {
+                        return new LayerItem()
+                        {
+                            Name = item.Filename,
+                            X = item.Frame.X,
+                            Y = item.Frame.Y,
+                            Width = item.Frame.H,
+                            Height = item.Frame.W,
+                        };
+                    }
+                    return new LayerItem()
+                    {
+                        Name = item.Filename,
+                        X = item.Frame.X,
+                        Y = item.Frame.Y,
+                        Width = item.Frame.W,
+                        Height = item.Frame.H,
+                        // Rotate = item.Rotated ? 90: 0,
+                    };
                 }).ToArray(),
             };
         }

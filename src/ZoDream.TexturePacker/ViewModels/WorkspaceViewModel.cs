@@ -25,6 +25,8 @@ namespace ZoDream.TexturePacker.ViewModels
             OrderCommand = new RelayCommand(TapOrder);
             AboutCommand = new RelayCommand(TapAbout);
             AddLayerCommand = new RelayCommand(TapAddLayer);
+            AddGroupCommand = new RelayCommand(TapAddGroup);
+            UngroupCommand = new RelayCommand(TapUngroup);
             DeleteLayerCommand = new RelayCommand(TapDeleteLayer);
             ImportFolderCommand = new RelayCommand(TapImportFolder);
             LayerPropertyCommand = new RelayCommand(TapLayerProperty);

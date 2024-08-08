@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using System.Diagnostics;
 using System.Windows.Input;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -17,9 +18,11 @@ namespace ZoDream.TexturePacker.Controls
         }
 
         private readonly double _dpiScale = App.ViewModel.GetDpiScaleFactorFromWindow();
+        private bool _booted = false;
 
         private void ImageEditor_Loaded(object sender, RoutedEventArgs e)
         {
+            _booted = true;
             Resize((int)(ActualWidth * _dpiScale), (int)(ActualHeight * _dpiScale));
         }
 
@@ -36,6 +39,10 @@ namespace ZoDream.TexturePacker.Controls
 
         private void CanvasTarget_PaintSurface(object sender, SkiaSharp.Views.Windows.SKPaintSurfaceEventArgs e)
         {
+            if (!_booted)
+            {
+                ImageEditor_Loaded(this, null);
+            }
             Paint(e.Surface.Canvas, e.Info);
         }
 

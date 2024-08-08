@@ -16,9 +16,16 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\ImageEditor.xaml" />
+    <None Remove="Dialogs\AboutDialog.xaml" />
     <None Remove="Dialogs\ConfirmDialog.xaml" />
     <None Remove="Dialogs\CreateProjectDialog.xaml" />
+    <None Remove="Dialogs\ExportDialog.xaml" />
+    <None Remove="Dialogs\GroupDialog.xaml" />
+    <None Remove="Dialogs\ImportDialog.xaml" />
+    <None Remove="Dialogs\LayerDialog.xaml" />
+    <None Remove="Dialogs\LayerPropertyDialog.xaml" />
     <None Remove="Dialogs\OpenProjectDialog.xaml" />
+    <None Remove="Dialogs\PropertyDialog.xaml" />
     <None Remove="Pages\StartupPage.xaml" />
     <None Remove="Pages\WorkspacePage.xaml" />
     <None Remove="Themes\BaseStyle.xaml" />
@@ -109,5 +116,41 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Remove="Controls\ImageEditor.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Dialogs\ExportDialog.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Remove="Dialogs\ExportDialog.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\AboutDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\LayerDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\GroupDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\LayerPropertyDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\PropertyDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Dialogs\ImportDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>
