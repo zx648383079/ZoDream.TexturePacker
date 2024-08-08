@@ -4,30 +4,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.Shared.Storage;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.Godot
 {
-    public class TscnReader : IPluginReader
+    public class TscnReader : IPluginReader, ITextReader
     {
-        public Task<LayerGroupItem?> ReadAsync(string fileName)
+        public bool Canable(string content)
+        {
+            return content.StartsWith("[gd_scene") && content.Contains("uid=\"");
+        }
+
+        public LayerGroupItem? Deserialize(string content)
         {
             throw new NotImplementedException();
         }
 
-        public Task<LayerGroupItem?> ReadAsync(IStorageFile file)
+
+        public async Task<LayerGroupItem?> ReadAsync(string fileName)
+        {
+            var text = await LocationStorage.ReadAsync(fileName);
+            return Deserialize(text);
+        }
+
+        public async Task<LayerGroupItem?> ReadAsync(IStorageFile file)
+        {
+            var text = await FileIO.ReadTextAsync(file);
+            return Deserialize(text);
+        }
+
+        public string Serialize(LayerGroupItem data)
         {
             throw new NotImplementedException();
         }
 
-        public Task WriteAsync(string fileName, LayerGroupItem data)
+        public async Task WriteAsync(string fileName, LayerGroupItem data)
         {
-            throw new NotImplementedException();
+            await LocationStorage.WriteAsync(fileName, Serialize(data));
         }
 
-        public Task WriteAsync(IStorageFile file, LayerGroupItem data)
+        public async Task WriteAsync(IStorageFile file, LayerGroupItem data)
         {
-            throw new NotImplementedException();
+            await FileIO.WriteTextAsync(file, Serialize(data), Windows.Storage.Streams.UnicodeEncoding.Utf8);
         }
     }
 }

@@ -3,11 +3,16 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using Windows.Storage;
+using Windows.Storage.Search;
 using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins;
-using ZoDream.TexturePacker.Plugins.Readers.Unity;
+using ZoDream.TexturePacker.Plugins.Readers;
+using ZoDream.TexturePacker.Plugins.Readers.Godot;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -326,36 +331,33 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private async void OnDragImage(IReadOnlyList<IStorageItem> items)
         {
+            var (imageFiles, partFiles) = await LoadFiles(items);
             var imageLayer = new Dictionary<string, BitmapImageLayer>();
-            var packerMap = new Dictionary<string, IStorageFile>();
-            foreach (var item in items)
+            foreach (var file in imageFiles)
             {
-                if (item is not IStorageFile file)
-                {
-                    continue;
-                }
-                var name = Path.GetFileNameWithoutExtension(item.Path);
-                if (file.ContentType.Contains("image"))
-                {
-                    var layer = await Editor!.AddImageAsync(file);
-                    AddLayer(layer.Id, name, layer.GetPreviewSource());
-                    imageLayer.TryAdd(name, layer);
-                    continue;
-                }
+                var name = Path.GetFileNameWithoutExtension(file.Path);
+                var layer = await Editor!.AddImageAsync(file);
+                AddLayer(layer.Id, name, layer.GetPreviewSource());
+                imageLayer.TryAdd(name, layer);
+            }
+            foreach (var file in partFiles)
+            {
+                LayerGroupItem? data = null;
+                var name = Path.GetFileNameWithoutExtension(file.Path);
                 if (file.ContentType.Contains("json"))
                 {
-                    packerMap.TryAdd(name, file);
-                    continue;
+                    data = await new JsonFactoryReader().ReadAsync(file);
+                } else if (file.FileType == ".tres")
+                {
+                    data = await new TresReader().ReadAsync(file);
+                    name = data?.Name;
                 }
-            }
-            foreach (var item in packerMap)
-            {
-                if (!imageLayer.TryGetValue(item.Key, out var layer))
+                if (data is null || data.Items.Count == 0)
                 {
                     continue;
                 }
-                var data = await new JsonReader().ReadAsync(item.Value);
-                if (data is null || data.Items.Count == 0) {
+                if (!imageLayer.TryGetValue(name, out var layer))
+                {
                     continue;
                 }
                 var parentLayer = GetLayer(layer.Id)!;
@@ -378,6 +380,40 @@ namespace ZoDream.TexturePacker.ViewModels
             Editor.Invalidate();
         }
 
-        
+
+        private static async Task<(IStorageFile[], IStorageFile[])> LoadFiles(IReadOnlyList<IStorageItem> items)
+        {
+            var images = new List<IStorageFile>();
+            var partItems = new List<IStorageFile>();
+            await EachFile(items, file => {
+                if (file.ContentType.Contains("image"))
+                {
+                    images.Add(file);
+                    return;
+                }
+                if (file.ContentType.Contains("json") || file.FileType == ".tres")
+                {
+                    partItems.Add(file);
+                }
+            });
+            return (images.ToArray(), partItems.ToArray());
+        }
+
+        private static async Task EachFile(IReadOnlyList<IStorageItem> items, Action<IStorageFile> cb)
+        {
+            foreach (var item in items)
+            {
+                if (item is IStorageFile file)
+                {
+                    cb(file);
+                    continue;
+                }
+                if (item is IStorageFolder folder)
+                {
+                    await EachFile(await folder.GetItemsAsync(), cb);
+                }
+            }
+        }
+
     }
 }
