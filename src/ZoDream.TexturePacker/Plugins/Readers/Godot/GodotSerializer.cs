@@ -11,11 +11,39 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
     {
         public static string GenerateUID()
         {
-            return "uid://";
+            return "uid://" + Random(13);
         }
         public static string GenerateID()
         {
-            return "1_aaaa";
+            return "1_" + Random(5);
+        }
+
+        public static string Random(int length)
+        {
+            var rand = new Random();
+            var code = string.Empty;
+            for (var i = 0; i < length; i++)
+            {
+                code += Letter(rand.Next(0, 36));
+            }
+            return code;
+        }
+
+        private static char Letter(int index)
+        {
+            if (index < 10)
+            {
+                return Convert.ToChar(48 + index);
+            }
+            if (index < 36)
+            {
+                return Convert.ToChar(87 + index);
+            }
+            if (index < 62)
+            {
+                return Convert.ToChar(29 + index);
+            }
+            return '-';
         }
         public static string Combine(string root, string path)
         {

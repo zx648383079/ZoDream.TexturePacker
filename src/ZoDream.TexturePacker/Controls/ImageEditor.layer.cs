@@ -211,6 +211,40 @@ namespace ZoDream.TexturePacker.Controls
             CanvasTarget.Invalidate();
         }
 
+        public void SaveAs(string fileName)
+        {
+            using var bitmap = new SKBitmap(ActualWidthI, ActualHeightI);
+            using var canvas = new SKCanvas(bitmap);
+            foreach (var item in LayerItems)
+            {
+                if (!item.Visible)
+                {
+                    continue;
+                }
+                item.Paint(canvas);
+            }
+            canvas.Flush();
+            using var fs = File.OpenWrite(fileName);
+            bitmap.Encode(fs, SKEncodedImageFormat.Png, 100);
+        }
+
+        public void SaveAs(IImageLayer layer, string fileName)
+        {
+            if (layer is null)
+            {
+                return;
+            }
+            var x = layer.X;
+            var y = layer.Y;
+            layer.X = 0;
+            layer.Y = 0;
+            using var bitmap = layer.PaintRotate(-layer.RotateDeg);
+            using var fs = File.OpenWrite(fileName);
+            bitmap.Encode(fs, SKEncodedImageFormat.Png, 100);
+            layer.X = x;
+            layer.Y = y;
+        }
+
 
         public void Dispose()
         {

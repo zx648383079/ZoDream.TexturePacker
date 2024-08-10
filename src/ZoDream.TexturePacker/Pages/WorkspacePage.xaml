@@ -13,6 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:skia="using:SkiaSharp.Views.Windows"
     xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
+    x:Name="root"
     mc:Ignorable="d">
 
     <Page.DataContext>
@@ -28,58 +29,51 @@
                 <TreeViewItem.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
-                            Command="{Binding CutCommand, ElementName=root}"
+                            Command="{Binding DataContext.CutCommand, ElementName=root}"
                             CommandParameter="{Binding}"
-                            Text="剪切">
-                            <MenuFlyoutItem.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="X" Modifiers="Control" />
-                            </MenuFlyoutItem.KeyboardAccelerators>
-                        </MenuFlyoutItem>
+                            Text="剪切" />
                         <MenuFlyoutItem
-                            Command="{Binding CopyCommand, ElementName=root}"
+                            Command="{Binding DataContext.CopyCommand, ElementName=root}"
                             CommandParameter="{Binding}"
-                            Text="复制">
-                            <MenuFlyoutItem.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="C" Modifiers="Control" />
-                            </MenuFlyoutItem.KeyboardAccelerators>
-                        </MenuFlyoutItem>
+                            Text="复制" />
                         <MenuFlyoutItem
-                            Command="{Binding PasteCommand, ElementName=root}"
+                            Command="{Binding DataContext.PasteCommand, ElementName=root}"
                             CommandParameter="{Binding}"
-                            Text="粘贴">
-                            <MenuFlyoutItem.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="V" Modifiers="Control" />
-                            </MenuFlyoutItem.KeyboardAccelerators>
-                        </MenuFlyoutItem>
+                            Text="粘贴" />
                         <MenuFlyoutSeparator />
+
                         <MenuFlyoutItem
-                            Command="{Binding LayerHiddenCommand, ElementName=root}"
+                            Command="{Binding DataContext.LayerHiddenCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="隐藏" />
                         <MenuFlyoutItem
-                            Command="{Binding OtherHiddenCommand, ElementName=root}"
+                            Command="{Binding DataContext.OtherHiddenCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="隐藏其他" />
                         <MenuFlyoutItem
-                            Command="{Binding OtherVisibleCommand, ElementName=root}"
+                            Command="{Binding DataContext.OtherVisibleCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="显示其他" />
                         <MenuFlyoutItem
-                            Command="{Binding LayerLockCommand, ElementName=root}"
+                            Command="{Binding DataContext.LayerLockCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="锁定" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
-                            Command="{Binding DeleteLayerCommand, ElementName=root}"
+                            Command="{Binding DataContext.LayerRenameCommand, ElementName=root}"
+                            CommandParameter="{Binding}"
+                            Text="重命名" />
+                        <MenuFlyoutItem
+                            Command="{Binding DataContext.DeleteLayerCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="删除" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
-                            Command="{Binding AddGroupCommand, ElementName=root}"
+                            Command="{Binding DataContext.AddGroupCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             Text="分组" />
                         <MenuFlyoutItem
-                            Command="{Binding UngroupCommand, ElementName=root}"
+                            Command="{Binding DataContext.UngroupCommand, ElementName=root}"
                             CommandParameter="{Binding}"
                             IsEnabled="{Binding Children, Converter={StaticResource IsGroup}}"
                             Text="取消分组" />

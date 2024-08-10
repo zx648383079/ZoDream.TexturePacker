@@ -64,6 +64,18 @@ namespace ZoDream.TexturePacker.ViewModels
             LayerSelectedCommand = new RelayCommand<LayerViewModel>(OnLayerSelected);
             EditorSelectedCommand = new RelayCommand<int>(OnEditorSelected);
             DragImageCommand = new RelayCommand<IReadOnlyList<IStorageItem>>(OnDragImage);
+            UndoRedo.UndoStateChanged += UndoRedo_UndoStateChanged;
+            UndoRedo.ReverseUndoStateChanged += UndoRedo_ReverseUndoStateChanged;
+        }
+
+        private void UndoRedo_ReverseUndoStateChanged(bool value)
+        {
+            RedoEnabled = value;
+        }
+
+        private void UndoRedo_UndoStateChanged(bool value)
+        {
+            UndoEnabled = value;
         }
     }
 }

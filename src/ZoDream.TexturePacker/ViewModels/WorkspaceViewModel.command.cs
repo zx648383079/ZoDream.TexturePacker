@@ -108,10 +108,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         }
 
-        private void TapImportFolder(object? _)
-        {
 
-        }
 
         private async void TapAbout(object? _)
         {
@@ -121,37 +118,24 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapNew(object? _)
         {
-
+            LayerItems.Clear();
+            Editor?.Clear();
+            Editor?.Invalidate();
         }
 
         private void TapOpen(object? _)
         {
+            TapNew(_);
+            TapImportFile(_);
+        }
 
-        }
-        private void TapSave(object? _) 
-        {
-        }
-        private void TapSaveAs(object? _)
-        {
-        }
-        private async void TapImport(object? _) 
-        {
-            var dialog = new ImportDialog();
-            await App.ViewModel.OpenDialogAsync(dialog);
-        }
-        private async void TapExport(object? _) 
-        {
-            var dialog = new ExportDialog();
-            if (await App.ViewModel.OpenDialogAsync(dialog) != ContentDialogResult.Primary)
-            {
-                return;
-            }
-        }
         private void TapUndo(object? _)
         {
+            UndoRedo.Undo();
         }
         private void TapRedo(object? _) 
         {
+            UndoRedo.ReverseUndo();
         }
         private void TapCut(object? _)
         {
@@ -289,9 +273,10 @@ namespace ZoDream.TexturePacker.ViewModels
 
         }
 
-        private void TapLayerRename(object? _)
+        private async void TapLayerRename(object? _)
         {
-
+            var dialog = new RenameDialog();
+            await App.ViewModel.OpenDialogAsync(dialog);
         }
 
         private void TapLayerHorizontalLeft(object? _)
@@ -354,92 +339,6 @@ namespace ZoDream.TexturePacker.ViewModels
         }
 
 
-
-        private async void OnDragImage(IReadOnlyList<IStorageItem> items)
-        {
-            var (imageFiles, partFiles) = await LoadFiles(items);
-            var imageLayer = new Dictionary<string, BitmapImageLayer>();
-            foreach (var file in imageFiles)
-            {
-                var name = Path.GetFileNameWithoutExtension(file.Path);
-                var layer = await Editor!.AddImageAsync(file);
-                AddLayer(layer.Id, name, layer.GetPreviewSource());
-                imageLayer.TryAdd(name, layer);
-            }
-            foreach (var file in partFiles)
-            {
-                LayerGroupItem? data = null;
-                var name = Path.GetFileNameWithoutExtension(file.Path);
-                if (file.ContentType.Contains("json"))
-                {
-                    data = await new JsonFactoryReader().ReadAsync(file);
-                } else if (file.FileType == ".tres")
-                {
-                    data = await new TresReader().ReadAsync(file);
-                    name = data?.Name;
-                }
-                if (data is null || data.Items.Count == 0)
-                {
-                    continue;
-                }
-                if (!imageLayer.TryGetValue(name, out var layer))
-                {
-                    continue;
-                }
-                var parentLayer = GetLayer(layer.Id)!;
-                foreach (var kid in data.Items)
-                {
-                    var kidLayer = layer.Split(kid);
-                    Editor!.Add(kidLayer);
-                    parentLayer.Children.Add(new LayerViewModel()
-                    {
-                        Id = kidLayer.Id,
-                        Name = kid.Name,
-                        PreviewImage = kidLayer.GetPreviewSource()
-                    });
-                }
-                layer.Visible = false;
-            }
-            // var (width, height) = new CssSprites().Compute([.. Editor.LayerItems]);
-            // Editor.Resize(width, height);
-            Editor!.Resize();
-            Editor.Invalidate();
-        }
-
-
-        private static async Task<(IStorageFile[], IStorageFile[])> LoadFiles(IReadOnlyList<IStorageItem> items)
-        {
-            var images = new List<IStorageFile>();
-            var partItems = new List<IStorageFile>();
-            await EachFile(items, file => {
-                if (file.ContentType.Contains("image"))
-                {
-                    images.Add(file);
-                    return;
-                }
-                if (file.ContentType.Contains("json") || file.FileType == ".tres")
-                {
-                    partItems.Add(file);
-                }
-            });
-            return (images.ToArray(), partItems.ToArray());
-        }
-
-        private static async Task EachFile(IReadOnlyList<IStorageItem> items, Action<IStorageFile> cb)
-        {
-            foreach (var item in items)
-            {
-                if (item is IStorageFile file)
-                {
-                    cb(file);
-                    continue;
-                }
-                if (item is IStorageFolder folder)
-                {
-                    await EachFile(await folder.GetItemsAsync(), cb);
-                }
-            }
-        }
 
     }
 }

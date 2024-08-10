@@ -6,23 +6,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZoDream.TexturePacker.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
     Title="导出"
     PrimaryButtonText="确认"
     SecondaryButtonText="取消"
     mc:Ignorable="d">
 
+    <ContentDialog.DataContext>
+        <vm:ExportViewModel />
+    </ContentDialog.DataContext>
+
     <StackPanel>
-        <ComboBox Header="导出内容">
-            <ComboBoxItem Content="选中层" />
-            <ComboBoxItem Content="合并文件" />
-            <ComboBoxItem Content="拆分文件" />
-        </ComboBox>
-        <ComboBox Header="导出格式">
-            <ComboBoxItem Content="PNG" />
-            <ComboBoxItem Content="Unity" />
-            <ComboBoxItem Content="Godot" />
-            <ComboBoxItem Content="Egret" />
-            <ComboBoxItem Content="TexturePacker" />
-        </ComboBox>
+        <ComboBox
+            Header="导出内容"
+            ItemsSource="{Binding SourceItems}"
+            SelectedIndex="{Binding SourceIndex, Mode=TwoWay}" />
+        <ComboBox
+            Header="导出格式"
+            ItemsSource="{Binding TypeItems}"
+            SelectedIndex="{Binding TypeIndex, Mode=TwoWay}" />
     </StackPanel>
 </ContentDialog>

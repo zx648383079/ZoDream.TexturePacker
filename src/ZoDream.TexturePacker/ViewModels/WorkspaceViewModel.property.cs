@@ -1,6 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using ZoDream.Shared.UndoRedo;
 using ZoDream.TexturePacker.ImageEditor;
@@ -29,9 +27,9 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public bool IsSelectedLayer => SelectedLayer != null;
 
-        private ObservableCollection<LayerViewModel> _layerItems = [];
+        private LayerTree _layerItems = [];
 
-        public ObservableCollection<LayerViewModel> LayerItems {
+        public LayerTree LayerItems {
             get => _layerItems;
             set => Set(ref _layerItems, value);
         }
@@ -49,15 +47,12 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public LayerViewModel? GetLayer(int id)
         {
-            foreach (var item in LayerItems)
-            {
-                var layer = item.Get(id);
-                if (layer is not null)
-                {
-                    return layer;
-                }
-            }
-            return null;
+            return LayerItems.Get(id);
+        }
+
+        public LayerViewModel? GetLayer(string name)
+        {
+            return LayerItems.Get(item => item.Name == name);
         }
 
         public void AddLayer(LayerGroupItem data)

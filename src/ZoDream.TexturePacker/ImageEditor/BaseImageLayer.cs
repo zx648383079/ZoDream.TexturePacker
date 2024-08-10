@@ -14,6 +14,11 @@ namespace ZoDream.TexturePacker.ImageEditor
         public int Width { get; set; }
         public int Height { get; set; }
         public int Depth { get; set; }
+
+        /// <summary>
+        /// 旋转角度0 - 360
+        /// </summary>
+        public float RotateDeg { get; set; }
         public bool Visible { get; set; } = true;
         public abstract void Paint(SKCanvas canvas);
 
@@ -26,21 +31,12 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         }
 
-        protected void Rotate(SKCanvas canvas, float deg)
+        public void Rotate(float angle)
         {
-            canvas.RotateDegrees(deg);
+            RotateDeg += angle;
         }
 
-        protected void Flip(SKCanvas canvas, bool isHorizontal = true)
-        {
-            if (isHorizontal)
-            {
-                canvas.Scale(1, -1);
-            } else
-            {
-                canvas.Scale(-1, 1);
-            }
-        }
+        
 
     }
 }

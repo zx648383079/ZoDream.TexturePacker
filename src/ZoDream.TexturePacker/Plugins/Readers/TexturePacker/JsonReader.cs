@@ -40,6 +40,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
                             Name = item.Filename,
                             X = item.Frame.X,
                             Y = item.Frame.Y,
+                            Rotate = 90,
                             Width = item.Frame.H,
                             Height = item.Frame.W,
                         };

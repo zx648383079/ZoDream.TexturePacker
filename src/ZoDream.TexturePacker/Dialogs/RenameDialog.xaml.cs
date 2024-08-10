@@ -12,20 +12,17 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using ZoDream.TexturePacker.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ZoDream.TexturePacker.Dialogs
 {
-    public sealed partial class ExportDialog : ContentDialog
+    public sealed partial class RenameDialog : ContentDialog
     {
-        public ExportDialog()
+        public RenameDialog()
         {
             this.InitializeComponent();
         }
-
-        public ExportViewModel ViewModel => (ExportViewModel)DataContext;
     }
 }

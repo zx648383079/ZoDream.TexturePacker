@@ -2,7 +2,6 @@
 using System;
 using System.Collections.ObjectModel;
 using ZoDream.Shared.ViewModel;
-using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -38,28 +37,25 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _isLocked, value);
         }
 
-        private ObservableCollection<LayerViewModel> _children = [];
+        private LayerTree _children = [];
 
-        public ObservableCollection<LayerViewModel> Children {
+        public LayerTree Children {
             get => _children;
             set => Set(ref _children, value);
         }
 
         public LayerViewModel? Get(int id)
         {
-            if (id == Id)
+            return Get(item => item.Id == id);
+        }
+
+        public LayerViewModel? Get(Func<LayerViewModel, bool> checkFn)
+        {
+            if (checkFn(this))
             {
                 return this;
             }
-            foreach (var item in Children)
-            {
-                var layer = item.Get(id);
-                if (layer is not null)
-                {
-                    return layer;
-                }
-            }
-            return null;
+            return Children.Get(checkFn);
         }
     }
 }

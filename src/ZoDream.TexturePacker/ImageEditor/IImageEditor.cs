@@ -53,6 +53,11 @@ namespace ZoDream.TexturePacker.ImageEditor
         public void Paint(SKCanvas canvas, SKImageInfo info);
 
         public void Invalidate();
-        
+
+        public void SaveAs(string fileName);
+
+        public void SaveAs(IImageLayer layer, string fileName);
+
+
     }
 }

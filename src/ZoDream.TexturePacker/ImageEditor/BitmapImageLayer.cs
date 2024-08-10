@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.TexturePacker.Models;
@@ -57,6 +58,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             {
                 X = item.X,
                 Y = item.Y,
+                RotateDeg = item.Rotate
             };
         }
 
@@ -77,5 +79,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         {
             Source.Dispose();
         }
+
+        
     }
 }
