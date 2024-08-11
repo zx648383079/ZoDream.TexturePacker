@@ -32,13 +32,23 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Egret
                 FileName = data.File,
                 Items = data.Frames.Select(item => new LayerItem()
                 {
-                    Name = item.Key,
+                    Name = FormatFileName(item.Key),
                     X = item.Value.X,
                     Y = item.Value.Y,
                     Width = item.Value.W,
                     Height = item.Value.H,
                 }).ToArray(),
             };
+        }
+
+        private string FormatFileName(string val)
+        {
+            var i = val.LastIndexOf('_');
+            if (i > 0)
+            {
+                return val[0..i] + '.' + val[(i + 1)..];
+            }
+            return val;
         }
 
         public async Task<LayerGroupItem?> ReadAsync(string fileName)

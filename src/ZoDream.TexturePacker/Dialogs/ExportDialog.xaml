@@ -25,5 +25,7 @@
             Header="导出格式"
             ItemsSource="{Binding TypeItems}"
             SelectedIndex="{Binding TypeIndex, Mode=TwoWay}" />
+        <ToggleSwitch Header="修正旋转" IsOn="{Binding ResetRotate, Mode=TwoWay}" />
+        <ToggleSwitch Header="创建图层文件夹" IsOn="{Binding LayerFolder, Mode=TwoWay}" />
     </StackPanel>
 </ContentDialog>

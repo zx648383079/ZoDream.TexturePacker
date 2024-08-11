@@ -39,7 +39,7 @@ namespace ZoDream.TexturePacker.ViewModels
             switch (dialog.ViewModel.SourceIndex)
             {
                 case 1:
-                    ExportEveryLayer(fileName);
+                    ExportEveryLayer(fileName, dialog.ViewModel.LayerFolder);
                     break;
                 case 2:
                     ExportSelected(fileName);
@@ -67,8 +67,9 @@ namespace ZoDream.TexturePacker.ViewModels
                 fileName = Path.Combine(file.Path, SelectedLayer.Name);
             }
             Editor?.SaveAs(layer, fileName);
+            App.ViewModel.Toast.Show("导出完成");
         }
-        private void ExportEveryLayer(IStorageItem file)
+        private void ExportEveryLayer(IStorageItem file, bool autoLayerFolder)
         {
             var root = file.Path;
             if (file is IStorageFile)
@@ -77,6 +78,7 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             foreach (var item in LayerItems)
             {
+                var layerFolder = root;
                 if (!item.IsVisible) 
                 {
                     continue;
@@ -84,8 +86,16 @@ namespace ZoDream.TexturePacker.ViewModels
                 if (item.Children.Count == 0)
                 {
                     Editor?.SaveAs(Editor.Get<IImageLayer>(item.Id), 
-                        Path.Combine(root, item.Name));
+                        Path.Combine(layerFolder, item.Name));
                     continue;
+                }
+                if (autoLayerFolder)
+                {
+                    layerFolder = Path.Combine(layerFolder, item.Name);
+                    if (!Directory.Exists(layerFolder)) 
+                    {
+                        Directory.CreateDirectory(layerFolder);
+                    }
                 }
                 foreach (var it in item.Children)
                 {
@@ -94,9 +104,10 @@ namespace ZoDream.TexturePacker.ViewModels
                         continue;
                     }
                     Editor?.SaveAs(Editor.Get<IImageLayer>(it.Id),
-                        Path.Combine(root, it.Name));
+                        Path.Combine(layerFolder, it.Name));
                 }
             }
+            App.ViewModel.Toast.Show("导出完成");
         }
         private void ExportWhole(IStorageItem file)
         {
@@ -106,6 +117,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 fileName = Path.Combine(file.Path, "undefined.png");
             }
             Editor?.SaveAs(fileName);
+            App.ViewModel.Toast.Show("导出完成");
         }
 
     }

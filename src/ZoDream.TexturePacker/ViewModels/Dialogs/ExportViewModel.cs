@@ -39,6 +39,21 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref typeIndex, value);
         }
 
+        private bool resetRotate;
+
+        public bool ResetRotate {
+            get => resetRotate;
+            set => Set(ref resetRotate, value);
+        }
+
+        private bool layerFolder;
+
+        public bool LayerFolder {
+            get => layerFolder;
+            set => Set(ref layerFolder, value);
+        }
+
+
         public async Task<IStorageItem> OpenPickerAsync()
         {
             if (SourceIndex < 0)

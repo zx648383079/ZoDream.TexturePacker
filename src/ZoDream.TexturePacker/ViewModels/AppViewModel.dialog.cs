@@ -18,6 +18,7 @@ namespace ZoDream.TexturePacker.ViewModels
     internal partial class AppViewModel
     {
         public XamlRoot BaseXamlRoot => _baseWindow!.Content.XamlRoot;
+        public Toast Toast { get; private set; } = new();
 
         public void InitializePicker(object target)
         {
