@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System;
+using System.IO;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -72,6 +73,31 @@ namespace ZoDream.TexturePacker.ImageEditor
                 layer.Paint(surface);
             }
             return rotatedBitmap;
+        }
+
+        public static SKEncodedImageFormat ConvertFormat(string extension)
+        {
+            var i = extension.LastIndexOf('.');
+            if (i >= 0)
+            {
+                extension = extension[(i + 1)..];
+            }
+            return extension.ToLower() switch
+            {
+                "jpg" or "jpeg" => SKEncodedImageFormat.Jpeg,
+                "ico" => SKEncodedImageFormat.Ico,
+                "bmp" => SKEncodedImageFormat.Bmp,
+                "webp" => SKEncodedImageFormat.Webp,
+                "avif" => SKEncodedImageFormat.Avif,
+                "gif" => SKEncodedImageFormat.Gif,
+                _ => SKEncodedImageFormat.Png
+            };
+        }
+
+        public static void SaveAs(this SKBitmap bitmap, string fileName)
+        {
+            using var fs = File.OpenWrite(fileName);
+            bitmap.Encode(fs, ConvertFormat(fileName), 100);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         {
             using var paint = new SKPaint()
             {
-                FilterQuality = SKFilterQuality.High
+                FilterQuality = SKFilterQuality.High,
             };
             return items.Select(item => {
                 var bitmap = new SKBitmap(item.Width, item.Height);

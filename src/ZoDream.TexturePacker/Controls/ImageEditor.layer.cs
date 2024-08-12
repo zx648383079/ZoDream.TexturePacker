@@ -224,8 +224,7 @@ namespace ZoDream.TexturePacker.Controls
                 item.Paint(canvas);
             }
             canvas.Flush();
-            using var fs = File.OpenWrite(fileName);
-            bitmap.Encode(fs, SKEncodedImageFormat.Png, 100);
+            bitmap.SaveAs(fileName);
         }
 
         public void SaveAs(IImageLayer layer, string fileName)
@@ -239,8 +238,7 @@ namespace ZoDream.TexturePacker.Controls
             layer.X = 0;
             layer.Y = 0;
             using var bitmap = layer.PaintRotate(-layer.RotateDeg);
-            using var fs = File.OpenWrite(fileName);
-            bitmap.Encode(fs, SKEncodedImageFormat.Png, 100);
+            bitmap.SaveAs(fileName);
             layer.X = x;
             layer.Y = y;
         }
