@@ -36,6 +36,10 @@ namespace ZoDream.TexturePacker.ViewModels
                 return;
             }
             var fileName = await dialog.ViewModel.OpenPickerAsync();
+            if (fileName is null) 
+            {
+                return;
+            }
             switch (dialog.ViewModel.SourceIndex)
             {
                 case 1:

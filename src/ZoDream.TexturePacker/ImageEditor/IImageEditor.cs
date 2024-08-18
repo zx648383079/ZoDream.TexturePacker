@@ -22,9 +22,10 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public T? Get<T>(int id) where T : IImageLayer;
 
-        public BitmapImageLayer AddImage(string fileName);
+        public Task<BitmapImageLayer?> AddImageAsync(string fileName);
 
-        public Task<BitmapImageLayer> AddImageAsync(IStorageFile file);
+        public Task<BitmapImageLayer?> AddImageAsync(IStorageFile file);
+        public BitmapImageLayer? AddImage(SKBitmap? image);
 
         public TextImageLayer AddText(string text);
 

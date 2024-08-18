@@ -36,6 +36,10 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         private void RenderSurface()
         {
+            if (Width == 0 || Height == 0)
+            {
+                return;
+            }
             var info = new SKImageInfo(Width, Height);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
@@ -66,6 +70,10 @@ namespace ZoDream.TexturePacker.ImageEditor
             if (_surface == null) 
             {
                 RenderSurface();
+            }
+            if (_surface == null)
+            {
+                return;
             }
             canvas.DrawSurface(_surface, 0, 0);
         }

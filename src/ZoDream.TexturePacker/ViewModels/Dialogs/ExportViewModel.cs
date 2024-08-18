@@ -56,9 +56,13 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public async Task<IStorageItem> OpenPickerAsync()
         {
-            if (SourceIndex < 0)
+            if (SourceIndex < 1)
             {
                 var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add("Image", [".png", ".jpg", 
+                    ".jpeg", ".webp", ".bmp"]);
+                picker.FileTypeChoices.Add("KTX", [".ktx"]);
+                picker.FileTypeChoices.Add("Windows ICO", [".ico"]);
                 App.ViewModel.InitializePicker(picker);
                 return await picker.PickSaveFileAsync();
             }

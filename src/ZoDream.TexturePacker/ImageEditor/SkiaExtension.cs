@@ -90,6 +90,7 @@ namespace ZoDream.TexturePacker.ImageEditor
                 "webp" => SKEncodedImageFormat.Webp,
                 "avif" => SKEncodedImageFormat.Avif,
                 "gif" => SKEncodedImageFormat.Gif,
+                "ktx" => SKEncodedImageFormat.Ktx,
                 _ => SKEncodedImageFormat.Png
             };
         }
