@@ -2,7 +2,6 @@
 using System;
 using System.Numerics;
 using ZoDream.TexturePacker.Plugins.Bitmaps.Pvr;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.Plugins.Bitmaps
 {
@@ -77,7 +76,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
 
                             var pX = px + x * 4;
                             var pY = py + y * 4;
-                            var offset = pX * pY;
+                            var offset = pX + pY * size;
                             buffer[offset] = red;
                             buffer[offset + 1] = green;
                             buffer[offset + 2] = green;

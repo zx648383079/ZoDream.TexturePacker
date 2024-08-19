@@ -10,11 +10,12 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
     {
         public byte[] Decode(byte[] data, int width, int height)
         {
-            byte[] buffer = new byte[width * height * 4];
-            for (int i = 0; i < (width * height * 4); i += 4)
+            var size = width * height;
+            var buffer = new byte[size * 4];
+            for (int i = 0; i < buffer.Length; i += 4)
             {
-                ushort X = (ushort)(((((ushort)data[i + 2]) << 8) | (ushort)data[i + 3]) + 0x7FFF);
-                ushort Y = (ushort)(((((ushort)data[i + 0]) << 8) | (ushort)data[i + 1]) + 0x7FFF);
+                var X = (ushort)(((((ushort)data[i + 2]) << 8) | (ushort)data[i + 3]) + 0x7FFF);
+                var Y = (ushort)(((((ushort)data[i + 0]) << 8) | (ushort)data[i + 1]) + 0x7FFF);
 
                 if (swapXY)
                 {

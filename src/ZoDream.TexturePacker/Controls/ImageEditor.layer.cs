@@ -52,6 +52,7 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return null;
             }
+
             return Add(new BitmapImageLayer(image, this));
         }
 

@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System.IO;
+using System.Runtime.InteropServices;
 using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.Plugins.Bitmaps
@@ -20,7 +21,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
                 BitmapFormat.G8 => SKColorType.Gray8,
                 BitmapFormat.RG1616 => SKColorType.Rg1616,
                 BitmapFormat.RGBX8888 => SKColorType.Rgb888x,
-                // BitmapFormat.RGB565 => SKColorType.Rgb565,
+                BitmapFormat.RGB565 => SKColorType.Rgb565,
                 BitmapFormat.RGBA1010102 => SKColorType.Rgba1010102,
                 BitmapFormat.RGBA16161616 => SKColorType.Rgba16161616,
                 BitmapFormat.BGRA8888 => SKColorType.Bgra8888,
@@ -35,11 +36,13 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
         {
             return Decode(data, width, height, Parse(format));
         }
-        public static SKBitmap Decode(byte[] data, int width, int height, SKColorType format)
+        public static SKBitmap Decode(byte[] buffer, int width, int height, SKColorType format)
         {
-            var codec = SKCodec.Create(SKData.CreateCopy(data));
+            var data = SKData.CreateCopy(buffer);
             var newInfo = new SKImageInfo(width, height, format);
-            return SKBitmap.Decode(codec, newInfo);
+            var bitmap = new SKBitmap();
+            bitmap.InstallPixels(newInfo, data.Data);
+            return bitmap;
         }
 
         public SKBitmap Decode(byte[] data)

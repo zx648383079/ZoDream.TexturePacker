@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.TexturePacker.Models;

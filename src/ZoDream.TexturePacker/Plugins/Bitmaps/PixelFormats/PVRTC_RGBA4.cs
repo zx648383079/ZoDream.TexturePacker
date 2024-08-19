@@ -72,7 +72,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
                             var alpha = (byte)((int)(ca.W * currentWeights[2] + cb.W * currentWeights[3]) >> 7);
                             var pX = px + x * 4;
                             var pY = py + y * 4;
-                            var offset = pX * pY;
+                            var offset = pX + pY * size;
                             buffer[offset] = red;
                             buffer[offset + 1] = green;
                             buffer[offset + 2] = green;
