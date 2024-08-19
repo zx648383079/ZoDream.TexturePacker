@@ -16,15 +16,15 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
         {
             return content.StartsWith("[gd_resource") && content.Contains("uid=\"");
         }
-        public LayerGroupItem? Deserialize(string content)
+        public SpriteLayerSection? Deserialize(string content)
         {
             return Deserialize(content, string.Empty);
         }
-        public LayerGroupItem? Deserialize(string content, string root)
+        public SpriteLayerSection? Deserialize(string content, string root)
         {
             var data = GodotSerializer.Deserialize(content);
             var fileName = GetImagePath(data);
-            var res = new LayerGroupItem()
+            var res = new SpriteLayerSection()
             {
                 Name = Path.GetFileNameWithoutExtension(fileName),
                 FileName = GodotSerializer.Combine(root, fileName),
@@ -60,22 +60,22 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             return string.Empty;
         }
 
-        public async Task<LayerGroupItem?> ReadAsync(string fileName)
+        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
         {
             var text = await LocationStorage.ReadAsync(fileName);
             return Deserialize(text, GodotSerializer.GetGodotProjectRoot(fileName));
         }
 
-        public async Task<LayerGroupItem?> ReadAsync(IStorageFile file)
+        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
         {
             var text = await FileIO.ReadTextAsync(file);
             return Deserialize(text, GodotSerializer.GetGodotProjectRoot(file.Path));
         }
-        public string Serialize(LayerGroupItem data)
+        public string Serialize(SpriteLayerSection data)
         {
             return Serialize(data, string.Empty);
         }
-        public string Serialize(LayerGroupItem data, string root)
+        public string Serialize(SpriteLayerSection data, string root)
         {
             var fileName = GodotSerializer.GetResourcePath(root, data.FileName);
             var uid = GodotSerializer.GenerateUID();
@@ -112,12 +112,12 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             return string.Empty;
         }
 
-        public async Task WriteAsync(string fileName, LayerGroupItem data)
+        public async Task WriteAsync(string fileName, SpriteLayerSection data)
         {
             // await LocationStorage.WriteAsync(fileName, Serialize(data, GodotSerializer.GetGodotProjectRoot(fileName)));
         }
 
-        public async Task WriteAsync(IStorageFile file, LayerGroupItem data)
+        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
         {
             // await FileIO.WriteTextAsync(file, Serialize(data, GodotSerializer.GetGodotProjectRoot(file.Path)), Windows.Storage.Streams.UnicodeEncoding.Utf8);
         }

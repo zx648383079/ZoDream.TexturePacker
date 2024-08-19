@@ -2,7 +2,7 @@
 
 namespace ZoDream.TexturePacker.Plugins
 {
-    public interface IPluginReader: IPluginReader<LayerGroupItem>
+    public interface IPluginReader: IPluginReader<SpriteLayerSection>
     {
     }
 }

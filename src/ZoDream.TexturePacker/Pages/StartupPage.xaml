@@ -40,8 +40,8 @@
             <win:SettingsCard
                 Margin="0,40,0,0"
                 Command="{Binding OpenCommand}"
-                Description="选择一个已存在"
-                Header="打开文件夹"
+                Description="选择一个已存在文件"
+                Header="打开文件"
                 IsActionIconVisible="False"
                 IsClickEnabled="True">
                 <win:SettingsCard.HeaderIcon>

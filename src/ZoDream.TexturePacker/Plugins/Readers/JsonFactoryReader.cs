@@ -21,19 +21,19 @@ namespace ZoDream.TexturePacker.Plugins.Readers
 
         protected virtual ITextReader Default => Items.First() ?? new Unity.JsonReader();
 
-        public async Task<LayerGroupItem?> ReadAsync(string fileName)
+        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
         {
             var text = await LocationStorage.ReadAsync(fileName);
             return Deserialize(text);
         }
 
-        public async Task<LayerGroupItem?> ReadAsync(IStorageFile file)
+        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
         {
             var text = await FileIO.ReadTextAsync(file);
             return Deserialize(text);
         }
 
-        protected virtual LayerGroupItem? Deserialize(string content)
+        protected virtual SpriteLayerSection? Deserialize(string content)
         {
             foreach (var item in Items)
             {
@@ -45,12 +45,12 @@ namespace ZoDream.TexturePacker.Plugins.Readers
             return null;
         }
 
-        public async Task WriteAsync(string fileName, LayerGroupItem data)
+        public async Task WriteAsync(string fileName, SpriteLayerSection data)
         {
             await LocationStorage.WriteAsync(fileName, Default.Serialize(data));
         }
 
-        public async Task WriteAsync(IStorageFile file, LayerGroupItem data)
+        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
         {
             await FileIO.WriteTextAsync(file, Default.Serialize(data), Windows.Storage.Streams.UnicodeEncoding.Utf8);
         }

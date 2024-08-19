@@ -16,35 +16,35 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             return content.StartsWith("[gd_scene") && content.Contains("uid=\"");
         }
 
-        public LayerGroupItem? Deserialize(string content)
+        public SpriteLayerSection? Deserialize(string content)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task<LayerGroupItem?> ReadAsync(string fileName)
+        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
         {
             var text = await LocationStorage.ReadAsync(fileName);
             return Deserialize(text);
         }
 
-        public async Task<LayerGroupItem?> ReadAsync(IStorageFile file)
+        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
         {
             var text = await FileIO.ReadTextAsync(file);
             return Deserialize(text);
         }
 
-        public string Serialize(LayerGroupItem data)
+        public string Serialize(SpriteLayerSection data)
         {
             throw new NotImplementedException();
         }
 
-        public async Task WriteAsync(string fileName, LayerGroupItem data)
+        public async Task WriteAsync(string fileName, SpriteLayerSection data)
         {
             await LocationStorage.WriteAsync(fileName, Serialize(data));
         }
 
-        public async Task WriteAsync(IStorageFile file, LayerGroupItem data)
+        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
         {
             await FileIO.WriteTextAsync(file, Serialize(data), Windows.Storage.Streams.UnicodeEncoding.Utf8);
         }

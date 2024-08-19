@@ -115,7 +115,7 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file);
         }
 
-        public static async Task<LayerGroupItem?> LoadLayerAsync(IStorageFile file)
+        public static async Task<SpriteLayerSection?> LoadLayerAsync(IStorageFile file)
         {
             var reader = GetLayerReader(file);
             if (reader is null)
@@ -125,7 +125,7 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file);
         }
 
-        public static async Task<LayerGroupItem?> LoadLayerAsync(string fileName)
+        public static async Task<SpriteLayerSection?> LoadLayerAsync(string fileName)
         {
             var reader = GetLayerReader(fileName);
             if (reader is null)

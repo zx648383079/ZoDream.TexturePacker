@@ -55,7 +55,7 @@ namespace ZoDream.TexturePacker.ViewModels
             return LayerItems.Get(item => item.Name == name);
         }
 
-        public void AddLayer(LayerGroupItem data)
+        public void AddLayer(SpriteLayerSection data)
         {
             LayerItems.Add(new LayerViewModel()
             {

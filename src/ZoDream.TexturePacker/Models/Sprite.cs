@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ZoDream.TexturePacker.Models
 {
-    public class LayerItem
+    public class SpriteLayer
     {
         public string Name { get; set; } = string.Empty;
 
@@ -23,7 +19,7 @@ namespace ZoDream.TexturePacker.Models
         public int Height { get; set; }
     }
 
-    public class LayerGroupItem
+    public class SpriteLayerSection
     {
         public string Name { get; set; } = string.Empty;
 
@@ -32,6 +28,6 @@ namespace ZoDream.TexturePacker.Models
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public IList<LayerItem> Items { get; set; } = [];
+        public IList<SpriteLayer> Items { get; set; } = [];
     }
 }

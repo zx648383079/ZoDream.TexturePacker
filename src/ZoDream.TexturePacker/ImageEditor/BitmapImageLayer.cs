@@ -24,7 +24,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public SKBitmap Source { get; set; }
 
-        public IList<IImageLayer> Split(IEnumerable<LayerItem> items)
+        public IList<IImageLayer> Split(IEnumerable<SpriteLayer> items)
         {
             using var paint = new SKPaint()
             {
@@ -43,7 +43,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             }).ToArray();
         }
 
-        public BitmapImageLayer Split(LayerItem item)
+        public BitmapImageLayer Split(SpriteLayer item)
         {
             using var paint = new SKPaint()
             {
