@@ -1,6 +1,5 @@
 ﻿using SkiaSharp;
 using System.IO;
-using System.Runtime.InteropServices;
 using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.Plugins.Bitmaps
@@ -36,6 +35,14 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
         {
             return Decode(data, width, height, Parse(format));
         }
+        /// <summary>
+        /// 把像素字节数组转图片
+        /// </summary>
+        /// <param name="buffer">像素数组，例如: [r, g, b, a, r, g, b, a ...]</param>
+        /// <param name="width">图片的宽度，例如: 512</param>
+        /// <param name="height">图片的高度，例如: 1024</param>
+        /// <param name="format">指定像素数组的组成方式，例如：SKColorType.Rgba8888</param>
+        /// <returns></returns>
         public static SKBitmap Decode(byte[] buffer, int width, int height, SKColorType format)
         {
             var data = SKData.CreateCopy(buffer);

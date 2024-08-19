@@ -52,8 +52,7 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return null;
             }
-
-            return Add(new BitmapImageLayer(image, this));
+            return Add(new BitmapImageLayer(image.Copy(), this));
         }
 
         public async Task<BitmapImageLayer?> AddImageAsync(string fileName)
