@@ -66,6 +66,7 @@ namespace ZoDream.TexturePacker.ViewModels
             DragImageCommand = new RelayCommand<IReadOnlyList<IStorageItem>>(OnDragImage);
             UndoRedo.UndoStateChanged += UndoRedo_UndoStateChanged;
             UndoRedo.ReverseUndoStateChanged += UndoRedo_ReverseUndoStateChanged;
+
         }
 
         private void UndoRedo_ReverseUndoStateChanged(bool value)

@@ -67,14 +67,16 @@ namespace ZoDream.TexturePacker.ViewModels
             });
         }
 
-        public void AddLayer(int id, string name, BitmapSource? image)
+        public LayerViewModel AddLayer(int id, string name, BitmapSource? image)
         {
-            LayerItems.Insert(0, new LayerViewModel()
+            var layer = new LayerViewModel()
             {
                 Id = id,
                 Name = name,
                 PreviewImage = image
-            });
+            };
+            LayerItems.Insert(0, layer);
+            return layer;
         }
     }
 }

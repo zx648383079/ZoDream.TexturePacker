@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,25 +9,25 @@ using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
-    public class JsonReader : IPluginReader, ITextReader
+    public class JsonReader : BaseTextReader
     {
         private readonly JsonSerializerOptions _option = new()
         {
             PropertyNamingPolicy = new LowcaseJsonNamingPolicy()
         };
-        public bool Canable(string content)
+        public override bool Canable(string content)
         {
             return content.Contains("http://www.codeandweb.com/texturepacker");
         }
 
-        public SpriteLayerSection? Deserialize(string content)
+        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
         {
             var data = JsonSerializer.Deserialize<TP_FrameRoot>(content, _option);
             if (data is null)
             {
                 return null;
             }
-            return new SpriteLayerSection()
+            return [new SpriteLayerSection()
             {
                 Name = data.Meta.Image,
                 FileName = data.Meta.Image,
@@ -50,35 +51,15 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
                         Rotate = item.Rotated ? 90: 0,
                     };
                 }).ToArray(),
-            };
+            }];
         }
 
-        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
-        {
-            var text = await LocationStorage.ReadAsync(fileName);
-            return Deserialize(text);
-        }
 
-        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
-        {
-            var text = await FileIO.ReadTextAsync(file);
-            return Deserialize(text);
-        }
-
-        public string Serialize(SpriteLayerSection data)
+        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
         {
             // TODO
-            return JsonSerializer.Serialize(data, _option);
+            return JsonSerializer.Serialize(data.First(), _option);
         }
 
-        public async Task WriteAsync(string fileName, SpriteLayerSection data)
-        {
-            await LocationStorage.WriteAsync(fileName, Serialize(data));
-        }
-
-        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
-        {
-            await FileIO.WriteTextAsync(file, Serialize(data), Windows.Storage.Streams.UnicodeEncoding.Utf8);
-        }
     }
 }

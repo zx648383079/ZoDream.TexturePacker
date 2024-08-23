@@ -20,7 +20,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
 
         private static SKBitmap? DecodeV3(byte[] buffer)
         {
-            var header = ByteArrayToStructure<PVRv3TexHeader>(buffer);
+            var header = StructConvert.ToStruct<PVRv3TexHeader>(buffer);
             var pixelFormat = (PVR3TexturePixelFormat)header.PixelFormat;
             // PVR3TexturePixelFormat::BGRA8888, gfx::Format::BGRA8),
             // PVR3TexturePixelFormat::RGBA8888, gfx::Format::RGBA8),
@@ -85,7 +85,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
         }
         private static SKBitmap? DecodeV2(byte[] buffer)
         {
-            var header = ByteArrayToStructure<PVRv2TexHeader>(buffer);
+            var header = StructConvert.ToStruct<PVRv2TexHeader>(buffer);
             // if (header.PvrTag == "PVR!")
             var pixelFormat = (PVR2TexturePixelFormat)(header.Flags & 0xFF);
             var data = Create(buffer, Marshal.SizeOf<PVRv2TexHeader>());
@@ -115,17 +115,5 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
             return data;
         }
 
-        private static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
-        {
-            var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            try
-            {
-                return (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            }
-            finally
-            {
-                handle.Free();
-            }
-        }
     }
 }

@@ -65,7 +65,6 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 
         private SKBitmap? Read(Stream input)
         {
-            byte[] buffer;
             var type = GetFileType(input);
             return type switch
             {

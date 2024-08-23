@@ -1,11 +1,14 @@
 ﻿using SkiaSharp;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins.Readers;
+using ZoDream.TexturePacker.Plugins.Readers.Cocos;
 using ZoDream.TexturePacker.Plugins.Readers.Godot;
+using ZoDream.TexturePacker.Plugins.Readers.Live2d;
 using ZoDream.TexturePacker.Plugins.Readers.TexturePacker;
 
 namespace ZoDream.TexturePacker.Plugins
@@ -15,7 +18,7 @@ namespace ZoDream.TexturePacker.Plugins
 
         private static string[] ImageFilterItems = [".png", ".jpg", ".jpeg", ".webp", ".pvr", ".ccz"];
 
-        private static string[] LayerFilterItems = [".json", ".tres", ".plist" ];
+        private static string[] LayerFilterItems = [".json", ".tres", ".moc3", ".atlas", ".plist" ];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
 
         public static bool IsImageFile(string fileName)
@@ -49,50 +52,57 @@ namespace ZoDream.TexturePacker.Plugins
             return LayerFilterItems.Contains(Path.GetExtension(fileName));
         }
 
+        private static IImageReader? GetImageExtensionReader(string extension)
+        {
+            if (ImageFilterItems.Contains(extension))
+            {
+                return new ImageFactoryReader();
+            }
+            return extension switch
+            {
+                ".pvr" or ".ccz" => new PvrReader(),
+                _ => null,
+            };
+        }
+
         public static IImageReader? GetImageReader(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            if (extension == ".pvr" || extension == ".ccz")
-            {
-                return new PvrReader();
-            }
-            return IsImageFile(fileName) ? new ImageFactoryReader() : null;
+            return GetImageExtensionReader(extension);
         }
 
         public static IImageReader? GetImageReader(IStorageFile file)
         {
-            if (file.FileType == ".pvr" || file.FileType == ".ccz")
+            var reader = GetImageExtensionReader(file.FileType);
+            if (reader is not null)
             {
-                return new PvrReader();
+                return reader;
             }
             return IsImageFile(file) ? new ImageFactoryReader() : null;
         }
 
-        public static IPluginReader? GetLayerReader(IStorageFile file)
+        private static IPluginReader? GetSpriteExtensionReader(string extension)
         {
-            if (file.FileType == ".tres")
+            return extension switch
             {
-                return new TresReader();
-            }
-            if (file.FileType == ".plist")
-            {
-                return new PlistReader();
-            }
-            return IsLayerFile(file) ? new JsonFactoryReader() : null;
+                ".tres" => new TresReader(),
+                ".plist" => new PlistReader(),
+                ".atlas" => new AtlasReader(),
+                ".moc3" => new MocReader(),
+                ".json" => new JsonFactoryReader(),
+                _ => null,
+            };
         }
 
-        public static IPluginReader? GetLayerReader(string fileName)
+        public static IPluginReader? GetSpriteReader(IStorageFile file)
+        {
+            return GetSpriteExtensionReader(file.FileType);
+        }
+
+        public static IPluginReader? GetSpriteReader(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            if (extension == ".tres")
-            {
-                return new TresReader();
-            }
-            if (extension == ".plist")
-            {
-                return new PlistReader();
-            }
-            return IsLayerFile(fileName) ? new JsonFactoryReader() : null;
+            return GetSpriteExtensionReader(extension);
         }
 
         public static async Task<SKBitmap?> LoadImageAsync(string fileName)
@@ -115,9 +125,9 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file);
         }
 
-        public static async Task<SpriteLayerSection?> LoadLayerAsync(IStorageFile file)
+        public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(IStorageFile file)
         {
-            var reader = GetLayerReader(file);
+            var reader = GetSpriteReader(file);
             if (reader is null)
             {
                 return null;
@@ -125,9 +135,9 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file);
         }
 
-        public static async Task<SpriteLayerSection?> LoadLayerAsync(string fileName)
+        public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(string fileName)
         {
-            var reader = GetLayerReader(fileName);
+            var reader = GetSpriteReader(fileName);
             if (reader is null)
             {
                 return null;

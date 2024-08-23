@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
+using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.Models
 {
-    public class SpriteLayer
+    public class SpriteLayer: IImageBound
     {
         public string Name { get; set; } = string.Empty;
 
@@ -19,7 +21,12 @@ namespace ZoDream.TexturePacker.Models
         public int Height { get; set; }
     }
 
-    public class SpriteLayerSection
+    public class SpriteUvLayer: SpriteLayer
+    {
+        public IList<Vector2> VertexItems { get; set; } = [];
+    }
+
+    public class SpriteLayerSection: IImageSize
     {
         public string Name { get; set; } = string.Empty;
 

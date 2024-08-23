@@ -68,11 +68,21 @@ namespace ZoDream.TexturePacker.ViewModels
             var fileName = file.Path;
             if (file is StorageFolder) 
             {
-                fileName = Path.Combine(file.Path, SelectedLayer.Name);
+                fileName = CombineLayerPath(file.Path, SelectedLayer.Name);
             }
             Editor?.SaveAs(layer, fileName);
             App.ViewModel.Toast.Show("导出完成");
         }
+
+        private string CombineLayerPath(string root, string name)
+        {
+            if (!name.Contains('.'))
+            {
+                name += ".png";
+            }
+            return Path.Combine(root, name);
+        }
+
         private void ExportEveryLayer(IStorageItem file, bool autoLayerFolder)
         {
             var root = file.Path;
@@ -89,8 +99,8 @@ namespace ZoDream.TexturePacker.ViewModels
                 }
                 if (item.Children.Count == 0)
                 {
-                    Editor?.SaveAs(Editor.Get<IImageLayer>(item.Id), 
-                        Path.Combine(layerFolder, item.Name));
+                    Editor?.SaveAs(Editor.Get<IImageLayer>(item.Id),
+                        CombineLayerPath(layerFolder, item.Name));
                     continue;
                 }
                 if (autoLayerFolder)
@@ -108,7 +118,7 @@ namespace ZoDream.TexturePacker.ViewModels
                         continue;
                     }
                     Editor?.SaveAs(Editor.Get<IImageLayer>(it.Id),
-                        Path.Combine(layerFolder, it.Name));
+                        CombineLayerPath(layerFolder, it.Name));
                 }
             }
             App.ViewModel.Toast.Show("导出完成");

@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.Collections.ObjectModel;
 using ZoDream.Shared.ViewModel;
 
 namespace ZoDream.TexturePacker.ViewModels

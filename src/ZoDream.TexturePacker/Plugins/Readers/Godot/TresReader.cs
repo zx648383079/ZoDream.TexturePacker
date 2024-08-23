@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -16,11 +15,11 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
         {
             return content.StartsWith("[gd_resource") && content.Contains("uid=\"");
         }
-        public SpriteLayerSection? Deserialize(string content)
+        public IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
         {
             return Deserialize(content, string.Empty);
         }
-        public SpriteLayerSection? Deserialize(string content, string root)
+        public IEnumerable<SpriteLayerSection>? DeserializeWithRoot(string content, string root)
         {
             var data = GodotSerializer.Deserialize(content);
             var fileName = GetImagePath(data);
@@ -44,7 +43,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
                     });
                 }
             }
-            return res;
+            return [res];
         }
 
         private string GetImagePath(IEnumerable<GD_Node> items)
@@ -60,25 +59,34 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             return string.Empty;
         }
 
-        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
+        public async Task<IEnumerable<SpriteLayerSection>?> ReadAsync(string fileName)
         {
             var text = await LocationStorage.ReadAsync(fileName);
-            return Deserialize(text, GodotSerializer.GetGodotProjectRoot(fileName));
+            return DeserializeWithRoot(text, GodotSerializer.GetGodotProjectRoot(fileName));
         }
 
-        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
+        public async Task<IEnumerable<SpriteLayerSection>?> ReadAsync(IStorageFile file)
         {
             var text = await FileIO.ReadTextAsync(file);
             return Deserialize(text, GodotSerializer.GetGodotProjectRoot(file.Path));
         }
-        public string Serialize(SpriteLayerSection data)
+        public string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
         {
             return Serialize(data, string.Empty);
         }
-        public string Serialize(SpriteLayerSection data, string root)
+        public string SerializeWithRoot(IEnumerable<SpriteLayerSection> data, string root)
         {
-            var fileName = GodotSerializer.GetResourcePath(root, data.FileName);
-            var uid = GodotSerializer.GenerateUID();
+            foreach (var item in data)
+            {
+                return SerializeWithRoot(data, root);
+            }
+            return string.Empty;
+        }
+        public string SerializeWithRoot(SpriteLayerSection data, string root)
+        {
+            var (imageUid, imageRes) = LoadImageImport(data.FileName, root);
+            var spriteFolder = Path.Combine(Path.GetDirectoryName(data.FileName), 
+                Path.GetFileNameWithoutExtension(data.FileName) + ".sprites");
             foreach (var item in data.Items)
             {
                 var id = GodotSerializer.GenerateID();
@@ -94,8 +102,8 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
                     new GD_Node("ext_resource") {
                        Properties = new() {
                            {"type", "Texture2D" },
-                           {"uid", uid},
-                           {"path", fileName },
+                           {"uid", imageUid},
+                           {"path", imageRes },
                            {"id",  id}
                        }
                     },
@@ -107,19 +115,71 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
                     }
                 ]);
 
-                File.WriteAllText(Path.Combine(root, item.Name + ".tres"), res);
+                File.WriteAllText(Path.Combine(spriteFolder, item.Name + ".tres"), res);
             }
             return string.Empty;
         }
 
-        public async Task WriteAsync(string fileName, SpriteLayerSection data)
+        public async Task WriteAsync(string fileName, IEnumerable<SpriteLayerSection> data)
         {
             // await LocationStorage.WriteAsync(fileName, Serialize(data, GodotSerializer.GetGodotProjectRoot(fileName)));
         }
 
-        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
+        public async Task WriteAsync(IStorageFile file, IEnumerable<SpriteLayerSection> data)
         {
             // await FileIO.WriteTextAsync(file, Serialize(data, GodotSerializer.GetGodotProjectRoot(file.Path)), Windows.Storage.Streams.UnicodeEncoding.Utf8);
+        }
+
+
+        private (string, string) CreateImageImport(string fileName, string root)
+        {
+            var uid = GodotSerializer.GenerateUID();
+            var relativeFile = GodotSerializer.GetResourcePath(root, fileName);
+            var sb = new StringBuilder();
+            sb.AppendLine("[remap]")
+                .AppendLine("importer=\"texture\"")
+                .AppendLine("type=\"CompressedTexture2D\"")
+                .AppendLine($"uid=\"{uid}\"")
+                .AppendLine("metadata={")
+                .AppendLine("\"vram_texture\": false")
+                .AppendLine("}")
+                .AppendLine()
+                .Append("[deps]")
+                .AppendLine($"source_file=\"{relativeFile}\"")
+                .AppendLine()
+                .AppendLine("[params]")
+                .AppendLine("compress/mode=3")
+                ;
+            File.WriteAllText(fileName + ".import", sb.ToString());
+            return (uid, relativeFile);
+        }
+
+        private (string, string) LoadImageImport(string fileName, string root)
+        {
+            var target = fileName + ".import";
+            if (!File.Exists(target)) 
+            {
+                return CreateImageImport(fileName, root);
+            }
+            var content = File.ReadAllText(fileName + ".import");
+            var uid = MatchWithRange(content, "uid=\"", "\"");
+            var relativeFile = MatchWithRange(content, "source_file=\"", "\"");
+            return (uid, relativeFile);
+        }
+
+        private string MatchWithRange(string text, string begin, string end)
+        {
+            var i = text.IndexOf(begin);
+            if (i < 0)
+            {
+                return string.Empty;
+            }
+            var j = text.IndexOf(end, i + 1);
+            if (j < 0)
+            {
+                return text[i..];
+            }
+            return text.Substring(i, j);
         }
     }
 }

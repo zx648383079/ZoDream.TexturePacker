@@ -10,14 +10,14 @@ using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
-    public class PlistReader : IPluginReader, ITextReader
+    public class PlistReader : BaseTextReader
     {
-        public bool Canable(string content)
+        public override bool Canable(string content)
         {
             return content.Contains("<string>$TexturePacker:SmartUpdate:");
         }
 
-        public SpriteLayerSection? Deserialize(string content)
+        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
         {
             var doc = new XmlDocument();
             doc.LoadXml(content);
@@ -48,7 +48,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
                 }
                 i++;
             }
-            return res;
+            return [res];
         }
 
         private SpriteLayer? ParseLayer(XmlNode? node)
@@ -109,31 +109,11 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             return null;
         }
 
-        public async Task<SpriteLayerSection?> ReadAsync(string fileName)
-        {
-            var text = await LocationStorage.ReadAsync(fileName);
-            return Deserialize(text);
-        }
 
-        public async Task<SpriteLayerSection?> ReadAsync(IStorageFile file)
-        {
-            var text = await FileIO.ReadTextAsync(file);
-            return Deserialize(text);
-        }
-
-        public string Serialize(SpriteLayerSection data)
+        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
         {
             throw new NotImplementedException();
         }
 
-        public async Task WriteAsync(string fileName, SpriteLayerSection data)
-        {
-            await LocationStorage.WriteAsync(fileName, Serialize(data));
-        }
-
-        public async Task WriteAsync(IStorageFile file, SpriteLayerSection data)
-        {
-            await FileIO.WriteTextAsync(file, Serialize(data), Windows.Storage.Streams.UnicodeEncoding.Utf8);
-        }
     }
 }

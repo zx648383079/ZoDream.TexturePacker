@@ -1,11 +1,12 @@
-﻿using ZoDream.TexturePacker.Models;
+﻿using System.Collections.Generic;
+using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins
 {
     public interface ITextReader
     {
         public bool Canable(string content);
-        public SpriteLayerSection? Deserialize(string content);
-        public string Serialize(SpriteLayerSection data);
+        public IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName);
+        public string Serialize(IEnumerable<SpriteLayerSection> data, string fileName);
     }
 }
