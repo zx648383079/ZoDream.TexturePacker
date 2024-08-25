@@ -25,6 +25,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             var fileName = GetImagePath(data);
             var res = new SpriteLayerSection()
             {
+                UseCustomName = true,
                 Name = Path.GetFileNameWithoutExtension(fileName),
                 FileName = GodotSerializer.Combine(root, fileName),
             };
@@ -87,6 +88,10 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
             var (imageUid, imageRes) = LoadImageImport(data.FileName, root);
             var spriteFolder = Path.Combine(Path.GetDirectoryName(data.FileName), 
                 Path.GetFileNameWithoutExtension(data.FileName) + ".sprites");
+            if (!Directory.Exists(spriteFolder))
+            {
+                Directory.CreateDirectory(spriteFolder);
+            }
             foreach (var item in data.Items)
             {
                 var id = GodotSerializer.GenerateID();

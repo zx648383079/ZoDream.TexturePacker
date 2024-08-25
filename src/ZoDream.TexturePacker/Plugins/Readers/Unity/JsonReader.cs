@@ -14,6 +14,10 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
 
         public override bool Canable(string content)
         {
+            if (content.Contains("\"SubTexture\"") && content.Contains("\"imagePath\""))
+            {
+                return true;
+            }
             return content.Contains("\"items\"");
         }
 

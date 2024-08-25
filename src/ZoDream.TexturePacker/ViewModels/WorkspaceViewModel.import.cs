@@ -76,7 +76,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 var name = Path.GetFileNameWithoutExtension(file.Path);
                 var data = await ReaderFactory.LoadSpriteAsync(file);
-                await ImportSpriteAsync(data, file.FileType == ".tres" ? string.Empty : name);
+                await ImportSpriteAsync(data, name);
             }
             // var (width, height) = new CssSprites().Compute([.. Editor.LayerItems]);
             // Editor.Resize(width, height);
@@ -94,7 +94,7 @@ namespace ZoDream.TexturePacker.ViewModels
             BitmapImageLayer? layer;
             foreach (var data in items)
             {
-                var name = string.IsNullOrWhiteSpace(layerName) ? data.Name : layerName;
+                var name = data.UseCustomName ? data.Name : layerName;
                 if (data is null || data.Items.Count == 0)
                 {
                     continue;

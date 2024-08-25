@@ -28,6 +28,7 @@ namespace ZoDream.TexturePacker.Models
 
     public class SpriteLayerSection: IImageSize
     {
+        public bool UseCustomName { get; set; }
         public string Name { get; set; } = string.Empty;
 
         public string FileName { get; set; } = string.Empty;
@@ -36,5 +37,6 @@ namespace ZoDream.TexturePacker.Models
         public int Height { get; set; }
 
         public IList<SpriteLayer> Items { get; set; } = [];
+        
     }
 }

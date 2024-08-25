@@ -18,7 +18,7 @@ namespace ZoDream.TexturePacker.Plugins
 
         private static string[] ImageFilterItems = [".png", ".jpg", ".jpeg", ".webp", ".pvr", ".ccz"];
 
-        private static string[] LayerFilterItems = [".json", ".tres", ".moc3", ".atlas", ".plist" ];
+        private static string[] LayerFilterItems = [".json", ".tres", ".moc3", ".atlas", ".txt", ".plist" ];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
 
         public static bool IsImageFile(string fileName)
@@ -81,8 +81,13 @@ namespace ZoDream.TexturePacker.Plugins
             return IsImageFile(file) ? new ImageFactoryReader() : null;
         }
 
-        private static IPluginReader? GetSpriteExtensionReader(string extension)
+        private static IPluginReader? GetSpriteExtensionReader(
+            string extension, string fileName)
         {
+            if (fileName.EndsWith(".atlas.txt"))
+            {
+                return new Readers.Unity.AtlasReader();
+            }
             return extension switch
             {
                 ".tres" => new TresReader(),
@@ -96,13 +101,13 @@ namespace ZoDream.TexturePacker.Plugins
 
         public static IPluginReader? GetSpriteReader(IStorageFile file)
         {
-            return GetSpriteExtensionReader(file.FileType);
+            return GetSpriteExtensionReader(file.FileType, file.Name);
         }
 
         public static IPluginReader? GetSpriteReader(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            return GetSpriteExtensionReader(extension);
+            return GetSpriteExtensionReader(extension, Path.GetFileName(fileName));
         }
 
         public static async Task<SKBitmap?> LoadImageAsync(string fileName)

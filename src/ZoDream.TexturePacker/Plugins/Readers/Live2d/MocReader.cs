@@ -107,27 +107,11 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
                 textureNo[i] = reader.ReadUInt32();
             }
             input.Seek(lastPos + 4, SeekOrigin.Begin);
+            // uv 对应的个数位置
+            var uvCountItems = ReadPart(reader, meshCount, reader => reader.ReadInt32());
+            // 获取在UV列表中的开始位置
+            var uvOffsetItems = ReadPart(reader, meshCount, reader => reader.ReadUInt32());
 
-            ptrPos = reader.ReadUInt32(); // uv 对应的个数位置
-            lastPos = input.Position;
-            input.Seek(ptrPos, SeekOrigin.Begin);
-            var uvCountItems = new int[meshCount];
-            for (var i = 0; i < meshCount; i++)
-            {
-                // 获取在 UV 列表中的个数
-                uvCountItems[i] = reader.ReadInt32();
-            }
-            input.Seek(lastPos, SeekOrigin.Begin);
-            ptrPos = reader.ReadUInt32();
-            lastPos = input.Position;
-            input.Seek(ptrPos, SeekOrigin.Begin);
-            var uvOffset = new uint[meshCount];
-            for (var i = 0; i < meshCount; i++)
-            {
-                // 获取在UV列表中的开始位置
-                uvOffset[i] = reader.ReadUInt32();
-            }
-            input.Seek(lastPos, SeekOrigin.Begin);
             input.Seek(4 * 4, SeekOrigin.Current);
             #endregion
 
@@ -153,6 +137,9 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
             // Keys
             input.Seek(4, SeekOrigin.Current);
 
+            // UVS
+            //input.Seek(4, SeekOrigin.Current);
+
             Debug.WriteLine($"pos: 0x{input.Position:X}");
             ptrPos = reader.ReadUInt32();
             lastPos = input.Position;
@@ -161,7 +148,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
             // input.Seek(0x82c40, SeekOrigin.Begin);
             for (var i = 0; i < meshCount; i++)
             {
-                input.Seek(uvPos + uvOffset[i] * 4, SeekOrigin.Begin);
+                input.Seek(uvPos + uvOffsetItems[i] * 4, SeekOrigin.Begin);
                 //input.Seek(uvOffset[i], SeekOrigin.Begin);
                 var uv = new Vector2[uvCountItems[i]];
                 for (var j = 0; j < uv.Length; j++)
@@ -190,6 +177,21 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
                 }
                 return block;
             });
+            return items;
+        }
+
+        private static T[] ReadPart<T>(BinaryReader reader, uint length, Func<BinaryReader, T> fn)
+        {
+            var ptrPos = reader.ReadUInt32(); // uv 对应的个数位置
+            var lastPos = reader.BaseStream.Position;
+            reader.BaseStream.Seek(ptrPos, SeekOrigin.Begin);
+            var items = new T[length];
+            for (var i = 0; i < length; i++)
+            {
+                // 获取在 UV 列表中的个数
+                items[i] = fn.Invoke(reader);
+            }
+            reader.BaseStream.Seek(lastPos, SeekOrigin.Begin);
             return items;
         }
 

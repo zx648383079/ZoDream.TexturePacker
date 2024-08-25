@@ -2,6 +2,7 @@
 using SkiaSharp;
 using System;
 using System.IO;
+using System.Linq;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ImageEditor
@@ -105,11 +106,13 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public static SKPath CreatePath(SpriteUvLayer uv, int imageWidth, int imageHeight)
         {
+            imageWidth -= 1;
+            imageHeight -= 1;
+            var pointItems = uv.VertexItems.Select(v => new SKPoint(v.X * imageWidth, v.Y * imageHeight)).ToArray();
             var path = new SKPath();
-            for (var i = 0; i < uv.VertexItems.Count; i++)
+            for (var i = 0; i < pointItems.Length; i++)
             {
-                var v = uv.VertexItems[i];
-                var point = new SKPoint(v.X * imageWidth, v.Y * imageHeight);
+                var point = pointItems[i];
                 if (i < 1)
                 {
                     path.MoveTo(point);
@@ -120,6 +123,17 @@ namespace ZoDream.TexturePacker.ImageEditor
                 }
             }
             path.Close();
+            //for (var i = 0; i < pointItems.Length - 1; i++)
+            //{
+
+            //    for (var j = i + 2; j < pointItems.Length - 1; j++)
+            //    {
+            //        if (LineIsIntersecting(pointItems[i], pointItems[i + 1], pointItems[j], pointItems[j + 1]))
+            //        {
+            //            path.AddPoly([pointItems[i], pointItems[j], pointItems[i + 1], pointItems[j + 1], ]);
+            //        }
+            //    }
+            //}
             return path;
         }
 
@@ -185,6 +199,22 @@ namespace ZoDream.TexturePacker.ImageEditor
             canvas.ClipPath(path, SKClipOperation.Difference);
             canvas.Clear();
             return bitmap;
+        }
+
+        private static bool LineIsIntersecting(SKPoint aBegin, SKPoint aEnd,
+            SKPoint bBegin, SKPoint bEnd)
+        {
+            var aVector = aEnd - aBegin;
+            var bVector = bEnd - bBegin;
+            var cross = aVector.X * bVector.Y - aVector.Y * bVector.X;
+            if (Math.Abs(cross) < 1e-8)
+            {
+                return false;
+            }
+            var diff = bBegin - aBegin;
+            var t = (diff.X * bVector.Y - diff.Y * bVector.X) / cross;
+            var u = (diff.X * aVector.Y - diff.Y * aVector.X) / cross;
+            return 0 <= t && t <= 1 && 0 <= u && u <= 1;
         }
     }
 }
