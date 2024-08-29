@@ -18,8 +18,10 @@ namespace ZoDream.TexturePacker.Plugins
 
         private static string[] ImageFilterItems = [".png", ".jpg", ".jpeg", ".webp", ".pvr", ".ccz"];
 
-        private static string[] LayerFilterItems = [".json", ".tres", ".moc3", ".atlas", ".txt", ".plist" ];
+        private static string[] LayerFilterItems = [".json", ".tres", 
+            ".moc3", ".atlas", ".txt", ".plist", ".asset" ];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
+
 
         public static bool IsImageFile(string fileName)
         {
@@ -95,6 +97,7 @@ namespace ZoDream.TexturePacker.Plugins
                 ".atlas" => new AtlasReader(),
                 ".moc3" => new MocReader(),
                 ".json" => new JsonFactoryReader(),
+                ".asset" => new Readers.Unity.AssetReader(),
                 _ => null,
             };
         }
@@ -148,6 +151,22 @@ namespace ZoDream.TexturePacker.Plugins
                 return null;
             }
             return await reader.ReadAsync(fileName);
+        }
+
+        public static async Task<IEnumerable<string>> LoadImageMetaAsync(string fileName)
+        {
+            IFileMetaReader[] metaReaderItems = [
+                new Readers.Unity.MetaReader(),
+            ];
+            foreach (var reader in metaReaderItems)
+            {
+                var res = await reader.ReadAsync(fileName);
+                if (res is not null)
+                {
+                    return res;
+                }
+            }
+            return [];
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Shared.UndoRedo;
 using ZoDream.TexturePacker.ImageEditor;
@@ -10,6 +11,8 @@ namespace ZoDream.TexturePacker.ViewModels
     {
         public CommandManager UndoRedo { get; private set; } = new();
         public IImageEditor? Editor { get; set; }
+
+        
 
         private bool _undoEnabled;
 

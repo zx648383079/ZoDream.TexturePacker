@@ -58,8 +58,11 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return null;
             }
+            _ = LoadImageMetaAsync(fileName, layer.Id);
             return AddLayer(layer.Id, name, layer.GetPreviewSource());
         }
+
+
 
         private async void OnDragImage(IEnumerable<IStorageItem> items)
         {
@@ -99,7 +102,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     continue;
                 }
-                var parentLayer = GetLayer(name!) ?? await AddImageAsync(data.FileName);
+                var parentLayer = GetLayerWithLink(name!) ?? await AddImageAsync(data.FileName);
                 if (parentLayer is null)
                 {
                     continue;

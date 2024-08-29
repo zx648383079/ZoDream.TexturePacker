@@ -52,7 +52,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             stream.Seek(0, SeekOrigin.Begin);
             var buffer = new byte[2];
             stream.Read(buffer, 0, buffer.Length);
-            return buffer[0] == 0x1F && buffer[1] == 0x8B;
+            return buffer.SequenceEqual(new byte[] { 0x1F, 0x8B });
         }
 
         public Task<SKBitmap?> ReadAsync(string fileName)

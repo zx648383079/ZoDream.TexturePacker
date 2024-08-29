@@ -46,6 +46,14 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public BitmapImageLayer? Split(SpriteLayer item)
         {
+            if (item.Y < 0)
+            {
+                item.Y += Source.Height - item.Height;
+            }
+            if (item.X < 0)
+            {
+                item.X += Source.Width - item.Width;
+            }
             var bitmap = Source.Clip(item);
             if (bitmap == null)
             {
