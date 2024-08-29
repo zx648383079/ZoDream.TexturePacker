@@ -167,24 +167,11 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Godot
                 return CreateImageImport(fileName, root);
             }
             var content = File.ReadAllText(fileName + ".import");
-            var uid = MatchWithRange(content, "uid=\"", "\"");
-            var relativeFile = MatchWithRange(content, "source_file=\"", "\"");
+            var uid = ReaderHelper.MatchWithRange(content, "uid=\"", "\"");
+            var relativeFile = ReaderHelper.MatchWithRange(content, "source_file=\"", "\"");
             return (uid, relativeFile);
         }
 
-        private string MatchWithRange(string text, string begin, string end)
-        {
-            var i = text.IndexOf(begin);
-            if (i < 0)
-            {
-                return string.Empty;
-            }
-            var j = text.IndexOf(end, i + 1);
-            if (j < 0)
-            {
-                return text[i..];
-            }
-            return text.Substring(i, j);
-        }
+        
     }
 }

@@ -44,16 +44,16 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
                         switch (args[0])
                         {
                             case "x":
-                                res.Items[0].X = TryParseInt(args[1]); 
+                                res.Items[0].X = ReaderHelper.TryParseInt(args[1]); 
                                 break;
                             case "y":
-                                res.Items[0].Y = - TryParseInt(args[1]);
+                                res.Items[0].Y = -ReaderHelper.TryParseInt(args[1]);
                                 break;
                             case "width":
-                                res.Items[0].Width = TryParseInt(args[1]);
+                                res.Items[0].Width = ReaderHelper.TryParseInt(args[1]);
                                 break;
                             case "height":
-                                res.Items[0].Height = TryParseInt(args[1]);
+                                res.Items[0].Height = ReaderHelper.TryParseInt(args[1]);
                                 break;
                             default:
                                 break;
@@ -62,7 +62,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
                 }
                 if (minCount > 0 && text.StartsWith("texture:"))
                 {
-                    res.Name = GetGuid(text);
+                    res.Name = ReaderHelper.MatchWithRange(text, "guid:", ",");
                 }
                 if (minCount > 0 && text.StartsWith("textureRect:"))
                 {
@@ -79,37 +79,6 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
                 return null;
             }
             return [res];
-        }
-
-
-        private int TryParseInt(string value)
-        {
-            value = value.Trim();
-            var i = value.IndexOf('.');
-            if (i >= 0)
-            {
-                value = value.Substring(0, i);
-            }
-            if (int.TryParse(value, out i))
-            {
-                return i;
-            }
-            return 0;
-        }
-
-        private string GetGuid(string text)
-        {
-            var i = text.IndexOf("guid:");
-            if (i < 0)
-            {
-                return string.Empty;
-            }
-            var j = text.IndexOf(',', i);
-            if (j < 0) 
-            {
-                return text[(i + 5)..].Trim();
-            }
-            return text[(i + 5)..j].Trim();
         }
 
 

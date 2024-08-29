@@ -157,6 +157,7 @@ namespace ZoDream.TexturePacker.Plugins
         {
             IFileMetaReader[] metaReaderItems = [
                 new Readers.Unity.MetaReader(),
+                new Readers.Godot.ImportReader(),
             ];
             foreach (var reader in metaReaderItems)
             {
