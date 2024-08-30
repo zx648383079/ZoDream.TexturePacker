@@ -55,7 +55,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             return buffer.SequenceEqual(new byte[] { 0x1F, 0x8B });
         }
 
-        public Task<SKBitmap?> ReadAsync(string fileName)
+        public Task<IImageData?> ReadAsync(string fileName)
         {
             return Task.Factory.StartNew(() => {
                 using var fs = File.OpenRead(fileName);
@@ -63,7 +63,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             });
         }
 
-        private SKBitmap? Read(Stream input)
+        private IImageData? Read(Stream input)
         {
             var type = GetFileType(input);
             return type switch
@@ -75,7 +75,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
                 _ => null,
             };
         }
-        private SKBitmap? DecodeGZIP(Stream input)
+        private IImageData? DecodeGZIP(Stream input)
         {
             var reader = new GZipStream(input, CompressionMode.Decompress);
             var working = new byte[1024];
@@ -87,7 +87,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             }
             return DecodePVR(output.ToArray());
         }
-        private SKBitmap? DecodeCCZP(Stream input)
+        private IImageData? DecodeCCZP(Stream input)
         {
             input.Seek(12, SeekOrigin.Begin);
             var buffer = new byte[input.Length - 12];
@@ -97,7 +97,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             return DecodeCCZ(buffer);
         }
 
-        private SKBitmap? DecodeCCZ(Stream input)
+        private IImageData? DecodeCCZ(Stream input)
         {
             input.Seek(12, SeekOrigin.Begin);
             var buffer = new byte[input.Length - 12];
@@ -105,34 +105,34 @@ namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
             return DecodeCCZ(buffer);
         }
 
-        private SKBitmap? DecodeCCZ(byte[] buffer)
+        private IImageData? DecodeCCZ(byte[] buffer)
         {
             buffer = Decompress(buffer.Skip(4).ToArray());
             return DecodePVR(buffer);
         }
-        private SKBitmap? DecodePVR(Stream input)
+        private IImageData? DecodePVR(Stream input)
         {
             var buffer = new byte[input.Length];
             input.Read(buffer, 0, buffer.Length);
             return DecodePVR(buffer);
         }
-        private SKBitmap? DecodePVR(byte[] buffer)
+        private IImageData? DecodePVR(byte[] buffer)
         {
             return PvtImage.Decode(buffer);
         }
 
-        public async Task<SKBitmap?> ReadAsync(IStorageFile file)
+        public async Task<IImageData?> ReadAsync(IStorageFile file)
         {
             using var fs = await file.OpenReadAsync();
             return Read(fs.AsStreamForRead());
         }
 
-        public Task WriteAsync(string fileName, SKBitmap data)
+        public Task WriteAsync(string fileName, IImageData data)
         {
             throw new NotImplementedException();
         }
 
-        public Task WriteAsync(IStorageFile file, SKBitmap data)
+        public Task WriteAsync(IStorageFile file, IImageData data)
         {
             throw new NotImplementedException();
         }

@@ -9,7 +9,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
         public static readonly uint HeaderVersion = 0x03525650;
         private static readonly uint BadEndianess = 0x50565203;
 
-        public static SKBitmap? Decode(byte[] buffer)
+        public static IImageData? Decode(byte[] buffer)
         {
             if (buffer[0] == 'P' && buffer[1] == 'V' && buffer[2] == 'R')
             {
@@ -18,7 +18,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
             return DecodeV2(buffer);
         }
 
-        private static SKBitmap? DecodeV3(byte[] buffer)
+        private static IImageData? DecodeV3(byte[] buffer)
         {
             var header = StructConvert.ToStruct<PVRv3TexHeader>(buffer);
             var pixelFormat = (PVR3TexturePixelFormat)header.PixelFormat;
@@ -83,7 +83,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
                     PVR3TexturePixelFormat.LA88 => BitmapFormat.LA88,
                 });
         }
-        private static SKBitmap? DecodeV2(byte[] buffer)
+        private static IImageData? DecodeV2(byte[] buffer)
         {
             var header = StructConvert.ToStruct<PVRv2TexHeader>(buffer);
             // if (header.PvrTag == "PVR!")

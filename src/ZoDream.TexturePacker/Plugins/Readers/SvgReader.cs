@@ -1,26 +1,30 @@
 ﻿using SkiaSharp;
+using Svg.Skia;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.Plugins.Readers
 {
-    public class ImageFactoryReader : IImageReader
+    public class SvgReader : IImageReader
     {
         public Task<IImageData?> ReadAsync(string fileName)
         {
-            return Task.FromResult(new FileImageData(fileName) as IImageData);
+            return Task.FromResult(new SvgFileImageData(fileName) as IImageData);
         }
 
-        public async Task<IImageData?> ReadAsync(IStorageFile file)
+        public Task<IImageData?> ReadAsync(IStorageFile file)
         {
-            return await ReadAsync(file.Path);
+            return ReadAsync(file.Path);
         }
 
         public Task WriteAsync(string fileName, IImageData data)
         {
-            data.TryParse()?.SaveAs(fileName);
+            using var stream = File.OpenWrite(fileName);
+            using var canvas = SKSvgCanvas.Create(new SKRect(0, 0, 100, 100), stream);
+            canvas.DrawBitmap(data.TryParse(), 0, 0);
+            canvas.Flush();
             return Task.CompletedTask;
         }
 

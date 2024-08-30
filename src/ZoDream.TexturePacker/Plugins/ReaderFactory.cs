@@ -16,7 +16,9 @@ namespace ZoDream.TexturePacker.Plugins
     public static class ReaderFactory
     {
 
-        private static string[] ImageFilterItems = [".png", ".jpg", ".jpeg", ".webp", ".pvr", ".ccz"];
+        private static string[] ImageFilterItems = [".png", ".jpg", 
+            ".jpeg", ".webp", ".svg", 
+            ".bmp", ".pvr", ".ccz"];
 
         private static string[] LayerFilterItems = [".json", ".tres", 
             ".moc3", ".atlas", ".txt", ".plist", ".asset" ];
@@ -56,15 +58,21 @@ namespace ZoDream.TexturePacker.Plugins
 
         private static IImageReader? GetImageExtensionReader(string extension)
         {
+            IImageReader? reader = extension switch
+            {
+                ".pvr" or ".ccz" => new PvrReader(),
+                ".svg" => new SvgReader(),
+                _ => null,
+            };
+            if (reader is not null)
+            {
+                return reader;
+            }
             if (ImageFilterItems.Contains(extension))
             {
                 return new ImageFactoryReader();
             }
-            return extension switch
-            {
-                ".pvr" or ".ccz" => new PvrReader(),
-                _ => null,
-            };
+            return null;
         }
 
         public static IImageReader? GetImageReader(string fileName)
@@ -113,7 +121,7 @@ namespace ZoDream.TexturePacker.Plugins
             return GetSpriteExtensionReader(extension, Path.GetFileName(fileName));
         }
 
-        public static async Task<SKBitmap?> LoadImageAsync(string fileName)
+        public static async Task<IImageData?> LoadImageAsync(string fileName)
         {
             var reader = GetImageReader(fileName);
             if (reader is null)
@@ -123,7 +131,7 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(fileName);
         }
 
-        public static async Task<SKBitmap?> LoadImageAsync(IStorageFile file)
+        public static async Task<IImageData?> LoadImageAsync(IStorageFile file)
         {
             var reader = GetImageReader(file);
             if (reader is null)

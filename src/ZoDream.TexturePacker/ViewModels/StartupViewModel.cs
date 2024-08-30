@@ -43,6 +43,7 @@ namespace ZoDream.TexturePacker.ViewModels
             picker.FileTypeFilter.Add("*");
             App.ViewModel.InitializePicker(picker);
             var items = await picker.PickMultipleFilesAsync();
+            App.ViewModel.Navigate<WorkspacePage>(items);
         }
 
         private void TapOpenFolder(object? _)

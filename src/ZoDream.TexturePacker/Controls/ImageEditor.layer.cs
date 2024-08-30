@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Plugins;
-using ZoDream.TexturePacker.Plugins.Readers.TexturePacker;
 
 namespace ZoDream.TexturePacker.Controls
 {
@@ -46,7 +45,7 @@ namespace ZoDream.TexturePacker.Controls
             return default;
         }
 
-        public BitmapImageLayer? AddImage(SKBitmap? image)
+        public IImageLayer? AddImage(SKBitmap? image)
         {
             if (image is null)
             {
@@ -55,12 +54,22 @@ namespace ZoDream.TexturePacker.Controls
             return Add(new BitmapImageLayer(image.Copy(), this));
         }
 
-        public async Task<BitmapImageLayer?> AddImageAsync(string fileName)
+        public IImageLayer? AddImage(IImageData? image)
+        {
+            var res = image?.TryParse(this);
+            if (res is null)
+            {
+                return null;
+            }
+            return Add(res);
+        }
+
+        public async Task<IImageLayer?> AddImageAsync(string fileName)
         {
             return AddImage(await ReaderFactory.LoadImageAsync(fileName));
         }
 
-        public async Task<BitmapImageLayer?> AddImageAsync(IStorageFile file)
+        public async Task<IImageLayer?> AddImageAsync(IStorageFile file)
         {
             return AddImage(await ReaderFactory.LoadImageAsync(file));
         }

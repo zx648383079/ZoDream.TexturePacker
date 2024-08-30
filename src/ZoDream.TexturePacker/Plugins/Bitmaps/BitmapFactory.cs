@@ -6,12 +6,12 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
     public static class BitmapFactory
     {
 
-        public static SKBitmap Decode(string fileName)
+        public static IImageData Decode(string fileName)
         {
             return new SKBitmapDecoder().Decode(fileName);
         }
 
-        public static SKBitmap Decode(byte[] data, int width, int height, BitmapFormat format)
+        public static IImageData Decode(byte[] data, int width, int height, BitmapFormat format)
         {
             if (SKBitmapDecoder.IsSupport(format))
             {

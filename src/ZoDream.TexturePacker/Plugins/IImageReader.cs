@@ -1,8 +1,6 @@
-﻿using SkiaSharp;
-
-namespace ZoDream.TexturePacker.Plugins
+﻿namespace ZoDream.TexturePacker.Plugins
 {
-    public interface IImageReader: IPluginReader<SKBitmap>
+    public interface IImageReader: IPluginReader<IImageData>
     {
 
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection.Emit;
@@ -62,7 +63,21 @@ namespace ZoDream.TexturePacker.ViewModels
             return AddLayer(layer.Id, name, layer.GetPreviewSource());
         }
 
+        public void DragFileAsync(IEnumerable<IStorageItem> items)
+        {
+            OnDragImage(items);
+        }
 
+        private void AddImage(IImageData data)
+        {
+            var layer = Editor?.AddImage(data);
+            if (layer is null)
+            {
+                return;
+            }
+            AddLayer(layer.Id, "image_" + layer.Id, layer.GetPreviewSource());
+            Editor?.Invalidate();
+        }
 
         private async void OnDragImage(IEnumerable<IStorageItem> items)
         {

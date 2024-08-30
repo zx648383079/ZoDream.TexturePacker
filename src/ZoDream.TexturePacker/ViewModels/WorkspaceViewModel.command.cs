@@ -1,19 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using SkiaSharp;
+﻿using SkiaSharp;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
-using Windows.Storage;
-using Windows.Storage.Search;
 using ZoDream.TexturePacker.Dialogs;
-using ZoDream.TexturePacker.ImageEditor;
-using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins;
-using ZoDream.TexturePacker.Plugins.Readers;
-using ZoDream.TexturePacker.Plugins.Readers.Godot;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -120,7 +109,9 @@ namespace ZoDream.TexturePacker.ViewModels
         {
             LayerItems.Clear();
             Editor?.Clear();
+            Editor?.Unselect();
             Editor?.Invalidate();
+            
         }
 
         private void TapOpen(object? _)
@@ -137,15 +128,7 @@ namespace ZoDream.TexturePacker.ViewModels
         {
             UndoRedo.ReverseUndo();
         }
-        private void TapCut(object? _)
-        {
-        }
-        private void TapCopy(object? _) 
-        {
-        }
-        private void TapPaste(object? _) 
-        {
-        }
+        
         private async void TapProperty(object? _)
         {
             var dialog = new PropertyDialog();

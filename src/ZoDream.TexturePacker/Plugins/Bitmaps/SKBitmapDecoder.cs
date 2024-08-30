@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 using System.IO;
 using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.TexturePacker.Plugins.Data;
 
 namespace ZoDream.TexturePacker.Plugins.Bitmaps
 {
@@ -31,7 +32,7 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
             };
         }
 
-        public static SKBitmap Decode(byte[] data, int width, int height, BitmapFormat format)
+        public static IImageData Decode(byte[] data, int width, int height, BitmapFormat format)
         {
             return Decode(data, width, height, Parse(format));
         }
@@ -43,44 +44,44 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
         /// <param name="height">图片的高度，例如: 1024</param>
         /// <param name="format">指定像素数组的组成方式，例如：SKColorType.Rgba8888</param>
         /// <returns></returns>
-        public static SKBitmap Decode(byte[] buffer, int width, int height, SKColorType format)
+        public static IImageData Decode(byte[] buffer, int width, int height, SKColorType format)
         {
-            var data = SKData.CreateCopy(buffer);
-            var newInfo = new SKImageInfo(width, height, format);
-            var bitmap = new SKBitmap();
-            bitmap.InstallPixels(newInfo, data.Data);
-            return bitmap;
+            return new ByteImageData(buffer, width, height, format);
         }
 
-        public SKBitmap Decode(byte[] data)
+        public IImageData Decode(byte[] data)
         {
-            return SKBitmap.Decode(data);
+            return new FileByteImageData(data);
         }
 
-        public SKBitmap Decode(Stream input)
+        public IImageData Decode(Stream input)
         {
-            return SKBitmap.Decode(input);
+            return new StreamImageData(input);
         }
 
-        public SKBitmap Decode(string fileName)
+        public IImageData Decode(string fileName)
         {
-            return SKBitmap.Decode(fileName);
+            return new FileImageData(fileName);
         }
 
-        public byte[] Encode(SKBitmap data)
+        public byte[] Encode(IImageData data)
         {
-            var res = data.Encode(SKEncodedImageFormat.Dng, 100);
+            var res = data.TryParse()?.Encode(SKEncodedImageFormat.Png, 100);
+            if (res is null)
+            {
+                return [];
+            }
             return res.AsSpan().ToArray();
         }
 
-        public void Encode(SKBitmap data, Stream output)
+        public void Encode(IImageData data, Stream output)
         {
-            data.Encode(output, SKEncodedImageFormat.Dng, 100);
+            data.TryParse()?.Encode(output, SKEncodedImageFormat.Png, 100);
         }
 
-        public void Encode(SKBitmap data, string fileName)
+        public void Encode(IImageData data, string fileName)
         {
-            data.SaveAs(fileName);
+            data.TryParse()?.SaveAs(fileName);
         }
     }
 }

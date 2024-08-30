@@ -5,11 +5,11 @@ namespace ZoDream.TexturePacker.Plugins.Bitmaps
 {
     public interface IBitmapDecoder
     {
-        public SKBitmap Decode(Stream input);
-        public SKBitmap Decode(byte[] data);
-        public SKBitmap Decode(string fileName);
-        public byte[] Encode(SKBitmap data);
-        public void Encode(SKBitmap data, Stream output);
-        public void Encode(SKBitmap data, string fileName);
+        public IImageData Decode(Stream input);
+        public IImageData Decode(byte[] data);
+        public IImageData Decode(string fileName);
+        public byte[] Encode(IImageData data);
+        public void Encode(IImageData data, Stream output);
+        public void Encode(IImageData data, string fileName);
     }
 }

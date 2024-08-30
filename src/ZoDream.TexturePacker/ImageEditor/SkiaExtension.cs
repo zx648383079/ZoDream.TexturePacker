@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using SkiaSharp;
+﻿using SkiaSharp;
 using System;
 using System.IO;
 using System.Linq;
@@ -151,6 +150,21 @@ namespace ZoDream.TexturePacker.ImageEditor
             var h = source.Height * scale;
             using var canvas = new SKCanvas(bitmap);
             canvas.DrawBitmap(source, SKRect.Create((size - w) / 2, (size - h) / 2, w, h));
+            return bitmap;
+        }
+
+        public static SKBitmap CreateThumbnail(this SKPicture source, int size)
+        {
+            var bitmap = new SKBitmap(size, size);
+            var scale = size / Math.Max(source.CullRect.Width, source.CullRect.Height);
+            var w = source.CullRect.Width * scale;
+            var h = source.CullRect.Height * scale;
+            using var canvas = new SKCanvas(bitmap);
+            //canvas.DrawColor(SKColors.Transparent);
+            canvas.Save();
+            canvas.Scale(scale, scale);
+            canvas.DrawPicture(source, (size - w) * scale / 2, (size - h) * scale / 2);
+            canvas.Restore();
             return bitmap;
         }
 

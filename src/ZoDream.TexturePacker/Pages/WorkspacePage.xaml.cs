@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using System.Collections.Generic;
+using Windows.Storage;
 using ZoDream.TexturePacker.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,6 +26,10 @@ namespace ZoDream.TexturePacker.Pages
         {
             base.OnNavigatedTo(e);
             ViewModel.Editor = Editor;
+            if (e.Parameter is IEnumerable<IStorageItem> items)
+            {
+                ViewModel.DragFileAsync(items);
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

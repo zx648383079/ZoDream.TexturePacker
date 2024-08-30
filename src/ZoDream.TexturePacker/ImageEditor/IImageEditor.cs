@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -22,10 +23,11 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public T? Get<T>(int id) where T : IImageLayer;
 
-        public Task<BitmapImageLayer?> AddImageAsync(string fileName);
+        public Task<IImageLayer?> AddImageAsync(string fileName);
 
-        public Task<BitmapImageLayer?> AddImageAsync(IStorageFile file);
-        public BitmapImageLayer? AddImage(SKBitmap? image);
+        public Task<IImageLayer?> AddImageAsync(IStorageFile file);
+        public IImageLayer? AddImage(SKBitmap? image);
+        public IImageLayer? AddImage(IImageData? image);
 
         public TextImageLayer AddText(string text);
 
