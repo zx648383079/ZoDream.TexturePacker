@@ -39,13 +39,14 @@ namespace ZoDream.TexturePacker.ViewModels
         }
 
 
-        public void Binding(Window window, Frame frame)
+        public void Binding(Window window, Frame frame, MenuBar? menuBar)
         {
             _baseWindow = window;
             _baseWindowHandle = WindowNative.GetWindowHandle(_baseWindow);
             var windowId = Win32Interop.GetWindowIdFromWindow(_baseWindowHandle);
             _appWindow = AppWindow.GetFromWindowId(windowId);
             _rootFrame = frame;
+            _menuBar = menuBar;
             Navigate<StartupPage>();
         }
 

@@ -4,8 +4,10 @@ using ZoDream.Shared.ViewModel;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public class LayerViewModel: BindableBase
+    public class LayerViewModel(WorkspaceViewModel workspace) : BindableBase
     {
+        public WorkspaceViewModel Workspace { get; private set; } = workspace;
+
         public int Id { get; set; }
 
         private string _name = string.Empty;

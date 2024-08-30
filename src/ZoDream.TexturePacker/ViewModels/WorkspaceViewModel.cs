@@ -40,6 +40,8 @@ namespace ZoDream.TexturePacker.ViewModels
             LayerScaleXCommand = new RelayCommand(TapLayerScaleX);
             LayerScaleYCommand = new RelayCommand(TapLayerScaleY);
             LayerVisibleCommand = new RelayCommand(TapLayerVisible);
+            LayerVisibleToggleCommand = new RelayCommand(TapLayerVisibleToggle);
+            LayerLockToggleCommand = new RelayCommand(TapLayerLockToggle);
             LayerHiddenCommand = new RelayCommand(TapLayerHidden);
             AllVisibleCommand = new RelayCommand(TapAllVisible);
             OtherHiddenCommand = new RelayCommand(TapOtherHidden);

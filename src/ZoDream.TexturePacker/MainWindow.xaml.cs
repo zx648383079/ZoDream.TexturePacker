@@ -28,7 +28,7 @@ namespace ZoDream.TexturePacker
         public MainWindow()
         {
             this.InitializeComponent();
-            ViewModel.Binding(this, RootFrame);
+            ViewModel.Binding(this, RootFrame, RootMenuBar);
         }
 
         internal AppViewModel ViewModel => App.ViewModel;

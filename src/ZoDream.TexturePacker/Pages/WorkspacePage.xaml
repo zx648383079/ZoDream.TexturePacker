@@ -13,7 +13,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:skia="using:SkiaSharp.Views.Windows"
     xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
-    x:Name="root"
     mc:Ignorable="d">
 
     <Page.DataContext>
@@ -29,55 +28,55 @@
                 <TreeViewItem.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.CutCommand, ElementName=root}"
+                            Command="{Binding Workspace.CutCommand}"
                             CommandParameter="{Binding}"
                             Text="剪切" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.CopyCommand, ElementName=root}"
+                            Command="{Binding Workspace.CopyCommand}"
                             CommandParameter="{Binding}"
                             Text="复制" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.PasteCommand, ElementName=root}"
+                            Command="{Binding Workspace.PasteCommand}"
                             CommandParameter="{Binding}"
                             Text="粘贴" />
                         <MenuFlyoutSeparator />
 
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.LayerHiddenCommand, ElementName=root}"
+                            Command="{Binding Workspace.LayerHiddenCommand}"
                             CommandParameter="{Binding}"
                             Text="隐藏" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.OtherHiddenCommand, ElementName=root}"
+                            Command="{Binding Workspace.OtherHiddenCommand}"
                             CommandParameter="{Binding}"
                             Text="隐藏其他" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.OtherVisibleCommand, ElementName=root}"
+                            Command="{Binding Workspace.OtherVisibleCommand}"
                             CommandParameter="{Binding}"
                             Text="显示其他" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.LayerLockCommand, ElementName=root}"
+                            Command="{Binding Workspace.LayerLockCommand}"
                             CommandParameter="{Binding}"
                             Text="锁定" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.LayerRenameCommand, ElementName=root}"
+                            Command="{Binding Workspace.LayerRenameCommand}"
                             CommandParameter="{Binding}"
                             Text="重命名" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.LayerPropertyCommand, ElementName=root}"
+                            Command="{Binding Workspace.LayerPropertyCommand}"
                             CommandParameter="{Binding}"
                             Text="图层属性" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.DeleteLayerCommand, ElementName=root}"
+                            Command="{Binding Workspace.DeleteLayerCommand}"
                             CommandParameter="{Binding}"
                             Text="删除" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.AddGroupCommand, ElementName=root}"
+                            Command="{Binding Workspace.AddGroupCommand}"
                             CommandParameter="{Binding}"
                             Text="分组" />
                         <MenuFlyoutItem
-                            Command="{Binding DataContext.UngroupCommand, ElementName=root}"
+                            Command="{Binding Workspace.UngroupCommand}"
                             CommandParameter="{Binding}"
                             IsEnabled="{Binding Children, Converter={StaticResource IsGroup}}"
                             Text="取消分组" />
@@ -93,16 +92,25 @@
                     <Image Source="{Binding PreviewImage}" Stretch="UniformToFill" />
                     <TextBlock
                         Grid.Column="1"
+                        Margin="8,0,0,0"
                         VerticalAlignment="Center"
                         Text="{Binding Name}" />
-                    <CheckBox
+                    <ctl:ToggleIcon
                         Grid.Column="2"
                         VerticalAlignment="Center"
-                        IsChecked="{Binding IsVisible, Mode=TwoWay}" />
-                    <CheckBox
+                        Command="{Binding Workspace.LayerVisibleToggleCommand}"
+                        CommandParameter="{Binding}"
+                        IsOn="{Binding IsVisible, Mode=TwoWay}"
+                        OffIcon="&#xED1A;"
+                        OnIcon="&#xE7B3;" />
+                    <ctl:ToggleIcon
                         Grid.Column="3"
                         VerticalAlignment="Center"
-                        IsChecked="{Binding IsLocked, Mode=TwoWay}" />
+                        Command="{Binding Workspace.LayerLockToggleCommand}"
+                        CommandParameter="{Binding}"
+                        IsOn="{Binding IsLocked, Mode=TwoWay}"
+                        OffIcon="&#xE785;"
+                        OnIcon="&#xE72E;" />
                 </Grid>
             </TreeViewItem>
         </DataTemplate>
@@ -116,235 +124,7 @@
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <MenuBar>
-            <MenuBarItem Title="文件">
-                <MenuFlyoutItem Command="{Binding NewCommand}" Text="新建">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="N" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem Command="{Binding OpenCommand}" Text="打开">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="O" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Command="{Binding SaveCommand}" Text="保存">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="S" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Command="{Binding ImportCommand}" Text="导入" />
-                <MenuFlyoutItem Command="{Binding ExportCommand}" Text="导出" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Command="{Binding ExitCommand}" Text="退出">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="E" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-            </MenuBarItem>
-            <MenuBarItem Title="编辑">
-                <MenuFlyoutItem
-                    Command="{Binding UnselectCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="取消选中" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding UndoCommand}"
-                    IsEnabled="{Binding UndoEnabled}"
-                    Text="撤销">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Z" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem
-                    Command="{Binding RedoCommand}"
-                    IsEnabled="{Binding RedoEnabled}"
-                    Text="重做">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Y" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem Command="{Binding CutCommand}" Text="剪切">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="X" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem Command="{Binding CopyCommand}" Text="复制">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="C" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem Command="{Binding PasteCommand}" Text="粘贴">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="V" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Command="{Binding PropertyCommand}" Text="属性" />
-                <RadioMenuFlyoutItem
-                    Command="{Binding TransparentCommand}"
-                    IsChecked="True"
-                    Text="透明背景" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutSubItem Text="排列">
-                    <MenuFlyoutItem
-                        Command="{Binding OrderCommand}"
-                        CommandParameter="TopDown"
-                        Text="上下布局" />
-                    <MenuFlyoutItem
-                        Command="{Binding OrderCommand}"
-                        CommandParameter="LeftRight"
-                        Text="左右布局" />
-                    <MenuFlyoutItem
-                        Command="{Binding OrderCommand}"
-                        CommandParameter="Diagonal"
-                        Text="对角布局" />
-                    <MenuFlyoutItem
-                        Command="{Binding OrderCommand}"
-                        CommandParameter="AltDiagonal"
-                        Text="斜对角布局" />
-                    <MenuFlyoutItem
-                        Command="{Binding OrderCommand}"
-                        CommandParameter="BinaryTree"
-                        Text="二叉树布局" />
-                </MenuFlyoutSubItem>
-            </MenuBarItem>
-            <MenuBarItem Title="图层">
-                <MenuFlyoutItem Command="{Binding AddLayerCommand}" Text="新建图层" />
-                <MenuFlyoutItem Command="{Binding AddGroupCommand}" Text="新建组" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerRenameCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="重命名图层" />
-                <MenuFlyoutItem
-                    Command="{Binding DeleteLayerCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="删除图层" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding LayerLockCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="锁定" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerUnlockCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="解锁" />
-                <MenuFlyoutItem Command="{Binding AllUnlockCommand}" Text="全部解锁" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding LayerHiddenCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="隐藏" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerVisibleCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="显示" />
-                <MenuFlyoutItem Command="{Binding AllVisibleCommand}" Text="全部显示" />
-                <MenuFlyoutItem
-                    Command="{Binding OtherHiddenCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="隐藏其他" />
-                <MenuFlyoutItem
-                    Command="{Binding OtherVisibleCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="显示其他" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding UnselectCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="取消选择图层" />
-                <MenuFlyoutItem
-                    Command="{Binding SelectPreviousCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="选择上一层" />
-                <MenuFlyoutItem
-                    Command="{Binding SelectNextCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="选择下一层" />
-                <MenuFlyoutItem
-                    Command="{Binding SelectParentCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="选择父层" />
-                <MenuFlyoutItem Command="{Binding SelectTopCommand}" Text="选择顶层" />
-                <MenuFlyoutItem Command="{Binding SelectBottomCommand}" Text="选择底层" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding LayerPropertyCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="图层属性" />
-            </MenuBarItem>
-            <MenuBarItem Title="排列">
-                <MenuFlyoutItem
-                    Command="{Binding LayerMoveTopCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="移至顶层" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerMoveUpCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="上移一层" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerMoveDownCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="下移一层" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerMoveBottomCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="移至底层" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding LayerHorizontalLeftCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="左对齐" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerHorizontalCenterCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="居中对齐" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerHorizontalRightCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="右对齐" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerVerticalTopCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="顶部对齐" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerVerticalMidCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="中间对齐" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerVerticalBottomCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="底部对齐" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{Binding LayerHorizontalFlipCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="水平翻转" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerVerticalFlipCommand}"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="垂直翻转" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerRotateCommand}"
-                    CommandParameter="90"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="顺时针旋转90°" />
-                <MenuFlyoutItem
-                    Command="{Binding LayerRotateCommand}"
-                    CommandParameter="-90"
-                    IsEnabled="{Binding IsSelectedLayer}"
-                    Text="逆时针旋转90°" />
-            </MenuBarItem>
-            <MenuBarItem Title="帮助">
-                <MenuFlyoutItem Command="{Binding AboutCommand}" Text="关于">
-                    <MenuFlyoutItem.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="I" Modifiers="Control" />
-                    </MenuFlyoutItem.KeyboardAccelerators>
-                </MenuFlyoutItem>
-            </MenuBarItem>
-        </MenuBar>
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />

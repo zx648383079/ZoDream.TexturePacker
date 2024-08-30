@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System;
+using System.Reflection.Emit;
 using System.Windows.Input;
 using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.Plugins;
@@ -47,11 +48,13 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand LayerScaleXCommand { get; private set; }
         public ICommand LayerScaleYCommand { get; private set; }
         public ICommand LayerVisibleCommand { get; private set; }
+        public ICommand LayerVisibleToggleCommand { get; private set; }
         public ICommand LayerHiddenCommand { get; private set; }
         public ICommand AllVisibleCommand { get; private set; }
         public ICommand OtherHiddenCommand { get; private set; }
         public ICommand OtherVisibleCommand { get; private set; }
         public ICommand LayerLockCommand { get; private set; }
+        public ICommand LayerLockToggleCommand { get; private set; }
         public ICommand LayerUnlockCommand { get; private set; }
         public ICommand AllUnlockCommand { get; private set; }
         public ICommand LayerRenameCommand { get; private set; }
@@ -92,10 +95,7 @@ namespace ZoDream.TexturePacker.ViewModels
             await App.ViewModel.OpenDialogAsync(dialog);
         }
 
-        private void TapDeleteLayer(object? _)
-        {
-
-        }
+        
 
 
 
@@ -183,7 +183,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapSelectParent(object? _)
         {
-
+            
         }
 
         private void TapSelectPrevious(object? _)
@@ -216,44 +216,140 @@ namespace ZoDream.TexturePacker.ViewModels
 
         }
 
-        private void TapLayerVisible(object? _)
+        private void TapDeleteLayer(object? arg)
         {
-
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            if (LayerItems.Remove(layer))
+            {
+                Editor?.Remove(layer.Id);
+            }
+            Editor?.Invalidate();
         }
 
-        private void TapLayerHidden(object? _)
+        private void TapLayerVisible(object? arg)
         {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsVisible = true;
+            Editor[layer.Id].Visible = true;
+            Editor.Invalidate();
+        }
 
+        private void TapLayerHidden(object? arg)
+        {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsVisible = false;
+            Editor[layer.Id].Visible = false;
+            Editor?.Invalidate();
         }
 
         private void TapAllVisible(object? _)
         {
-
+            LayerItems.Get(item => {
+                item.IsVisible = true;
+                Editor[item.Id].Visible = false;
+                return false;
+            });
+            Editor?.Invalidate();
         }
 
-        private void TapOtherHidden(object? _)
+        private void TapOtherHidden(object? arg)
         {
-
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            LayerItems.Get(item => {
+                if (item.Children.Count > 0)
+                {
+                    return false;
+                }
+                item.IsVisible = item == layer;
+                Editor[item.Id].Visible = item.IsVisible;
+                return false;
+            });
+            Editor?.Invalidate();
         }
 
-        private void TapOtherVisible(object? _)
+        private void TapOtherVisible(object? arg)
         {
-
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            LayerItems.Get(item => {
+                if (item.Children.Count > 0)
+                {
+                    return false;
+                }
+                item.IsVisible = item != layer;
+                Editor[item.Id].Visible = item.IsVisible;
+                return false;
+            });
+            Editor?.Invalidate();
         }
 
-        private void TapLayerLock(object? _)
+        private void TapLayerVisibleToggle(object? arg)
         {
-
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsVisible = !layer.IsVisible;
+            Editor[layer.Id].Visible = layer.IsVisible;
+            Editor?.Invalidate();
         }
 
-        private void TapLayerUnlock(object? _)
+        private void TapLayerLockToggle(object? arg)
         {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsLocked = !layer.IsLocked;
+        }
 
+        private void TapLayerLock(object? arg)
+        {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsLocked = true;
+        }
+
+        private void TapLayerUnlock(object? arg)
+        {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.IsLocked = false;
         }
 
         private void TapAllUnlock(object? _)
         {
-
+            LayerItems.Get(item => {
+                item.IsLocked = false;
+                return false;
+            });
         }
 
         private async void TapLayerRename(object? _)

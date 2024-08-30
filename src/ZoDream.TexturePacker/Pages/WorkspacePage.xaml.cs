@@ -25,6 +25,7 @@ namespace ZoDream.TexturePacker.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            App.ViewModel.BindMenu(ViewModel);
             ViewModel.Editor = Editor;
             if (e.Parameter is IEnumerable<IStorageItem> items)
             {

@@ -135,7 +135,7 @@ namespace ZoDream.TexturePacker.ViewModels
                         continue;
                     }
                     Editor!.Add(kidLayer);
-                    parentLayer.Children.Add(new LayerViewModel()
+                    parentLayer.Children.Add(new LayerViewModel(this)
                     {
                         Id = kidLayer.Id,
                         Name = kid.Name,

@@ -60,10 +60,10 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public void AddLayer(SpriteLayerSection data)
         {
-            LayerItems.Add(new LayerViewModel()
+            LayerItems.Add(new LayerViewModel(this)
             {
                 Name = data.Name,
-                Children = [..data.Items.Select(item => new LayerViewModel()
+                Children = [..data.Items.Select(item => new LayerViewModel(this)
                 {
                     Name = item.Name
                 })]
@@ -72,7 +72,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public LayerViewModel AddLayer(int id, string name, BitmapSource? image)
         {
-            var layer = new LayerViewModel()
+            var layer = new LayerViewModel(this)
             {
                 Id = id,
                 Name = name,
