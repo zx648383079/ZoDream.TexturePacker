@@ -157,6 +157,8 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
                 }
                 uvItems[i] = uv;
             }
+
+
             var items = textureItems.Select((texture, n) => {
                 var block = new SpriteLayerSection()
                 {

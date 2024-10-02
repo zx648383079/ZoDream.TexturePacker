@@ -3,13 +3,108 @@
     x:Class="ZoDream.TexturePacker.Dialogs.LayerPropertyDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctl="using:ZoDream.TexturePacker.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZoDream.TexturePacker.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
     Title="图层属性"
     PrimaryButtonText="确认"
     SecondaryButtonText="取消"
     mc:Ignorable="d">
 
-    <Grid />
+    <ContentDialog.DataContext>
+        <vm:LayerPropertyDialogViewModel />
+    </ContentDialog.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{StaticResource HeaderLb}" Text="名称：" />
+        <TextBlock
+            Grid.Row="1"
+            Style="{StaticResource HeaderLb}"
+            Text="位置：" />
+        <TextBlock
+            Grid.Row="2"
+            Style="{StaticResource HeaderLb}"
+            Text="尺寸：" />
+        <TextBlock
+            Grid.Row="3"
+            Style="{StaticResource HeaderLb}"
+            Text="旋转：" />
+        <TextBlock
+            Grid.Row="4"
+            Style="{StaticResource HeaderLb}"
+            Text="缩放：" />
+        <TextBlock
+            Grid.Row="5"
+            Style="{StaticResource HeaderLb}"
+            Text="可见：" />
+        <TextBlock
+            Grid.Row="6"
+            Style="{StaticResource HeaderLb}"
+            Text="锁定：" />
+
+        <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1"
+            Orientation="Horizontal">
+            <NumberBox Header="X" Value="{Binding X, Mode=TwoWay}" />
+            <NumberBox Header="Y" Value="{Binding Y, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Orientation="Horizontal">
+            <NumberBox Header="Width" Value="{Binding Width, Mode=TwoWay}" />
+            <ctl:ToggleIcon
+                VerticalAlignment="Bottom"
+                IsOn="{Binding IsLockSize, Mode=TwoWay}"
+                OffIcon="&#xE785;"
+                OnIcon="&#xE72E;" />
+            <NumberBox Header="Height" Value="{Binding Height, Mode=TwoWay}" />
+        </StackPanel>
+        <NumberBox
+            Grid.Row="3"
+            Grid.Column="1"
+            Value="{Binding Rotate, Mode=TwoWay}" />
+        <StackPanel
+            Grid.Row="4"
+            Grid.Column="1"
+            Orientation="Horizontal">
+            <NumberBox Header="ScaleX" Value="{Binding ScaleX, Mode=TwoWay}" />
+            <ctl:ToggleIcon
+                VerticalAlignment="Bottom"
+                IsOn="{Binding IsLockScale, Mode=TwoWay}"
+                OffIcon="&#xE785;"
+                OnIcon="&#xE72E;" />
+            <NumberBox Header="ScaleY" Value="{Binding ScaleY, Mode=TwoWay}" />
+        </StackPanel>
+        <ToggleSwitch
+            Grid.Row="5"
+            Grid.Column="1"
+            IsOn="{Binding IsVisible, Mode=TwoWay}"
+            OffContent="隐藏"
+            OnContent="显示" />
+        <ToggleSwitch
+            Grid.Row="6"
+            Grid.Column="1"
+            IsOn="{Binding IsLocked, Mode=TwoWay}"
+            OffContent="解锁"
+            OnContent="锁定" />
+    </Grid>
 </ContentDialog>

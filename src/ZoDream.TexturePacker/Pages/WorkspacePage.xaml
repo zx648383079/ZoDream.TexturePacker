@@ -129,6 +129,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <CommandBar>
                 <AppBarButton
@@ -170,6 +171,12 @@
                     Icon="Download"
                     Label="导出" />
             </CommandBar>
+
+            <ToggleSwitch
+                Grid.Column="2"
+                IsOn="{Binding LayerMode, Mode=TwoWay}"
+                OffContent="图层"
+                OnContent="效果图" />
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

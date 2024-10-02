@@ -12,7 +12,15 @@ namespace ZoDream.TexturePacker.ViewModels
         public CommandManager UndoRedo { get; private set; } = new();
         public IImageEditor? Editor { get; set; }
 
-        
+
+        private bool _layerMode;
+
+        public bool LayerMode {
+            get => _layerMode;
+            set => Set(ref _layerMode, value);
+        }
+
+
 
         private bool _undoEnabled;
 
