@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins.Readers;
 using ZoDream.TexturePacker.Plugins.Readers.Cocos;

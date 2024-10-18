@@ -8,7 +8,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Cocos
 {
     public class AtlasReader : BaseTextReader
     {
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("xy:") && content.Contains("format:");
         }

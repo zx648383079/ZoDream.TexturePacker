@@ -11,13 +11,13 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
         public uint RotationDeformers;
         public uint ArtMeshes;
         public uint Parameters;
-        public uint PartKeyforms;
-        public uint WarpDeformerKeyforms;
-        public uint RotationDeformerKeyforms;
-        public uint ArtMeshKeyforms;
-        public uint KeyformPositions;
+        public uint PartKeyForms;
+        public uint WarpDeformerKeyForms;
+        public uint RotationDeformerKeyForms;
+        public uint ArtMeshKeyForms;
+        public uint KeyFormPositions;
         public uint ParameterBindingIndices;
-        public uint KeyformBindings;
+        public uint KeyFormBindings;
         public uint ParameterBindings;
         public uint Keys;
         public uint Uvs;
@@ -27,6 +27,6 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
         public uint DrawOrderGroupObjects;
         public uint Glue;
         public uint GlueInfo;
-        public uint GlueKeyforms;
+        public uint GlueKeyForms;
     }
 }

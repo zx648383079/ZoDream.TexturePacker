@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.Shared.Storage;
+using ZoDream.Shared.IO;
 
 namespace ZoDream.TexturePacker.Plugins.Readers
 {
     public abstract class BaseTextReader<T> : IPluginReader<IEnumerable<T>>, ITextReader<IEnumerable<T>>
 
     {
-        public virtual bool Canable(string content)
+        public virtual bool IsEnabled(string content)
         {
             return true;
         }

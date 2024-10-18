@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Windows.Storage;
-using ZoDream.Shared.Storage;
+using ZoDream.Shared.IO;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
     public class PlistReader : BaseTextReader
     {
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("<string>$TexturePacker:SmartUpdate:");
         }

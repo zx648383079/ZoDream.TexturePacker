@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.Shared.Storage;
+using ZoDream.Shared.IO;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers
@@ -35,7 +35,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers
         {
             foreach (var item in Items)
             {
-                if (item.Canable(content))
+                if (item.IsEnabled(content))
                 {
                     return item.Deserialize(content, fileName);
                 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
 	  <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 	  <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
     <RootNamespace>ZoDream.TexturePacker</RootNamespace>
@@ -12,9 +12,10 @@
 	  <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
 	  <LangVersion>12</LangVersion>
 	  <Nullable>Enable</Nullable>
+	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\ImageEditor.xaml" />
@@ -56,7 +57,7 @@
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
     <PackageReference Include="SkiaSharp.Views.WinUI" Version="2.88.8" />
     <PackageReference Include="Svg.Skia" Version="2.0.0.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -69,6 +70,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\ZoDream.Shared.Drawing\ZoDream.Shared.Drawing.csproj" />
     <ProjectReference Include="..\..\shared\ZoDream.Shared.UndoRedo\ZoDream.Shared.UndoRedo.csproj" />
     <ProjectReference Include="..\..\shared\ZoDream.Shared\ZoDream.Shared.csproj" />
   </ItemGroup>

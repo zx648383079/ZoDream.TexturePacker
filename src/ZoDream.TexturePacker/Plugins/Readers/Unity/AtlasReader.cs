@@ -7,7 +7,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
 {
     public class AtlasReader : BaseTextReader
     {
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("bounds:") && content.Contains("offsets:");
         }

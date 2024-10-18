@@ -12,7 +12,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Live2d
 {
     public class MocJsonReader : BaseTextReader
     {
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("\"FileReferences\"");
         }

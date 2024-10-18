@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.TexturePacker.Plugins.Bitmaps.Pvr;
+using ZoDream.Shared.Drawing;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {

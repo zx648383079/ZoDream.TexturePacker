@@ -1,13 +1,14 @@
-﻿using SkiaSharp;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using ZoDream.Shared.Drawing;
+using ZoDream.Shared.IO;
 
-namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
+namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
     public static class PvtImage
     {
         public static readonly uint HeaderVersion = 0x03525650;
-        private static readonly uint BadEndianess = 0x50565203;
+        private static readonly uint BadEndian = 0x50565203;
 
         public static IImageData? Decode(byte[] buffer)
         {

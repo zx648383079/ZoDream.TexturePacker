@@ -11,7 +11,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Egret
         {
             PropertyNamingPolicy = new LowcaseJsonNamingPolicy()
         };
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("\"frames\"");
         }

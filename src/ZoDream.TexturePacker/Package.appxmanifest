@@ -34,7 +34,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="TexturePacker"
+        DisplayName="ZoDream.TexturePacker"
         Description="Texture Packer And Unpacker"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"

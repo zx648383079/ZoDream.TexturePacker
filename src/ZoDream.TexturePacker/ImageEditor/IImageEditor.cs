@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ImageEditor

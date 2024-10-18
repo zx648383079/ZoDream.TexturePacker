@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Models;

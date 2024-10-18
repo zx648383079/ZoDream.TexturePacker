@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.Shared.IO;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.Live2d

@@ -12,7 +12,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Unity
             PropertyNamingPolicy = new UnityJsonNamingPolicy()
         };
 
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             if (content.Contains("\"SubTexture\"") && content.Contains("\"imagePath\""))
             {

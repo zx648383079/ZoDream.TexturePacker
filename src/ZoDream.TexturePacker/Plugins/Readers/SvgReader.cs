@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using ZoDream.Shared.Drawing;
+using ZoDream.TexturePacker.Drawing;
 
 namespace ZoDream.TexturePacker.Plugins.Readers
 {
@@ -23,7 +25,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers
         {
             using var stream = File.OpenWrite(fileName);
             using var canvas = SKSvgCanvas.Create(new SKRect(0, 0, 100, 100), stream);
-            canvas.DrawBitmap(data.TryParse(), 0, 0);
+            canvas.DrawBitmap(data.ToBitmap(), 0, 0);
             canvas.Flush();
             return Task.CompletedTask;
         }

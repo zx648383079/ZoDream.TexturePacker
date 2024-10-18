@@ -16,7 +16,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Spine
             PropertyNamingPolicy = new LowcaseJsonNamingPolicy()
         };
 
-        public override bool Canable(string content)
+        public override bool IsEnabled(string content)
         {
             return content.Contains("\"skeleton\"") && content.Contains("\"spine\"");
         }

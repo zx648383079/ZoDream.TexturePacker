@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using ZoDream.TexturePacker.Plugins;
-using ZoDream.TexturePacker.Plugins.Data;
+using ZoDream.Shared.Drawing;
+using ZoDream.TexturePacker.Drawing;
 
 namespace ZoDream.TexturePacker.ViewModels
 {

@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using ZoDream.Shared.ViewModel;
 using ZoDream.TexturePacker.Pages;
@@ -43,6 +37,10 @@ namespace ZoDream.TexturePacker.ViewModels
             picker.FileTypeFilter.Add("*");
             App.ViewModel.InitializePicker(picker);
             var items = await picker.PickMultipleFilesAsync();
+            if (items.Count == 0)
+            {
+                return;
+            }
             App.ViewModel.Navigate<WorkspacePage>(items);
         }
 

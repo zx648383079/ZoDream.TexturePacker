@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
+namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct PVRv3TexHeader

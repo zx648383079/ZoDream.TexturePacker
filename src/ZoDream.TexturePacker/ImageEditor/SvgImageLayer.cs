@@ -2,6 +2,7 @@
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
 using Svg.Skia;
+using ZoDream.Shared.Drawing;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {

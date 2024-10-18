@@ -1,8 +1,6 @@
-﻿using SkiaSharp;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.Drawing;
 
 namespace ZoDream.TexturePacker.Plugins.Readers
 {
@@ -20,7 +18,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers
 
         public Task WriteAsync(string fileName, IImageData data)
         {
-            data.TryParse()?.SaveAs(fileName);
+            data.ToBitmap()?.SaveAs(fileName);
             return Task.CompletedTask;
         }
 

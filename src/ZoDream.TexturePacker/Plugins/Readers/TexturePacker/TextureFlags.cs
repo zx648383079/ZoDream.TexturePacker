@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZoDream.TexturePacker.Plugins.Bitmaps.Pvr
+namespace ZoDream.TexturePacker.Plugins.Readers.TexturePacker
 {
     public enum PvrTextureFlags
     {

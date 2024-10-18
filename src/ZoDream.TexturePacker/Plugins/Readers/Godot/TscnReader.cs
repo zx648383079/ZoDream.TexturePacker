@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.Shared.Storage;
+using ZoDream.Shared.IO;
 using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.Plugins.Readers.Godot
 {
     public class TscnReader : IPluginReader, ITextReader
     {
-        public bool Canable(string content)
+        public bool IsEnabled(string content)
         {
             return content.StartsWith("[gd_scene") && content.Contains("uid=\"");
         }
