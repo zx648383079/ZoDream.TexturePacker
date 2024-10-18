@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ZoDream.TexturePacker (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "nativeDebugging": true
     },
     "ZoDream.TexturePacker (Unpackaged)": {
       "commandName": "Project"

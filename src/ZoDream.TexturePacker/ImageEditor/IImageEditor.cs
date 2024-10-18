@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ZoDream.Shared.Drawing;
-using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
@@ -14,7 +13,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         public int ActualHeightI { get; }
         public int ActualWidthI { get; }
 
-        public SKColor? Backgound { get; set; }
+        public SKColor? BackgroundColor { get; set; }
 
         public IList<IImageLayer> LayerItems { get; }
 

@@ -147,7 +147,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapTransparent(object? _)
         {
-            Editor!.Backgound = Editor.Backgound is null ? SKColors.White : null;
+            Editor!.BackgroundColor = Editor.BackgroundColor is null ? SKColors.White : null;
             Editor.Invalidate();
         }
 

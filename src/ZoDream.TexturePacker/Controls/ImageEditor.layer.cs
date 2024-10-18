@@ -19,12 +19,12 @@ namespace ZoDream.TexturePacker.Controls
         /// </summary>
         private int _widthI = 0;
         private int _heightI = 0;
-        private TransparentImageLayer? _transparentBackgound;
+        private TransparentImageLayer? _transparentBackground;
 
         private ICommandImageLayer? _commandLayer;
         public IList<IImageLayer> LayerItems { get; private set; } = [];
 
-        public SKColor? Backgound { get; set; }
+        public SKColor? BackgroundColor { get; set; }
 
 
         public int ActualHeightI => _heightI;
@@ -155,7 +155,7 @@ namespace ZoDream.TexturePacker.Controls
             _widthI = width; 
             _heightI = height;
             ResizeWithControl(width, height);
-            _transparentBackgound?.Invalidate();
+            _transparentBackground?.Invalidate();
             //_surface?.Dispose();
             //_surface = null;
         }
@@ -213,11 +213,11 @@ namespace ZoDream.TexturePacker.Controls
 
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
-            canvas.Clear(Backgound ?? SKColors.Transparent);
-            if (Backgound is null)
+            canvas.Clear(BackgroundColor ?? SKColors.Transparent);
+            if (BackgroundColor is null)
             {
-                _transparentBackgound ??= new TransparentImageLayer(this);
-                _transparentBackgound.Paint(canvas);
+                _transparentBackground ??= new TransparentImageLayer(this);
+                _transparentBackground.Paint(canvas);
             }
             foreach (var item in LayerItems)
             {
@@ -274,7 +274,7 @@ namespace ZoDream.TexturePacker.Controls
             {
                 item.Dispose();
             }
-            _transparentBackgound?.Dispose();
+            _transparentBackground?.Dispose();
         }
     }
 }
