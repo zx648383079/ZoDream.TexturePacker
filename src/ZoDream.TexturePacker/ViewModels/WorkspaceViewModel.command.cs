@@ -2,7 +2,9 @@
 using System;
 using System.Reflection.Emit;
 using System.Windows.Input;
+using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Dialogs;
+using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels
@@ -33,6 +35,8 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand CopyCommand { get; private set; }
         public ICommand PasteCommand { get; private set; }
         public ICommand TransparentCommand { get; private set; }
+
+        public ICommand SeparateCommand { get; private set; }
         public ICommand OrderCommand { get; private set; }
         public ICommand AddLayerCommand { get; private set; }
         public ICommand AddGroupCommand { get; private set; }
@@ -142,6 +146,62 @@ namespace ZoDream.TexturePacker.ViewModels
                 var (width, height) = new CssSprites(res).Compute([.. Editor!.LayerItems]);
                 Editor!.Resize(width, height);
                 Editor.Invalidate();
+            }
+        }
+        /// <summary>
+        /// 自动分离物体对象
+        /// </summary>
+        /// <param name="_"></param>
+        private async void TapSeparate(object? _)
+        {
+            if (Editor is null || LayerItems.Count == 0)
+            {
+                return;
+            }
+            foreach (var item in LayerItems)
+            {
+                if (!item.IsVisible || item.IsLocked || item.Children.Count > 0)
+                {
+                    continue;
+                }
+                var image = Editor.Get<BitmapImageLayer>(item.Id);
+                if (image is null)
+                {
+                    continue;
+                }
+                var items = await image.Source.GetObjectAsync();
+                var i = 0;
+                using var paint = new SKPaint()
+                {
+                    IsStroke = true,
+                    StrokeWidth = 1,
+                    ColorF = SKColors.Red,
+                };
+                foreach (var path in items)
+                {
+                    var bound = path.Bounds;
+                    var kid = image.Source.Clip(path);
+                    if (kid is null)
+                    {
+                        continue;
+                    }
+                    var kidLayer = new BitmapImageLayer(
+                        kid
+                        , Editor)
+                    {
+                        X = (int)bound.Left,
+                        Y = (int)bound.Top
+                    };
+                    Editor!.Add(kidLayer);
+                    item.Children.Add(new LayerViewModel(this)
+                    {
+                        Id = kidLayer.Id,
+                        Name = $"undefined_{++i}",
+                        PreviewImage = kidLayer.GetPreviewSource()
+                    });
+                }
+                Editor.Invalidate();
+                break;
             }
         }
 

@@ -28,10 +28,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public IList<IImageLayer> Split(IEnumerable<SpriteLayer> items)
         {
-            using var paint = new SKPaint()
-            {
-                FilterQuality = SKFilterQuality.High,
-            };
+            using var paint = new SKPaint();
             return items.Select(item => {
                 var bitmap = new SKBitmap(item.Width, item.Height);
                 using var canvas = new SKCanvas(bitmap);
@@ -68,9 +65,6 @@ namespace ZoDream.TexturePacker.ImageEditor
             };
         }
 
-
-        
-
         public override BitmapSource? GetPreviewSource()
         {
             return Source.CreateThumbnail(60).ToWriteableBitmap();
@@ -79,8 +73,6 @@ namespace ZoDream.TexturePacker.ImageEditor
         public override void Paint(SKCanvas canvas)
         {
             // 设置插值质量为高质量
-            using var paint = new SKPaint();
-            paint.FilterQuality = SKFilterQuality.High;
             canvas.DrawBitmap(Source, X, Y/*, paint*/);
         }
 

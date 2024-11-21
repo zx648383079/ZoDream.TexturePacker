@@ -1,7 +1,4 @@
 ﻿using SkiaSharp;
-using Svg.Skia;
-using System;
-using System.IO;
 using System.Linq;
 using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Drawing;

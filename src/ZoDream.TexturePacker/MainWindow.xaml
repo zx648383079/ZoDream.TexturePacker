@@ -94,6 +94,7 @@
                         IsChecked="True"
                         Text="透明背景" />
                     <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Command="{Binding SeparateCommand}" Text="自动拆分" />
                     <MenuFlyoutSubItem Text="排列">
                         <MenuFlyoutItem
                             Command="{Binding OrderCommand}"
