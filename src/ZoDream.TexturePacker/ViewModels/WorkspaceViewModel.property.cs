@@ -67,18 +67,6 @@ namespace ZoDream.TexturePacker.ViewModels
             return LayerItems.Get(item => item.Name == name);
         }
 
-        public void AddLayer(SpriteLayerSection data)
-        {
-            //var layer = new LayerViewModel(this)
-            //{
-            //    Name = data.Name
-            //};
-            //layer.Children.AddRange(data.Items.Select(item => new LayerViewModel(this)
-            //{
-            //    Name = item.Name
-            //}));
-            //LayerItems.Add(layer);
-        }
 
         public IImageLayer Create(IImageSource source)
         {

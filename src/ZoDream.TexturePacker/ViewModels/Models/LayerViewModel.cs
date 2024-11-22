@@ -20,6 +20,8 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public WorkspaceViewModel Workspace { get; private set; }
 
+        public IImageLayer? Parent { get; set; }
+
         public int Id { get; set; }
 
         private string _name = string.Empty;

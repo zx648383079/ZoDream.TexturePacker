@@ -16,6 +16,10 @@
         <vm:ExportViewModel />
     </ContentDialog.DataContext>
 
+    <ContentDialog.Resources>
+        <ResourceDictionary Source="ms-appx:///Themes/FormStyle.xaml" />
+    </ContentDialog.Resources>
+
     <StackPanel>
         <ComboBox
             Header="导出内容"

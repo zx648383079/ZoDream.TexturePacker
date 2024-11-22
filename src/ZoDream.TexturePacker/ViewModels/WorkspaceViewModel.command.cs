@@ -102,9 +102,7 @@ namespace ZoDream.TexturePacker.ViewModels
             Instance?.AddFolder(dialog.ViewModel.Name);
         }
 
-        private void TapUngroup(object? _)
-        {
-        }
+        
 
         private async void TapAbout(object? _)
         {
@@ -159,51 +157,60 @@ namespace ZoDream.TexturePacker.ViewModels
         /// 自动分离物体对象
         /// </summary>
         /// <param name="_"></param>
-        private async void TapSeparate(object? _)
+        private async void TapSeparate(IImageLayer? arg)
         {
             if (Instance is null || LayerItems.Count == 0)
             {
                 return;
             }
-            var trace = new ImageContourTrace(true);
-            foreach (var item in LayerItems)
+            var layer = arg is not null ? arg : SelectedLayer;
+            if (layer is null)
             {
-                if (!item.IsVisible || item.IsLocked || item.Children.Count > 0)
+                foreach (var item in LayerItems)
                 {
-                    continue;
-                }
-                var layer = Instance.Get(item.Id)?.Source;
-                if (layer is not BitmapImageSource image)
-                {
-                    continue;
-                }
-                var items = await trace.GetContourAsync(image.Source);
-                //using var paint = new SKPaint()
-                //{
-                //    IsStroke = true,
-                //    StrokeWidth = 1,
-                //    ColorF = SKColors.Red,
-                //};
-                Instance!.Add(items.Select(path => {
-                    var bound = path.Bounds;
-                    var kid = image.Source.Clip(path);
-                    if (kid is null)
+                    if (!item.IsVisible || item.IsLocked || item.Children.Count > 0)
                     {
-                        return null;
+                        continue;
                     }
-                    var kidLayer = new BitmapImageSource(
-                        kid
-                        , Instance)
+                    if (item.Source is not BitmapImageSource)
                     {
-                        X = (int)bound.Left,
-                        Y = (int)bound.Top
-                    };
-                    return Create(kidLayer);
-                }), item);
-                item.IsVisible = false;
-                Instance.Invalidate();
-                break;
+                        continue;
+                    }
+                    layer = item;
+                    break;
+                }
             }
+            if (layer is null || layer.Source is not BitmapImageSource image)
+            {
+                return;
+            }
+            
+            var trace = new ImageContourTrace(true);
+            var items = await trace.GetContourAsync(image.Source);
+            //using var paint = new SKPaint()
+            //{
+            //    IsStroke = true,
+            //    StrokeWidth = 1,
+            //    ColorF = SKColors.Red,
+            //};
+            Instance!.Add(items.Select(path => {
+                var bound = path.Bounds;
+                var kid = image.Source.Clip(path);
+                if (kid is null)
+                {
+                    return null;
+                }
+                var kidLayer = new BitmapImageSource(
+                    kid
+                    , Instance)
+                {
+                    X = (int)bound.Left,
+                    Y = (int)bound.Top
+                };
+                return Create(kidLayer);
+            }), layer);
+            layer.IsVisible = false;
+            Instance.Invalidate();
         }
 
         private void TapTransparent(object? _)
@@ -230,27 +237,95 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapSelectTop(object? _)
         {
-
+            if (LayerItems.Count == 0)
+            {
+                return;
+            }
+            var layer = SelectedLayer;
+            if (layer is null || layer.Parent is null)
+            {
+                SelectedLayer = LayerItems[0];
+            } else
+            {
+                SelectedLayer = layer.Parent.Children[0];
+            }
+            Instance?.Select(SelectedLayer);
         }
 
         private void TapSelectBottom(object? _)
         {
-
+            if (LayerItems.Count == 0)
+            {
+                return;
+            }
+            var layer = SelectedLayer;
+            if (layer is null || layer.Parent is null)
+            {
+                SelectedLayer = LayerItems.Last();
+            }
+            else
+            {
+                SelectedLayer = layer.Parent.Children.Last();
+            }
+            Instance?.Select(SelectedLayer);
         }
 
         private void TapSelectParent(object? _)
         {
-            
+            if (LayerItems.Count == 0 || SelectedLayer is null)
+            {
+                return;
+            }
+            var layer = SelectedLayer.Parent;
+            if (layer is null)
+            {
+                return;
+            }
+            SelectedLayer = layer;
+            Instance?.Select(layer);
         }
 
         private void TapSelectPrevious(object? _)
         {
-
+            if (LayerItems.Count == 0 || SelectedLayer is null)
+            {
+                return;
+            }
+            var layer = SelectedLayer;
+            if (layer.Parent is null)
+            {
+                SelectLayer(LayerItems.IndexOf(layer) - 1, LayerItems);
+            } else
+            {
+                SelectLayer(layer.Parent.Children.IndexOf(layer) - 1, layer.Parent.Children);
+            }
         }
 
         private void TapSelectNext(object? _)
         {
+            if (LayerItems.Count == 0 || SelectedLayer is null)
+            {
+                return;
+            }
+            var layer = SelectedLayer;
+            if (layer.Parent is null)
+            {
+                SelectLayer(LayerItems.IndexOf(layer) + 1, LayerItems);
+            }
+            else
+            {
+                SelectLayer(layer.Parent.Children.IndexOf(layer) + 1, layer.Parent.Children);
+            }
+        }
 
+        private void SelectLayer(int i, IImageLayerTree items)
+        {
+            if (i < 0 || i >= items.Count)
+            {
+                return;
+            }
+            SelectedLayer = items[i];
+            Instance?.Select(SelectedLayer);
         }
     }
 }

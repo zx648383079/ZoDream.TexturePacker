@@ -34,6 +34,7 @@
     <None Remove="Pages\WorkspacePage.xaml" />
     <None Remove="Themes\BaseStyle.xaml" />
     <None Remove="Themes\DarkTheme.xaml" />
+    <None Remove="Themes\FormStyle.xaml" />
     <None Remove="Themes\Input.xaml" />
 	  <None Remove="Themes\LightTheme.xaml" />
 	  <None Remove="Themes\TitleBar.xaml" />
@@ -135,6 +136,9 @@
     <Resource Remove="Dialogs\ExportDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Themes\FormStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>

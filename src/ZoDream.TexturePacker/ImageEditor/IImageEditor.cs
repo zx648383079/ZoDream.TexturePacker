@@ -39,12 +39,22 @@ namespace ZoDream.TexturePacker.ImageEditor
         public void Add(IEnumerable<IImageLayer?> items, IImageLayer parent);
 
         public void Add(IImageLayer layer);
-        public void Add(IImageLayer layer, IImageLayer parent);
+        public void Add(IImageLayer layer, IImageLayer? parent);
 
+        public void InsertAfter(IEnumerable<IImageLayer> items, IImageLayer layer);
+        /// <summary>
+        /// 清除全部图层
+        /// </summary>
         public void Clear();
-
+        /// <summary>
+        /// 移除图层并销毁
+        /// </summary>
+        /// <param name="id"></param>
         public void Remove(int id);
-
+        /// <summary>
+        /// 移除图层并销毁
+        /// </summary>
+        /// <param name="layer"></param>
         public void Remove(IImageLayer layer);
 
         public void Resize();
@@ -55,7 +65,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public void Select(int id);
 
-        public void Select(IImageLayer layer);
+        public void Select(IImageLayer? layer);
 
         public void Unselect();
 
@@ -66,7 +76,6 @@ namespace ZoDream.TexturePacker.ImageEditor
         public void SaveAs(string fileName);
 
         public void SaveAs(IImageLayer layer, string fileName);
-
-
+        
     }
 }

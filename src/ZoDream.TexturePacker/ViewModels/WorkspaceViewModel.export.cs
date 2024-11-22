@@ -3,17 +3,8 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Xml.Linq;
 using Windows.Storage;
-using Windows.Storage.Search;
 using ZoDream.TexturePacker.Dialogs;
-using ZoDream.TexturePacker.ImageEditor;
-using ZoDream.TexturePacker.Models;
-using ZoDream.TexturePacker.Plugins;
-using ZoDream.TexturePacker.Plugins.Readers;
-using ZoDream.TexturePacker.Plugins.Readers.Godot;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -99,7 +90,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 }
                 if (item.Children.Count == 0)
                 {
-                    Instance?.SaveAs(Instance.Get(item.Id),
+                    Instance?.SaveAs(item,
                         CombineLayerPath(layerFolder, item.Name));
                     continue;
                 }
@@ -117,7 +108,7 @@ namespace ZoDream.TexturePacker.ViewModels
                     {
                         continue;
                     }
-                    Instance?.SaveAs(Instance.Get(it.Id),
+                    Instance?.SaveAs(it,
                         CombineLayerPath(layerFolder, it.Name));
                 }
             }

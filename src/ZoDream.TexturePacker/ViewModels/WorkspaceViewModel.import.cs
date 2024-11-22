@@ -120,8 +120,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     continue;
                 }
-                var layer = Instance!.Get(parentLayer.Id);
-                if (layer is null || layer.Source is not BitmapImageSource layerImage)
+                if (parentLayer.Source is not BitmapImageSource layerImage)
                 {
                     continue;
                 }
@@ -134,7 +133,7 @@ namespace ZoDream.TexturePacker.ViewModels
                     }
                     Instance!.Add(Create(kidLayer, kid.Name), parentLayer);;
                 }
-                layer.IsVisible = false;
+                parentLayer.IsVisible = false;
             }
         }
 

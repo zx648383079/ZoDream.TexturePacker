@@ -89,6 +89,10 @@ namespace ZoDream.TexturePacker.Controls
 
         public void Clear()
         {
+            foreach (var item in LayerItems)
+            {
+                item.Dispose();
+            }
             LayerItems.Clear();
         }
 
@@ -160,7 +164,10 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return;
             }
+            layer.Parent?.Children.Remove(layer);
             Initialize(layer);
+            layer.Depth = 0;
+            layer.Parent = null;
             LayerItems.AddFirst(layer);
         }
 
@@ -176,11 +183,40 @@ namespace ZoDream.TexturePacker.Controls
             }
         }
 
-        public void Add(IImageLayer layer, IImageLayer parent)
+        public void Add(IImageLayer layer, IImageLayer? parent)
         {
+            if (parent is null)
+            {
+                Add(layer);
+                return;
+            }
             Initialize(layer);
             layer.Depth = parent.Depth + 1;
+            if (parent != layer.Parent)
+            {
+                if (layer.Parent is null)
+                {
+                    LayerItems.Remove(layer);
+                } else
+                {
+                    layer.Parent.Children.Remove(layer);
+                }
+                layer.Parent = parent;
+            }
             parent.Children.AddFirst(layer);
+        }
+
+        public void InsertAfter(IEnumerable<IImageLayer> items, IImageLayer layer)
+        {
+            var parent = layer.Parent;
+            var tree = parent is null ? LayerItems : parent.Children;
+            var i = LayerItems.IndexOf(layer) + 1;
+            foreach (var item in items.Reverse())
+            {
+                item.Parent = parent;
+                item.Depth = layer.Depth;
+                tree.Insert(i, item);
+            }
         }
 
         public void GenerateLayerId(IImageLayer layer)
@@ -194,18 +230,24 @@ namespace ZoDream.TexturePacker.Controls
 
         public void Remove(int id)
         {
-            for (var i = LayerItems.Count - 1; i >= 0; i--)
+            var layer = Get(id);
+            if (layer is null)
             {
-                if (LayerItems[i].Id == id)
-                {
-                    LayerItems.RemoveAt(i);
-                }
+                return;
             }
+            Remove(layer);
         }
 
         public void Remove(IImageLayer layer)
         {
-            LayerItems.Remove(layer);
+            if (layer.Parent is null)
+            {
+                LayerItems.Remove(layer);
+            } else
+            {
+                layer.Parent.Children.Remove(layer);
+            }
+            layer.Dispose();
         }
 
         /// <summary>
@@ -259,8 +301,13 @@ namespace ZoDream.TexturePacker.Controls
                 Select(layer);
             }
         }
-        public void Select(IImageLayer layer)
+        public void Select(IImageLayer? layer)
         {
+            if (layer is null)
+            {
+                Unselect();
+                return;
+            }
             _commandLayer ??= new SelectionImageSource(this);
             _commandLayer.Resize(layer.Source);
             Invalidate();

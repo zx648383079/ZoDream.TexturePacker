@@ -4,9 +4,34 @@ namespace ZoDream.TexturePacker.ViewModels
 {
     public partial class WorkspaceViewModel
     {
-        private void TapLayerRotate(object? _)
+        private void TapUngroup(IImageLayer? arg)
         {
+            var layer = arg is not null ? arg : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            Instance?.InsertAfter(layer.Children, layer);
+            layer.Children.Clear();
+            Instance?.Remove(layer);
+        }
 
+        private void TapLayerRotate(object? arg)
+        {
+            var deg = 0;
+            if (arg is int i)
+            {
+                deg = i;
+            } else if (arg is string s)
+            {
+                _ = int.TryParse(s, out deg);
+            }
+            if (deg == 0 || SelectedLayer is null)
+            {
+                return;
+            }
+            SelectedLayer.Source.Rotate(deg);
+            Instance?.Invalidate();
         }
 
         private void TapLayerScale(object? _)

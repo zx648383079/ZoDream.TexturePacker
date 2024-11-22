@@ -4,6 +4,9 @@ namespace ZoDream.TexturePacker.ImageEditor
 {
     public interface IImageLayer: IDisposable
     {
+
+        public IImageLayer? Parent { get; set; }
+
         public int Id { get; set; }
 
         public string Name { get; set; }
