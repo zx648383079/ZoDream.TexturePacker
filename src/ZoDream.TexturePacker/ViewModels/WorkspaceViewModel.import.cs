@@ -48,20 +48,19 @@ namespace ZoDream.TexturePacker.ViewModels
             await App.ViewModel.OpenDialogAsync(dialog);
         }
 
-        private async Task<LayerViewModel?> AddImageAsync(string? fileName)
+        private async Task<IImageLayer?> AddImageAsync(string? fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
             {
                 return null;
             }
-            var name = Path.GetFileNameWithoutExtension(fileName);
-            var layer = await Editor!.AddImageAsync(fileName);
+            var layer = await Instance!.AddImageAsync(fileName);
             if (layer is null)
             {
                 return null;
             }
             _ = LoadImageMetaAsync(fileName, layer.Id);
-            return AddLayer(layer.Id, name, layer.GetPreviewSource());
+            return layer;
         }
 
         public void DragFileAsync(IEnumerable<IStorageItem> items)
@@ -71,13 +70,12 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void AddImage(IImageData data)
         {
-            var layer = Editor?.AddImage(data);
+            var layer = Instance?.AddImage(data);
             if (layer is null)
             {
                 return;
             }
-            AddLayer(layer.Id, "image_" + layer.Id, layer.GetPreviewSource());
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private async void OnDragImage(IEnumerable<IStorageItem> items)
@@ -99,8 +97,8 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             // var (width, height) = new CssSprites().Compute([.. Editor.LayerItems]);
             // Editor.Resize(width, height);
-            Editor!.Resize();
-            Editor.Invalidate();
+            Instance!.Resize();
+            Instance.Invalidate();
         }
 
         private async Task ImportSpriteAsync(IEnumerable<SpriteLayerSection>? items, 
@@ -110,7 +108,6 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
-            BitmapImageLayer? layer;
             foreach (var data in items)
             {
                 var name = data.UseCustomName ? data.Name : layerName;
@@ -123,27 +120,21 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     continue;
                 }
-                layer = Editor!.Get<BitmapImageLayer>(parentLayer.Id);
-                if (layer is null)
+                var layer = Instance!.Get(parentLayer.Id);
+                if (layer is null || layer.Source is not BitmapImageSource layerImage)
                 {
                     continue;
                 }
                 foreach (var kid in data.Items)
                 {
-                    var kidLayer = layer.Split(kid);
+                    var kidLayer = layerImage.Split(kid);
                     if (kidLayer is null)
                     {
                         continue;
                     }
-                    Editor!.Add(kidLayer);
-                    parentLayer.Children.Add(new LayerViewModel(this)
-                    {
-                        Id = kidLayer.Id,
-                        Name = kid.Name,
-                        PreviewImage = kidLayer.GetPreviewSource()
-                    });
+                    Instance!.Add(Create(kidLayer, kid.Name), parentLayer);;
                 }
-                layer.Visible = false;
+                layer.IsVisible = false;
             }
         }
 

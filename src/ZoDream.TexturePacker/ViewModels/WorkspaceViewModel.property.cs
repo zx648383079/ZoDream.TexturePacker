@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
-using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Shared.UndoRedo;
 using ZoDream.TexturePacker.ImageEditor;
@@ -7,11 +6,12 @@ using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public partial class WorkspaceViewModel
+    public partial class WorkspaceViewModel : IImageCommander
     {
         public CommandManager UndoRedo { get; private set; } = new();
-        public IImageEditor? Editor { get; set; }
+        public IImageEditor? Instance { get; set; }
 
+        public IImageLayerTree Source => LayerItems;
 
         private bool _layerMode;
 
@@ -45,9 +45,9 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _layerItems, value);
         }
 
-        private LayerViewModel? _selectedLayer;
+        private IImageLayer? _selectedLayer;
 
-        public LayerViewModel? SelectedLayer {
+        public IImageLayer? SelectedLayer {
             get => _selectedLayer;
             set {
                 Set(ref _selectedLayer, value);
@@ -55,39 +55,46 @@ namespace ZoDream.TexturePacker.ViewModels
             }
         }
 
+        
 
-        public LayerViewModel? GetLayer(int id)
+        public IImageLayer? GetLayer(int id)
         {
             return LayerItems.Get(id);
         }
 
-        public LayerViewModel? GetLayer(string name)
+        public IImageLayer? GetLayer(string name)
         {
             return LayerItems.Get(item => item.Name == name);
         }
 
         public void AddLayer(SpriteLayerSection data)
         {
-            LayerItems.Add(new LayerViewModel(this)
-            {
-                Name = data.Name,
-                Children = [..data.Items.Select(item => new LayerViewModel(this)
-                {
-                    Name = item.Name
-                })]
-            });
+            //var layer = new LayerViewModel(this)
+            //{
+            //    Name = data.Name
+            //};
+            //layer.Children.AddRange(data.Items.Select(item => new LayerViewModel(this)
+            //{
+            //    Name = item.Name
+            //}));
+            //LayerItems.Add(layer);
         }
 
-        public LayerViewModel AddLayer(int id, string name, BitmapSource? image)
+        public IImageLayer Create(IImageSource source)
         {
-            var layer = new LayerViewModel(this)
+            return new LayerViewModel(this, source)
             {
-                Id = id,
-                Name = name,
-                PreviewImage = image
+                PreviewImage = source.GetPreviewSource()
             };
-            LayerItems.Insert(0, layer);
-            return layer;
+        }
+
+        public IImageLayer Create(IImageSource source, string name)
+        {
+            return new LayerViewModel(this, source)
+            {
+                Name = name,
+                PreviewImage = source.GetPreviewSource()
+            };
         }
     }
 }

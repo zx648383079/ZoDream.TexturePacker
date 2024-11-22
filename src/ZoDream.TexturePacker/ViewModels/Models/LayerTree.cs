@@ -1,12 +1,25 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public class LayerTree: ObservableCollection<LayerViewModel>
+    public class LayerTree : ObservableCollection<IImageLayer>, IImageLayerTree, IList<IImageLayer>
     {
-
-        public new bool Remove(LayerViewModel layer)
+        public void AddFirst(IImageLayer layer)
+        {
+            Insert(0, layer);
+        }
+        public void AddRange(IEnumerable<IImageLayer> items)
+        {
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+        public bool RemoveIfKid(IImageLayer layer)
         {
             var i = IndexOf(layer);
             if (i >= 0)
@@ -24,12 +37,12 @@ namespace ZoDream.TexturePacker.ViewModels
             return false;
         }
 
-        public LayerViewModel? Get(int id)
+        public IImageLayer? Get(int id)
         {
             return Get(item => item.Id == id);
         }
 
-        public LayerViewModel? Get(Func<LayerViewModel, bool> checkFn)
+        public IImageLayer? Get(Func<IImageLayer, bool> checkFn)
         {
             foreach (var item in this)
             {
@@ -40,6 +53,35 @@ namespace ZoDream.TexturePacker.ViewModels
                 }
             }
             return null;
+        }
+
+        public IImageLayer? Get(float x, float y)
+        {
+            foreach (var item in Items)
+            {
+                if (!item.IsChildrenEnabled)
+                {
+                    continue;
+                }
+                var layer = item.Children.Get(x, y);
+                if (layer is not null)
+                {
+                    return layer;
+                }
+                if (item.IsVisible && item.Source.Contains(x, y))
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public void Paint(IImageCanvas canvas)
+        {
+            foreach (var item in Items)
+            {
+                item.Paint(canvas);
+            }
         }
     }
 }

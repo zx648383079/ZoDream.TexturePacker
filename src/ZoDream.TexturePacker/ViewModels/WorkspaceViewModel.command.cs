@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
+using SkiaSharp.Views.Windows;
 using System;
-using System.Reflection.Emit;
+using System.Linq;
 using System.Windows.Input;
 using ZoDream.Shared.Drawing;
 using ZoDream.TexturePacker.Dialogs;
@@ -80,24 +81,30 @@ namespace ZoDream.TexturePacker.ViewModels
         private async void TapAddLayer(object? _)
         {
             var dialog = new LayerDialog();
-            await App.ViewModel.OpenDialogAsync(dialog);
+            var model = dialog.ViewModel;
+            var res = await App.ViewModel.OpenFormAsync(dialog);
+            if (!res)
+            {
+                return;
+            }
+            Instance?.AddText(model.Text, model.FamilyName, model.Size, model.Foreground.ToSKColor());
+            Instance?.Invalidate();
         }
 
         private async void TapAddGroup(object? _)
         {
             var dialog = new GroupDialog();
-            await App.ViewModel.OpenDialogAsync(dialog);
+            var res = await App.ViewModel.OpenFormAsync(dialog);
+            if (!res)
+            {
+                return;
+            }
+            Instance?.AddFolder(dialog.ViewModel.Name);
         }
 
         private void TapUngroup(object? _)
         {
         }
-
-    
-
-        
-
-
 
         private async void TapAbout(object? _)
         {
@@ -108,9 +115,9 @@ namespace ZoDream.TexturePacker.ViewModels
         private void TapNew(object? _)
         {
             LayerItems.Clear();
-            Editor?.Clear();
-            Editor?.Unselect();
-            Editor?.Invalidate();
+            Instance?.Clear();
+            Instance?.Unselect();
+            Instance?.Invalidate();
             
         }
 
@@ -136,16 +143,16 @@ namespace ZoDream.TexturePacker.ViewModels
         }
         private void TapUnselect(object? _)
         {
-            Editor!.Unselect();
+            Instance!.Unselect();
             SelectedLayer = null;
         }
         private void TapOrder(object? arg)
         {
             if (Enum.TryParse<CssSpritesAlgorithm>(arg as string, out var res))
             {
-                var (width, height) = new CssSprites(res).Compute([.. Editor!.LayerItems]);
-                Editor!.Resize(width, height);
-                Editor.Invalidate();
+                var (width, height) = new CssSprites(res).Compute([.. Instance!.LayerItems.Select(i => i.Source)]);
+                Instance!.Resize(width, height);
+                Instance.Invalidate();
             }
         }
         /// <summary>
@@ -154,7 +161,7 @@ namespace ZoDream.TexturePacker.ViewModels
         /// <param name="_"></param>
         private async void TapSeparate(object? _)
         {
-            if (Editor is null || LayerItems.Count == 0)
+            if (Instance is null || LayerItems.Count == 0)
             {
                 return;
             }
@@ -165,65 +172,58 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     continue;
                 }
-                var image = Editor.Get<BitmapImageLayer>(item.Id);
-                if (image is null)
+                var layer = Instance.Get(item.Id)?.Source;
+                if (layer is not BitmapImageSource image)
                 {
                     continue;
                 }
                 var items = await trace.GetContourAsync(image.Source);
-                var i = 0;
-                using var paint = new SKPaint()
-                {
-                    IsStroke = true,
-                    StrokeWidth = 1,
-                    ColorF = SKColors.Red,
-                };
-                foreach (var path in items)
-                {
+                //using var paint = new SKPaint()
+                //{
+                //    IsStroke = true,
+                //    StrokeWidth = 1,
+                //    ColorF = SKColors.Red,
+                //};
+                Instance!.Add(items.Select(path => {
                     var bound = path.Bounds;
                     var kid = image.Source.Clip(path);
                     if (kid is null)
                     {
-                        continue;
+                        return null;
                     }
-                    var kidLayer = new BitmapImageLayer(
+                    var kidLayer = new BitmapImageSource(
                         kid
-                        , Editor)
+                        , Instance)
                     {
                         X = (int)bound.Left,
                         Y = (int)bound.Top
                     };
-                    Editor!.Add(kidLayer);
-                    item.Children.Add(new LayerViewModel(this)
-                    {
-                        Id = kidLayer.Id,
-                        Name = $"undefined_{++i}",
-                        PreviewImage = kidLayer.GetPreviewSource()
-                    });
-                }
-                Editor.Invalidate();
+                    return Create(kidLayer);
+                }), item);
+                item.IsVisible = false;
+                Instance.Invalidate();
                 break;
             }
         }
 
         private void TapTransparent(object? _)
         {
-            Editor!.BackgroundColor = Editor.BackgroundColor is null ? SKColors.White : null;
-            Editor.Invalidate();
+            Instance!.BackgroundColor = Instance.BackgroundColor is null ? SKColors.White : null;
+            Instance.Invalidate();
         }
 
-        private void OnEditorSelected(int id)
+        private void OnEditorSelected(IImageLayer? layer)
         {
-            SelectedLayer = GetLayer(id);
+            SelectedLayer = layer;
         }
 
-        private void OnLayerSelected(LayerViewModel? layer)
+        private void OnLayerSelected(IImageLayer? layer)
         {
             if (layer is null)
             {
                 return;
             }
-            Editor?.Select(layer.Id);
+            Instance?.Select(layer);
         }
 
 
@@ -252,10 +252,5 @@ namespace ZoDream.TexturePacker.ViewModels
         {
 
         }
-
-        
-
-
-
     }
 }

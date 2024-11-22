@@ -19,10 +19,20 @@ namespace ZoDream.TexturePacker.Controls
         /// </summary>
         private int _widthI = 0;
         private int _heightI = 0;
-        private TransparentImageLayer? _transparentBackground;
+        private TransparentImageSource? _transparentBackground;
 
-        private ICommandImageLayer? _commandLayer;
-        public IList<IImageLayer> LayerItems { get; private set; } = [];
+        private ICommandImageSource? _commandLayer;
+        private IImageCommander _commander;
+
+        public IImageCommander Commander 
+        {
+            set {
+                _commander = value;
+                _commander.Instance = this;
+            }
+        }
+
+        public IImageLayerTree LayerItems => _commander.Source;
 
         public SKColor? BackgroundColor { get; set; }
 
@@ -30,20 +40,12 @@ namespace ZoDream.TexturePacker.Controls
         public int ActualHeightI => _heightI;
         public int ActualWidthI => _widthI;
 
-        public IImageLayer? this[int id] => Get<IImageLayer>(id);
+        public IImageLayer? this[int id] => Get(id);
 
 
-        public T? Get<T>(int id)
-            where T : IImageLayer
+        public IImageLayer? Get(int id)
         {
-            foreach (var item in LayerItems)
-            {
-                if (item.Id == id)
-                {
-                    return (T)item;
-                }
-            }
-            return default;
+            return LayerItems.Get(id);
         }
 
         public IImageLayer? AddImage(SKBitmap? image)
@@ -52,7 +54,7 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return null;
             }
-            return Add(new BitmapImageLayer(image.Copy(), this));
+            return Add(new BitmapImageSource(image, this));
         }
 
         public IImageLayer? AddImage(IImageData? image)
@@ -67,12 +69,22 @@ namespace ZoDream.TexturePacker.Controls
 
         public async Task<IImageLayer?> AddImageAsync(string fileName)
         {
-            return AddImage(await ReaderFactory.LoadImageAsync(fileName));
+            var layer = AddImage(await ReaderFactory.LoadImageAsync(fileName));
+            if (layer is not null)
+            {
+                layer.Name = Path.GetFileNameWithoutExtension(fileName);
+            }
+            return layer;
         }
 
         public async Task<IImageLayer?> AddImageAsync(IStorageFile file)
         {
-            return AddImage(await ReaderFactory.LoadImageAsync(file));
+            var layer = AddImage(await ReaderFactory.LoadImageAsync(file));
+            if (layer is not null)
+            {
+                layer.Name = file.Name;
+            }
+            return layer;
         }
 
         public void Clear()
@@ -80,31 +92,95 @@ namespace ZoDream.TexturePacker.Controls
             LayerItems.Clear();
         }
 
-        public TextImageLayer AddText(string text)
+        public IImageLayer AddText(string text)
         {
-            return Add(new TextImageLayer(text, this));
+            return Add(new TextImageSource(text, this));
         }
-        public void Add(IEnumerable<IImageLayer> items)
+
+        public IImageLayer AddText(
+            string text, 
+            string fontFamily, 
+            int fontSize, SKColor color)
         {
-            foreach (var item in items)
+            return Add(new TextImageSource(text, this)
             {
+                FontFamily = SKFontManager.Default.MatchFamily(fontFamily),
+                FontSize = fontSize,
+                Color = color
+            }, text.Trim());
+        }
+
+        public IImageLayer AddFolder(string name)
+        {
+            return Add(new FolderImageSource(this), name);
+        }
+
+        public void Add(IEnumerable<IImageLayer?> items)
+        {
+            foreach (var item in items.Reverse())
+            {
+                if (item is null)
+                {
+                    continue;
+                }
                 Add(item);
             }
         }
-        public T Add<T>(T layer)
-            where T : IImageLayer
+
+        public void Add(IEnumerable<IImageLayer?> items, IImageLayer parent)
+        {
+            foreach (var item in items.Reverse())
+            {
+                if (item is null)
+                {
+                    continue;
+                }
+                Add(item, parent);
+            }
+        }
+
+        public IImageLayer Add(IImageSource source)
+        {
+            var layer = _commander.Create(source);
+            Add(layer);
+            return layer;
+        }
+
+        public IImageLayer Add(IImageSource source, string name)
+        {
+            var layer = _commander.Create(source);
+            layer.Name = name.Length > 10 ? name[0..8] + "..." : name;
+            Add(layer);
+            return layer;
+        }
+
+        public void Add(IImageLayer layer)
         {
             if (LayerItems.Contains(layer))
             {
-                return layer;
+                return;
             }
-            if (LayerItems.Count > 0)
+            Initialize(layer);
+            LayerItems.AddFirst(layer);
+        }
+
+        private void Initialize(IImageLayer layer)
+        {
+            if (layer.Id < 1) 
             {
-                layer.Depth = LayerItems.MaxBy(item => item.Depth)!.Depth + 1;
+                GenerateLayerId(layer);
             }
-            GenerateLayerId(layer);
-            LayerItems.Add(layer);
-            return layer;
+            if (string.IsNullOrWhiteSpace(layer.Name))
+            {
+                layer.Name = $"undefined_{layer.Id}";
+            }
+        }
+
+        public void Add(IImageLayer layer, IImageLayer parent)
+        {
+            Initialize(layer);
+            layer.Depth = parent.Depth + 1;
+            parent.Children.AddFirst(layer);
         }
 
         public void GenerateLayerId(IImageLayer layer)
@@ -141,8 +217,8 @@ namespace ZoDream.TexturePacker.Controls
             var outerHeight = 0;
             foreach (var item in LayerItems)
             {
-                outerWidth = Math.Max(outerWidth, item.X + item.Width);
-                outerHeight = Math.Max(outerHeight, item.Y + item.Height);
+                outerWidth = Math.Max(outerWidth, item.Source.X + item.Source.Width);
+                outerHeight = Math.Max(outerHeight, item.Source.Y + item.Source.Height);
             }
             if (outerHeight == 0 || outerWidth == 0)
             {
@@ -167,27 +243,17 @@ namespace ZoDream.TexturePacker.Controls
         /// <param name="y"></param>
         public void Tap(float x, float y)
         {
-            var items = LayerItems.Where(item => item.Visible).OrderByDescending(item => item.Depth);
-            foreach (var item in items)
+            var layer = LayerItems.Get(x, y);
+            if (layer == null)
             {
-                var offsetX = x - item.X;
-                if (offsetX < 0 || offsetX > item.Width)
-                {
-                    continue;
-                }
-                var offsetY = y - item.Y;
-                if (offsetY < 0 || offsetY > item.Height)
-                {
-                    continue;
-                }
-                Select(item);
-                SelectedCommand?.Execute(item.Id);
                 return;
             }
+            Select(layer);
+            SelectedCommand?.Execute(layer);
         }
         public void Select(int id)
         {
-            var layer = Get<IImageLayer>(id);
+            var layer = Get(id);
             if (layer is not null)
             {
                 Select(layer);
@@ -195,8 +261,8 @@ namespace ZoDream.TexturePacker.Controls
         }
         public void Select(IImageLayer layer)
         {
-            _commandLayer ??= new SelectionImageLayer(this);
-            _commandLayer.Resize(layer);
+            _commandLayer ??= new SelectionImageSource(this);
+            _commandLayer.Resize(layer.Source);
             Invalidate();
         }
 
@@ -214,20 +280,14 @@ namespace ZoDream.TexturePacker.Controls
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
             canvas.Clear(BackgroundColor ?? SKColors.Transparent);
+            var c = new ImageCanvas(canvas);
             if (BackgroundColor is null)
             {
-                _transparentBackground ??= new TransparentImageLayer(this);
-                _transparentBackground.Paint(canvas);
+                _transparentBackground ??= new TransparentImageSource(this);
+                _transparentBackground.Paint(c);
             }
-            foreach (var item in LayerItems)
-            {
-                if (!item.Visible)
-                {
-                    continue;
-                }
-                item.Paint(canvas);
-            }
-            _commandLayer?.Paint(canvas);
+            LayerItems?.Paint(c);
+            _commandLayer?.Paint(c);
         }
 
         public void Invalidate()
@@ -239,13 +299,14 @@ namespace ZoDream.TexturePacker.Controls
         {
             using var bitmap = new SKBitmap(ActualWidthI, ActualHeightI);
             using var canvas = new SKCanvas(bitmap);
+            var c = new ImageCanvas(canvas);
             foreach (var item in LayerItems)
             {
-                if (!item.Visible)
+                if (!item.IsVisible)
                 {
                     continue;
                 }
-                item.Paint(canvas);
+                item.Source.Paint(c);
             }
             canvas.Flush();
             bitmap.SaveAs(fileName);
@@ -257,14 +318,14 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return;
             }
-            var x = layer.X;
-            var y = layer.Y;
-            layer.X = 0;
-            layer.Y = 0;
-            using var bitmap = layer.PaintRotate(-layer.RotateDeg);
+            var x = layer.Source.X;
+            var y = layer.Source.Y;
+            layer.Source.X = 0;
+            layer.Source.Y = 0;
+            using var bitmap = layer.Source.PaintRotate(-layer.Source.RotateDeg);
             bitmap.SaveAs(fileName);
-            layer.X = x;
-            layer.Y = y;
+            layer.Source.X = x;
+            layer.Source.Y = y;
         }
 
 

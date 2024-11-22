@@ -60,7 +60,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
-            var layer = Editor?.Get<IImageLayer>(SelectedLayer.Id);
+            var layer = Instance?.Get(SelectedLayer.Id);
             if (layer == null) 
             {
                 return;
@@ -70,7 +70,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 fileName = CombineLayerPath(file.Path, SelectedLayer.Name);
             }
-            Editor?.SaveAs(layer, fileName);
+            Instance?.SaveAs(layer, fileName);
             App.ViewModel.Toast.Show("导出完成");
         }
 
@@ -99,7 +99,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 }
                 if (item.Children.Count == 0)
                 {
-                    Editor?.SaveAs(Editor.Get<IImageLayer>(item.Id),
+                    Instance?.SaveAs(Instance.Get(item.Id),
                         CombineLayerPath(layerFolder, item.Name));
                     continue;
                 }
@@ -117,7 +117,7 @@ namespace ZoDream.TexturePacker.ViewModels
                     {
                         continue;
                     }
-                    Editor?.SaveAs(Editor.Get<IImageLayer>(it.Id),
+                    Instance?.SaveAs(Instance.Get(it.Id),
                         CombineLayerPath(layerFolder, it.Name));
                 }
             }
@@ -130,7 +130,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 fileName = Path.Combine(file.Path, "undefined.png");
             }
-            Editor?.SaveAs(fileName);
+            Instance?.SaveAs(fileName);
             App.ViewModel.Toast.Show("导出完成");
         }
 

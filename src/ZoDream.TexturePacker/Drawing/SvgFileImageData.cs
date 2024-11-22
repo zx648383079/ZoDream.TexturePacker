@@ -25,11 +25,11 @@ namespace ZoDream.TexturePacker.Drawing
             throw new NotImplementedException();
         }
 
-        public IImageLayer? ToLayer(IImageEditor editor)
+        public IImageSource? ToLayer(IImageEditor editor)
         {
             var svg = new SKSvg();
             svg.Load(fileName);
-            return new SvgImageLayer(svg, editor);
+            return new SvgImageSource(svg, editor);
         }
     }
 }

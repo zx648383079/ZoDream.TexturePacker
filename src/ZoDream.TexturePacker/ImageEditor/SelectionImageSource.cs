@@ -5,7 +5,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     /// <summary>
     /// 选择高亮
     /// </summary>
-    public class SelectionImageLayer(IImageEditor editor): BaseImageLayer(editor), ICommandImageLayer
+    public class SelectionImageSource(IImageEditor editor): BaseImageSource(editor), ICommandImageSource
     {
         private SKSurface? _surface;
 
@@ -16,7 +16,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             Invalidate();
         }
 
-        public void Resize(IImageLayer layer)
+        public void Resize(IImageSource layer)
         {
             X = layer.X;
             Y = layer.Y;
@@ -60,7 +60,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             }
         }
 
-        public override void Paint(SKCanvas canvas)
+        public override void Paint(IImageCanvas canvas)
         {
             if (_surface == null)
             {

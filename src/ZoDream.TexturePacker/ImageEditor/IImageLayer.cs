@@ -1,25 +1,29 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
-using SkiaSharp;
-using System;
+﻿using System;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public interface IImageLayer: IImageBound, IDisposable
+    public interface IImageLayer: IDisposable
     {
         public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public bool IsVisible { get; set; }
+
+        public bool IsLocked {  get; set; }
+
         public int Depth { get; set; }
 
-        public bool Visible { get; set; }
+        public IImageSource Source { get; }
 
+        public IImageLayerTree Children { get; }
         /// <summary>
-        /// 旋转角度0 - 360
+        /// 判断子节点是否启用
         /// </summary>
-        public float RotateDeg { get; set; }
+        public bool IsChildrenEnabled { get; }
 
-        public void Rotate(float angle);
+        public IImageLayer? Get(Func<IImageLayer, bool> checkFn);
 
-        public void Paint(SKCanvas canvas);
-
-        public BitmapSource? GetPreviewSource();
+        public void Paint(IImageCanvas canvas);
     }
 }

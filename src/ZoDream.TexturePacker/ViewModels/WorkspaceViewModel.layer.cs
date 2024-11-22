@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZoDream.TexturePacker.Dialogs;
+﻿using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -31,55 +26,54 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapDeleteLayer(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
             }
-            if (LayerItems.Remove(layer))
+            Instance?.Remove(layer);
+            if (SelectedLayer == layer)
             {
-                Editor?.Remove(layer.Id);
+                SelectedLayer = null;
+                Instance?.Unselect();
             }
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapLayerVisible(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
             }
             layer.IsVisible = true;
-            Editor[layer.Id].Visible = true;
-            Editor.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapLayerHidden(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
             }
             layer.IsVisible = false;
-            Editor[layer.Id].Visible = false;
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapAllVisible(object? _)
         {
             LayerItems.Get(item => {
                 item.IsVisible = true;
-                Editor[item.Id].Visible = false;
                 return false;
             });
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapOtherHidden(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
@@ -90,15 +84,14 @@ namespace ZoDream.TexturePacker.ViewModels
                     return false;
                 }
                 item.IsVisible = item == layer;
-                Editor[item.Id].Visible = item.IsVisible;
                 return false;
             });
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapOtherVisible(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
@@ -109,27 +102,25 @@ namespace ZoDream.TexturePacker.ViewModels
                     return false;
                 }
                 item.IsVisible = item != layer;
-                Editor[item.Id].Visible = item.IsVisible;
                 return false;
             });
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapLayerVisibleToggle(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
             }
             layer.IsVisible = !layer.IsVisible;
-            Editor[layer.Id].Visible = layer.IsVisible;
-            Editor?.Invalidate();
+            Instance?.Invalidate();
         }
 
         private void TapLayerLockToggle(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
@@ -139,7 +130,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapLayerLock(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;
@@ -149,7 +140,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void TapLayerUnlock(object? arg)
         {
-            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
             if (layer is null)
             {
                 return;

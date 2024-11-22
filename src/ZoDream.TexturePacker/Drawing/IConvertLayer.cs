@@ -4,6 +4,6 @@ namespace ZoDream.TexturePacker.Drawing
 {
     public interface IConvertLayer
     {
-        public IImageLayer? ToLayer(IImageEditor editor);
+        public IImageSource? ToLayer(IImageEditor editor);
     }
 }

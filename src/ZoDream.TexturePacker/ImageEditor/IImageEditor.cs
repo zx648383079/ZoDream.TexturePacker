@@ -15,13 +15,13 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public SKColor? BackgroundColor { get; set; }
 
-        public IList<IImageLayer> LayerItems { get; }
+        public IImageLayerTree LayerItems { get; }
 
         public void GenerateLayerId(IImageLayer layer);
 
         public IImageLayer? this[int id] { get; }
 
-        public T? Get<T>(int id) where T : IImageLayer;
+        public IImageLayer? Get(int id);
 
         public Task<IImageLayer?> AddImageAsync(string fileName);
 
@@ -29,11 +29,17 @@ namespace ZoDream.TexturePacker.ImageEditor
         public IImageLayer? AddImage(SKBitmap? image);
         public IImageLayer? AddImage(IImageData? image);
 
-        public TextImageLayer AddText(string text);
+        public IImageLayer AddText(string text);
 
-        public void Add(IEnumerable<IImageLayer> items);
+        public IImageLayer AddText(string text, string fontFamily, int fontSize, SKColor color);
 
-        public T Add<T>(T layer) where T : IImageLayer;
+        public IImageLayer AddFolder(string name);
+
+        public void Add(IEnumerable<IImageLayer?> items);
+        public void Add(IEnumerable<IImageLayer?> items, IImageLayer parent);
+
+        public void Add(IImageLayer layer);
+        public void Add(IImageLayer layer, IImageLayer parent);
 
         public void Clear();
 

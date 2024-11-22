@@ -6,10 +6,10 @@ using ZoDream.Shared.Drawing;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class SvgImageLayer : BaseImageLayer
+    public class SvgImageSource : BaseImageSource
     {
 
-        public SvgImageLayer(SKSvg svg, IImageEditor editor)
+        public SvgImageSource(SKSvg svg, IImageEditor editor)
             : base(editor)
         {
             Source = svg;
@@ -28,7 +28,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             return Source.Picture?.CreateThumbnail(60).ToWriteableBitmap();
         }
 
-        public override void Paint(SKCanvas canvas)
+        public override void Paint(IImageCanvas canvas)
         {
             canvas.DrawPicture(Source.Picture, X, Y);
         }

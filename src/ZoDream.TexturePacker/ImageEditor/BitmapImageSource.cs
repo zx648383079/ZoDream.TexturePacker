@@ -9,15 +9,15 @@ using ZoDream.TexturePacker.Models;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class BitmapImageLayer: BaseImageLayer
+    public class BitmapImageSource: BaseImageSource
     {
 
-        public BitmapImageLayer(string fileName, IImageEditor editor) : this(SKBitmap.Decode(fileName), editor)
+        public BitmapImageSource(string fileName, IImageEditor editor) : this(SKBitmap.Decode(fileName), editor)
         {
             
         }
 
-        public BitmapImageLayer(SKBitmap bitmap, IImageEditor editor): base(editor)
+        public BitmapImageSource(SKBitmap bitmap, IImageEditor editor): base(editor)
         {
             Source = bitmap;
             Width = bitmap.Width;
@@ -26,7 +26,7 @@ namespace ZoDream.TexturePacker.ImageEditor
 
         public SKBitmap Source { get; set; }
 
-        public IList<IImageLayer> Split(IEnumerable<SpriteLayer> items)
+        public IList<IImageSource> Split(IEnumerable<SpriteLayer> items)
         {
             using var paint = new SKPaint();
             return items.Select(item => {
@@ -34,7 +34,7 @@ namespace ZoDream.TexturePacker.ImageEditor
                 using var canvas = new SKCanvas(bitmap);
                 // canvas.Clear(SKColors.Transparent);
                 canvas.DrawBitmap(Source, SKRect.Create(item.X, item.Y, item.Width, item.Height), SKRect.Create(0, 0, item.Width, item.Height), paint);
-                return new BitmapImageLayer(bitmap, Editor) 
+                return new BitmapImageSource(bitmap, Editor) 
                 {
                     X = item.X,
                     Y = item.Y,
@@ -42,7 +42,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             }).ToArray();
         }
 
-        public BitmapImageLayer? Split(SpriteLayer item)
+        public BitmapImageSource? Split(SpriteLayer item)
         {
             if (item.Y < 0)
             {
@@ -57,7 +57,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             {
                 return null;
             }
-            return new BitmapImageLayer(bitmap, Editor)
+            return new BitmapImageSource(bitmap, Editor)
             {
                 X = item.X,
                 Y = item.Y,
@@ -70,7 +70,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             return Source.CreateThumbnail(60).ToWriteableBitmap();
         }
 
-        public override void Paint(SKCanvas canvas)
+        public override void Paint(IImageCanvas canvas)
         {
             // 设置插值质量为高质量
             canvas.DrawBitmap(Source, X, Y/*, paint*/);

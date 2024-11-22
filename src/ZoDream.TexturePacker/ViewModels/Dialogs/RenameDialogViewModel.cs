@@ -3,7 +3,7 @@ using ZoDream.Shared.ViewModel;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public class RenameDialogViewModel: BindableBase
+    public class RenameDialogViewModel : BindableBase, IFormValidator
     {
         public RenameDialogViewModel()
         {
@@ -16,15 +16,15 @@ namespace ZoDream.TexturePacker.ViewModels
             get => _name;
             set {
                 Set(ref _name, value);
-                ConfirmEnabled = !string.IsNullOrWhiteSpace(value);
+                IsValid = !string.IsNullOrWhiteSpace(value);
             }
         }
 
-        private bool _confirmEnabled;
+        private bool _isValid;
 
-        public bool ConfirmEnabled {
-            get => _confirmEnabled;
-            set => Set(ref _confirmEnabled, value);
+        public bool IsValid {
+            get => _isValid;
+            set => Set(ref _isValid, value);
         }
 
 
@@ -32,7 +32,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         private void OnTextChanged(bool changed)
         {
-            ConfirmEnabled = changed;
+            IsValid = changed;
         }
     }
 }

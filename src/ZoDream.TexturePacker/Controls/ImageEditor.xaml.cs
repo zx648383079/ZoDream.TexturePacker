@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.Windows.Input;
+using ZoDream.TexturePacker.ImageEditor;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,7 +34,6 @@ namespace ZoDream.TexturePacker.Controls
         // Using a DependencyProperty as the backing store for SelectedCommand.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedCommandProperty =
             DependencyProperty.Register("SelectedCommand", typeof(ICommand), typeof(ImageEditor), new PropertyMetadata(null));
-
 
 
         private void CanvasTarget_PaintSurface(object sender, SkiaSharp.Views.Windows.SKPaintSurfaceEventArgs e)

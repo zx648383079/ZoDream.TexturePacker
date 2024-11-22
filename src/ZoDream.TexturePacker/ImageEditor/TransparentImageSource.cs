@@ -2,14 +2,14 @@
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public class TransparentImageLayer : BaseImageLayer, ICommandImageLayer
+    public class TransparentImageSource : BaseImageSource, ICommandImageSource
     {
-        public TransparentImageLayer(IImageEditor editor): base(editor)
+        public TransparentImageSource(IImageEditor editor): base(editor)
         {
             Invalidate();
         }
 
-        public TransparentImageLayer(int size, IImageEditor editor) : this(editor)
+        public TransparentImageSource(int size, IImageEditor editor) : this(editor)
         {
             _gridSize = size;
         }
@@ -23,7 +23,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             Invalidate();
         }
 
-        public void Resize(IImageLayer layer)
+        public void Resize(IImageSource layer)
         {
         }
         public void Invalidate()
@@ -65,7 +65,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             }
         }
 
-        public override void Paint(SKCanvas canvas)
+        public override void Paint(IImageCanvas canvas)
         {
             if (_surface == null) 
             {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Windows.Storage;
 using ZoDream.Shared.ViewModel;
+using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -64,8 +65,8 @@ namespace ZoDream.TexturePacker.ViewModels
             LayerMoveDownCommand = new RelayCommand(TapLayerMoveDown);
             LayerMoveBottomCommand = new RelayCommand(TapLayerMoveBottom);
             ExitCommand = new RelayCommand(TapExit);
-            LayerSelectedCommand = new RelayCommand<LayerViewModel>(OnLayerSelected);
-            EditorSelectedCommand = new RelayCommand<int>(OnEditorSelected);
+            LayerSelectedCommand = new RelayCommand<IImageLayer>(OnLayerSelected);
+            EditorSelectedCommand = new RelayCommand<IImageLayer>(OnEditorSelected);
             DragImageCommand = new RelayCommand<IReadOnlyList<IStorageItem>>(OnDragImage);
             UndoRedo.UndoStateChanged += UndoRedo_UndoStateChanged;
             UndoRedo.ReverseUndoStateChanged += UndoRedo_ReverseUndoStateChanged;

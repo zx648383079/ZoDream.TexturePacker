@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels
@@ -18,7 +19,7 @@ namespace ZoDream.TexturePacker.ViewModels
             }
         }
 
-        public LayerViewModel? GetLayerWithLink(string name)
+        public IImageLayer? GetLayerWithLink(string name)
         {
             if (string.IsNullOrEmpty(name))
             {

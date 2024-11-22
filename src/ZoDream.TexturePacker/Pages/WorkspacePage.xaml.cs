@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using Windows.Storage;
@@ -26,7 +25,7 @@ namespace ZoDream.TexturePacker.Pages
         {
             base.OnNavigatedTo(e);
             App.ViewModel.BindMenu(ViewModel);
-            ViewModel.Editor = Editor;
+            Editor.Commander = ViewModel;
             if (e.Parameter is IEnumerable<IStorageItem> items)
             {
                 ViewModel.DragFileAsync(items);
@@ -36,7 +35,7 @@ namespace ZoDream.TexturePacker.Pages
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            ViewModel.Editor?.Dispose();
+            ViewModel.Instance?.Dispose();
         }
 
     }

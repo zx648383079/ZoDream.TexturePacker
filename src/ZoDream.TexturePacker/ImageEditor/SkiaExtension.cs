@@ -10,7 +10,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     {
 
 
-        public static SKBitmap PaintRotate(this IImageLayer layer, float angle)
+        public static SKBitmap PaintRotate(this IImageSource layer, float angle)
         {
             var (rotatedWidth, rotatedHeight) = Shared.Drawing.SkiaExtension.ComputedRotate(layer.Width, layer.Height, angle);
             var rotatedBitmap = new SKBitmap(rotatedWidth, rotatedHeight);
@@ -19,7 +19,7 @@ namespace ZoDream.TexturePacker.ImageEditor
                 surface.Translate(rotatedWidth / 2, rotatedHeight / 2);
                 surface.RotateDegrees(angle);
                 surface.Translate(-layer.Width / 2, -layer.Height / 2);
-                layer.Paint(surface);
+                layer.Paint(new ImageCanvas(surface));
             }
             return rotatedBitmap;
         }
@@ -69,10 +69,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             // canvas.Clear(SKColors.Transparent);
             canvas.DrawBitmap(source, SKRect.Create(layer.X, layer.Y, 
                 layer.Width, layer.Height), 
-                SKRect.Create(0, 0, layer.Width, layer.Height), new SKPaint()
-                {
-                    FilterQuality = SKFilterQuality.High
-                });
+                SKRect.Create(0, 0, layer.Width, layer.Height), new SKPaint());
             return bitmap;
         }
 
@@ -89,10 +86,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             var bitmap = new SKBitmap((int)rect.Width, (int)rect.Height);
             using var canvas = new SKCanvas(bitmap);
             canvas.DrawBitmap(source, rect, 
-                SKRect.Create(0, 0, bitmap.Width, bitmap.Height), new SKPaint()
-                {
-                    FilterQuality= SKFilterQuality.High
-                });
+                SKRect.Create(0, 0, bitmap.Width, bitmap.Height), new SKPaint());
             path.Offset(-rect.Left, -rect.Top);
             //canvas.DrawPath(path, new SKPaint()
             //{
@@ -106,7 +100,7 @@ namespace ZoDream.TexturePacker.ImageEditor
         }
 
 
-        public static IImageLayer? TryParse(this IImageData source, IImageEditor editor)
+        public static IImageSource? TryParse(this IImageData source, IImageEditor editor)
         {
             if (source is IConvertLayer c)
             {
@@ -117,7 +111,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             {
                 return null;
             }
-            return new BitmapImageLayer(bitmap, editor);
+            return new BitmapImageSource(bitmap, editor);
         }
     }
 }

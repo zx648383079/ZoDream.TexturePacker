@@ -3,24 +3,19 @@ using SkiaSharp;
 
 namespace ZoDream.TexturePacker.ImageEditor
 {
-    public abstract class BaseImageLayer(IImageEditor editor) : IImageLayer
+    public abstract class BaseImageSource(IImageEditor editor) : IImageSource
     {
 
         protected IImageEditor Editor { get; private set; } = editor;
-        public int Id { get; set; }
-
         public int X { get; set; }
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public int Depth { get; set; }
-
         /// <summary>
         /// 旋转角度0 - 360
         /// </summary>
         public float RotateDeg { get; set; }
-        public bool Visible { get; set; } = true;
-        public abstract void Paint(SKCanvas canvas);
+        public abstract void Paint(IImageCanvas canvas);
 
         public virtual BitmapSource? GetPreviewSource()
         {
@@ -36,7 +31,19 @@ namespace ZoDream.TexturePacker.ImageEditor
             RotateDeg += angle;
         }
 
-        
-
+        public virtual bool Contains(float x, float y)
+        {
+            var offsetX = x - X;
+            if (offsetX < 0 || offsetX > Width)
+            {
+                return false;
+            }
+            var offsetY = y - Y;
+            if (offsetY < 0 || offsetY > Height)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

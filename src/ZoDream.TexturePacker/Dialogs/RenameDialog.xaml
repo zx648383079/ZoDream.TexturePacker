@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
     Title="重命名"
-    IsPrimaryButtonEnabled="{Binding ConfirmEnabled}"
+    IsPrimaryButtonEnabled="{Binding IsValid}"
     PrimaryButtonText="确认"
     SecondaryButtonText="取消"
     mc:Ignorable="d">

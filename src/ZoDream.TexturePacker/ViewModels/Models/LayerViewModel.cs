@@ -1,12 +1,24 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using ZoDream.Shared.ViewModel;
+using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public class LayerViewModel(WorkspaceViewModel workspace) : BindableBase
+    public class LayerViewModel : BindableBase, IImageLayer
     {
-        public WorkspaceViewModel Workspace { get; private set; } = workspace;
+
+        public LayerViewModel(WorkspaceViewModel workspace, IImageSource source)
+        {
+            Workspace = workspace;
+            Source = source;
+            if (source is FolderImageSource f)
+            {
+                f.Host = this;
+            }
+        }
+
+        public WorkspaceViewModel Workspace { get; private set; }
 
         public int Id { get; set; }
 
@@ -38,19 +50,21 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _isLocked, value);
         }
 
-        private LayerTree _children = [];
+        private IImageLayerTree _children = new LayerTree();
 
-        public LayerTree Children {
+        public IImageLayerTree Children {
             get => _children;
             set => Set(ref _children, value);
         }
 
-        public LayerViewModel? Get(int id)
-        {
-            return Get(item => item.Id == id);
-        }
+        public int Depth { get; set; }
 
-        public LayerViewModel? Get(Func<LayerViewModel, bool> checkFn)
+        public IImageSource Source { get; private set; }
+
+        public bool IsChildrenEnabled => IsVisible || Source is not FolderImageSource;
+
+
+        public IImageLayer? Get(Func<IImageLayer, bool> checkFn)
         {
             if (checkFn(this))
             {
@@ -58,5 +72,30 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             return Children.Get(checkFn);
         }
+
+        public void Paint(IImageCanvas canvas)
+        {
+            var isFolder = Source is FolderImageSource;
+            if (IsVisible)
+            {
+                Source?.Paint(canvas);
+            }
+            if (isFolder)
+            {
+                return;
+            }
+            Children.Paint(canvas.Transform(Source?.X ?? 0, Source?.Y ?? 0));
+        }
+
+        public void Dispose()
+        {
+            foreach (var item in Children)
+            {
+                item.Dispose();
+            }
+            Source?.Dispose();
+        }
+
+      
     }
 }

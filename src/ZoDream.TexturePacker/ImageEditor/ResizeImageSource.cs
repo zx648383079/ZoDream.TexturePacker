@@ -5,7 +5,7 @@ namespace ZoDream.TexturePacker.ImageEditor
     /// <summary>
     /// 改变尺寸框
     /// </summary>
-    public class ResizeImageLayer(IImageEditor editor) : BaseImageLayer(editor), ICommandImageLayer
+    public class ResizeImageSource(IImageEditor editor) : BaseImageSource(editor), ICommandImageSource
     {
         private readonly int _dotSize = 10;
         private SKSurface? _surface;
@@ -21,7 +21,7 @@ namespace ZoDream.TexturePacker.ImageEditor
             _surface = null;
         }
 
-        public void Resize(IImageLayer layer)
+        public void Resize(IImageSource layer)
         {
             X = layer.X; 
             Y = layer.Y;
@@ -69,13 +69,13 @@ namespace ZoDream.TexturePacker.ImageEditor
             }
         }
 
-        public override void Paint(SKCanvas canvas)
+        public override void Paint(IImageCanvas canvas)
         {
             if (_surface == null)
             {
                 RenderSurface();
             }
-            canvas.DrawSurface(_surface, ActualLeft, ActualTop);
+            canvas.DrawSurface(_surface, (int)ActualLeft, (int)ActualTop);
         }
 
         public override void Dispose()

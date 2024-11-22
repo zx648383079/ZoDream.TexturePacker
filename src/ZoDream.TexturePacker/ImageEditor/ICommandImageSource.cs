@@ -1,13 +1,10 @@
-﻿using SkiaSharp;
-using System;
-
-namespace ZoDream.TexturePacker.ImageEditor
+﻿namespace ZoDream.TexturePacker.ImageEditor
 {
-    public interface ICommandImageLayer: IImageLayer
+    public interface ICommandImageSource: IImageSource
     {
         public void Resize(int width, int height);
 
-        public void Resize(IImageLayer layer);
+        public void Resize(IImageSource layer);
 
         /// <summary>
         /// 依赖Editor尺寸的需要重绘
