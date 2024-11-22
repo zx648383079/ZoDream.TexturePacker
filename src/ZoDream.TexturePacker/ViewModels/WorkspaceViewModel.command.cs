@@ -158,6 +158,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
+            var trace = new ImageContourTrace(true);
             foreach (var item in LayerItems)
             {
                 if (!item.IsVisible || item.IsLocked || item.Children.Count > 0)
@@ -169,7 +170,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     continue;
                 }
-                var items = await image.Source.GetObjectAsync();
+                var items = await trace.GetContourAsync(image.Source);
                 var i = 0;
                 using var paint = new SKPaint()
                 {
