@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using ZoDream.Shared.Drawing;
+using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.ImageEditor;
+using ZoDream.Shared.Models;
 using ZoDream.TexturePacker.Dialogs;
-using ZoDream.TexturePacker.ImageEditor;
-using ZoDream.TexturePacker.Models;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels

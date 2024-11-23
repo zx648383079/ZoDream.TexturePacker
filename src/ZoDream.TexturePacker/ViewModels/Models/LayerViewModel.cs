@@ -1,7 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using ZoDream.Shared.ViewModel;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.ImageEditor;
+using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -77,7 +78,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public void Resample()
         {
-            PreviewImage = Source.GetPreviewSource();
+            PreviewImage = Workspace.CreateThumbnail(Source);
         }
 
         public void Paint(IImageCanvas canvas)
@@ -85,7 +86,8 @@ namespace ZoDream.TexturePacker.ViewModels
             var isFolder = Source is FolderImageSource;
             if (IsVisible)
             {
-                Source?.Paint(canvas);
+                var style = canvas.Compute(this);
+                Source?.Paint(canvas, style);
             }
             if (isFolder)
             {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.EditorInterface;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels

@@ -3,9 +3,9 @@ using SkiaSharp.Views.Windows;
 using System;
 using System.Linq;
 using System.Windows.Input;
-using ZoDream.Shared.Drawing;
+using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.ImageEditor;
 using ZoDream.TexturePacker.Dialogs;
-using ZoDream.TexturePacker.ImageEditor;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels

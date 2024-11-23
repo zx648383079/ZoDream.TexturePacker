@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.Plugins
 {

@@ -6,7 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ZoDream.Shared.Drawing;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.ImageEditor;
 using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.Controls
@@ -326,8 +327,13 @@ namespace ZoDream.TexturePacker.Controls
 
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
+            var styler = Compute();
+            if (styler.ActualWidth != ActualWidthI || styler.ActualHeight != ActualHeightI)
+            {
+                Resize(styler.ActualWidth, styler.ActualHeight);
+            }
             canvas.Clear(BackgroundColor ?? SKColors.Transparent);
-            var c = new ImageCanvas(canvas);
+            var c = new ImageCanvas(canvas, styler);
             if (BackgroundColor is null)
             {
                 _transparentBackground ??= new TransparentImageSource(this);
@@ -341,20 +347,29 @@ namespace ZoDream.TexturePacker.Controls
         {
             CanvasTarget.Invalidate();
         }
+        /// <summary>
+        /// 先计算
+        /// </summary>
+        /// <returns></returns>
+        private IImageComputedStyler Compute()
+        {
+            var styler = new ImageComputedStyler(_commander.Styler);
+            styler.Compute(LayerItems);
+            if (styler.ActualWidth == 0 || styler.ActualHeight == 0)
+            {
+                styler.Width = ActualWidthI;
+                styler.Height = ActualHeightI;
+            } 
+            return styler;
+        }
 
         public void SaveAs(string fileName)
         {
-            using var bitmap = new SKBitmap(ActualWidthI, ActualHeightI);
+            var styler = Compute();
+            using var bitmap = new SKBitmap(styler.ActualWidth, styler.ActualHeight);
             using var canvas = new SKCanvas(bitmap);
-            var c = new ImageCanvas(canvas);
-            foreach (var item in LayerItems)
-            {
-                if (!item.IsVisible)
-                {
-                    continue;
-                }
-                item.Source.Paint(c);
-            }
+            var c = new ImageCanvas(canvas, styler);
+            LayerItems?.Paint(c);
             canvas.Flush();
             bitmap.SaveAs(fileName);
         }
@@ -365,14 +380,15 @@ namespace ZoDream.TexturePacker.Controls
             {
                 return;
             }
-            var x = layer.Source.X;
-            var y = layer.Source.Y;
-            layer.Source.X = 0;
-            layer.Source.Y = 0;
-            using var bitmap = layer.Source.PaintRotate(-layer.Source.RotateDeg);
+            var styler = new ImageComputedStyler(_commander.RealStyler);
+            styler.Compute(layer);
+            var bitmap = new SKBitmap(styler.ActualWidth, styler.ActualHeight);
+            using (var surface = new SKCanvas(bitmap))
+            {
+                var c = new ImageCanvas(surface, styler);
+                layer.Paint(c);
+            }
             bitmap.SaveAs(fileName);
-            layer.Source.X = x;
-            layer.Source.Y = y;
         }
 
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using System;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.Converters
 {

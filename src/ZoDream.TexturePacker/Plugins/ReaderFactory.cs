@@ -1,16 +1,12 @@
-﻿using SkiaSharp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ZoDream.Shared.Drawing;
-using ZoDream.TexturePacker.Models;
-using ZoDream.TexturePacker.Plugins.Readers;
-using ZoDream.TexturePacker.Plugins.Readers.Cocos;
-using ZoDream.TexturePacker.Plugins.Readers.Godot;
-using ZoDream.TexturePacker.Plugins.Readers.Live2d;
-using ZoDream.TexturePacker.Plugins.Readers.TexturePacker;
+using ZoDream.Shared.ImageEditor;
+using ZoDream.Shared.Interfaces;
+using ZoDream.Shared.Models;
 
 namespace ZoDream.TexturePacker.Plugins
 {
@@ -22,7 +18,7 @@ namespace ZoDream.TexturePacker.Plugins
             ".bmp", ".pvr", ".ccz"];
 
         private static string[] LayerFilterItems = [".json", ".tres", 
-            ".moc3", ".atlas", ".txt", ".plist", ".asset" ];
+            ".moc3", ".atlas", ".txt", ".plist", ".asset"];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
 
 
@@ -61,7 +57,7 @@ namespace ZoDream.TexturePacker.Plugins
         {
             IImageReader? reader = extension switch
             {
-                ".pvr" or ".ccz" => new PvrReader(),
+                ".pvr" or ".ccz" => new Plugin.Readers.TexturePacker.PvrReader(),
                 ".svg" => new SvgReader(),
                 _ => null,
             };
@@ -97,16 +93,16 @@ namespace ZoDream.TexturePacker.Plugins
         {
             if (fileName.EndsWith(".atlas.txt"))
             {
-                return new Readers.Unity.AtlasReader();
+                return new Plugin.Readers.Unity.AtlasReader();
             }
             return extension switch
             {
-                ".tres" => new TresReader(),
-                ".plist" => new PlistReader(),
-                ".atlas" => new AtlasReader(),
-                ".moc3" => new MocReader(),
+                ".tres" => new Plugin.Readers.Godot.TresReader(),
+                ".plist" => new Plugin.Readers.TexturePacker.PlistReader(),
+                ".atlas" => new Plugin.Readers.Cocos.AtlasReader(),
+                ".moc3" => new Plugin.Readers.Live2d.MocReader(),
                 ".json" => new JsonFactoryReader(),
-                ".asset" => new Readers.Unity.AssetReader(),
+                ".asset" => new Plugin.Readers.Unity.AssetReader(),
                 _ => null,
             };
         }
@@ -139,7 +135,7 @@ namespace ZoDream.TexturePacker.Plugins
             {
                 return null;
             }
-            return await reader.ReadAsync(file);
+            return await reader.ReadAsync(file.Path);
         }
 
         public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(IStorageFile file)
@@ -149,7 +145,7 @@ namespace ZoDream.TexturePacker.Plugins
             {
                 return null;
             }
-            return await reader.ReadAsync(file);
+            return await reader.ReadAsync(file.Path);
         }
 
         public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(string fileName)
@@ -165,8 +161,8 @@ namespace ZoDream.TexturePacker.Plugins
         public static async Task<IEnumerable<string>> LoadImageMetaAsync(string fileName)
         {
             IFileMetaReader[] metaReaderItems = [
-                new Readers.Unity.MetaReader(),
-                new Readers.Godot.ImportReader(),
+                new Plugin.Readers.Unity.MetaReader(),
+                new Plugin.Readers.Godot.ImportReader(),
             ];
             foreach (var reader in metaReaderItems)
             {

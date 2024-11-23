@@ -1,4 +1,4 @@
-﻿using ZoDream.TexturePacker.ImageEditor;
+﻿using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.ViewModels
 {

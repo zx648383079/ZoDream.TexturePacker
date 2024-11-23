@@ -1,8 +1,7 @@
-﻿using SkiaSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ZoDream.TexturePacker.ImageEditor;
+using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.ViewModels
 {

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net9.0</TargetFramework>
+	  <LangVersion>12</LangVersion>
+	  <Nullable>enable</Nullable>
+	  <Version>1.0.0</Version>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SkiaSharp" Version="3.118.0-preview.1.2" />
+		<PackageReference Include="Svg.Skia" Version="2.0.0.2" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\shared\ZoDream.Shared.Drawing\ZoDream.Shared.Drawing.csproj" />
+	  <ProjectReference Include="..\ZoDream.Shared\ZoDream.Shared.csproj" />
+	</ItemGroup>
+</Project>

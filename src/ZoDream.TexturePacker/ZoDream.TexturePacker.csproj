@@ -73,7 +73,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\ZoDream.Shared.Drawing\ZoDream.Shared.Drawing.csproj" />
     <ProjectReference Include="..\..\shared\ZoDream.Shared.UndoRedo\ZoDream.Shared.UndoRedo.csproj" />
-    <ProjectReference Include="..\..\shared\ZoDream.Shared\ZoDream.Shared.csproj" />
+    <ProjectReference Include="..\ZoDream.Plugin.Reader\ZoDream.Plugin.Reader.csproj" />
+    <ProjectReference Include="..\ZoDream.Shared.ImageEditor\ZoDream.Shared.ImageEditor.csproj" />
+    <ProjectReference Include="..\ZoDream.Shared\ZoDream.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Dialogs\OpenProjectDialog.xaml">

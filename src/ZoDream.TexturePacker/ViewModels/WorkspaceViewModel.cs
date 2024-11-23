@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Windows.Storage;
+using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ViewModel;
-using ZoDream.TexturePacker.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
