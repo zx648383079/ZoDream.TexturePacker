@@ -43,7 +43,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Cocos
                         var (w, h) = TryParse(args[1]);
                         if (isLayer)
                         {
-                            if (last.Rotate > 0)
+                            if (IsRotate90(last.Rotate))
                             {
                                 (w, h) = (h, w);
                             }
@@ -68,7 +68,7 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Cocos
                         if (isLayer)
                         {
                             last.Rotate = TryParseRotate(args[1].Trim());
-                            if (last.Rotate > 0 && last.Width > 0)
+                            if (IsRotate90(last.Rotate) && last.Width > 0)
                             {
                                 (last.Width, last.Height) = (last.Height, last.Width);
                             }
@@ -81,6 +81,11 @@ namespace ZoDream.TexturePacker.Plugins.Readers.Cocos
             return [res];
         }
 
+
+        private bool IsRotate90(int deg)
+        {
+            return Math.Abs(deg) % 180 == 90;
+        }
 
         private int TryParseRotate(string text)
         {

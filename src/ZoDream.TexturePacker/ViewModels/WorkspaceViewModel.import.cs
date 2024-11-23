@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Emit;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using ZoDream.Shared.Drawing;
@@ -17,6 +16,100 @@ namespace ZoDream.TexturePacker.ViewModels
 {
     public partial class WorkspaceViewModel
     {
+        /// <summary>
+        /// 分离图片
+        /// </summary>
+        /// <param name="layer"></param>
+        private async void SeparateImage(IImageLayer layer)
+        {
+            if (layer is null || layer.Source is not BitmapImageSource image)
+            {
+                return;
+            }
+            var trace = new ImageContourTrace(true);
+            var items = await trace.GetContourAsync(image.Source);
+            Instance!.Add(items.Select(path => {
+                var bound = path.Bounds;
+                var kid = image.Source.Clip(path);
+                if (kid is null)
+                {
+                    return null;
+                }
+                var kidLayer = new BitmapImageSource(
+                    kid
+                    , Instance)
+                {
+                    X = (int)bound.Left,
+                    Y = (int)bound.Top
+                };
+                return Create(kidLayer);
+            }), layer);
+            layer.IsVisible = false;
+            Instance.Invalidate();
+        }
+        /// <summary>
+        /// 分离图片对象并重新采样合并到子对象
+        /// </summary>
+        /// <param name="layer"></param>
+        private async void SeparateImageAndMerge(IImageLayer layer)
+        {
+            if (layer is null || layer.Source is not BitmapImageSource image)
+            {
+                return;
+            }
+            var trace = new ImageContourTrace(true);
+            var items = await trace.GetContourAsync(image.Source);
+            using var paint = new SKPaint();
+            foreach (var item in layer.Children)
+            {
+                if (item.Source is not BitmapImageSource i)
+                {
+                    continue;
+                }
+                var path = GetContainPath(i, items);
+                if (path is null)
+                {
+                    continue;
+                }
+                using var canvas = new SKCanvas(i.Source);
+                var rect = path.Bounds;
+                canvas.Clear(SKColors.Transparent);
+                canvas.DrawBitmap(image.Source, rect, 
+                    SKRect.Create(rect.Left - i.X, rect.Top - i.Y, rect.Width, rect.Height), paint);
+                path.Offset(-i.X, -i.Y);
+                canvas.ClipPath(path, SKClipOperation.Difference);
+                canvas.Clear();
+                item.Resample();
+            }
+            Instance?.Invalidate();
+        }
+
+        private static SKPath? GetContainPath(IImageBound image, IEnumerable<SKPath> items)
+        {
+            var maxDiff = 6;
+            var doubleMaxDiff = 2 * maxDiff;
+            var minDiff = 2;
+            var doubleMinDiff = 2 * minDiff;
+            foreach (var item in items)
+            {
+                var bound = item.Bounds;
+                if (image.X > bound.Left + minDiff || image.Y > bound.Top + minDiff
+                    || image.Width < bound.Width - doubleMinDiff 
+                    || image.Height < bound.Height - doubleMinDiff)
+                {
+                    continue;
+                }
+                if (bound.Left - image.X >= maxDiff 
+                    || bound.Top - image.Y >= maxDiff
+                    || image.Width - bound.Width >= doubleMaxDiff
+                    || image.Height - bound.Height >= doubleMaxDiff)
+                {
+                    continue;
+                }
+                return item;
+            }
+            return null;
+        }
 
         private async void TapImportFolder(object? _)
         {

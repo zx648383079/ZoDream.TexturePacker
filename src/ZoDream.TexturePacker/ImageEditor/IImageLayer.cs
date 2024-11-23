@@ -26,6 +26,10 @@ namespace ZoDream.TexturePacker.ImageEditor
         public bool IsChildrenEnabled { get; }
 
         public IImageLayer? Get(Func<IImageLayer, bool> checkFn);
+        /// <summary>
+        /// 源更新了，需要重采样
+        /// </summary>
+        public void Resample();
 
         public void Paint(IImageCanvas canvas);
     }

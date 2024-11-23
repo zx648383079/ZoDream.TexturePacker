@@ -75,6 +75,11 @@ namespace ZoDream.TexturePacker.ViewModels
             return Children.Get(checkFn);
         }
 
+        public void Resample()
+        {
+            PreviewImage = Source.GetPreviewSource();
+        }
+
         public void Paint(IImageCanvas canvas)
         {
             var isFolder = Source is FolderImageSource;

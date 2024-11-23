@@ -180,37 +180,22 @@ namespace ZoDream.TexturePacker.ViewModels
                     break;
                 }
             }
-            if (layer is null || layer.Source is not BitmapImageSource image)
+            if(layer is null || layer.Source is not BitmapImageSource)
             {
                 return;
             }
-            
-            var trace = new ImageContourTrace(true);
-            var items = await trace.GetContourAsync(image.Source);
-            //using var paint = new SKPaint()
-            //{
-            //    IsStroke = true,
-            //    StrokeWidth = 1,
-            //    ColorF = SKColors.Red,
-            //};
-            Instance!.Add(items.Select(path => {
-                var bound = path.Bounds;
-                var kid = image.Source.Clip(path);
-                if (kid is null)
-                {
-                    return null;
-                }
-                var kidLayer = new BitmapImageSource(
-                    kid
-                    , Instance)
-                {
-                    X = (int)bound.Left,
-                    Y = (int)bound.Top
-                };
-                return Create(kidLayer);
-            }), layer);
-            layer.IsVisible = false;
-            Instance.Invalidate();
+            if (layer.Children.Count == 0)
+            {
+                SeparateImage(layer);
+                return;
+            }
+            var res = await App.ViewModel.ConfirmAsync("是否重新采样子图形？");
+            if (!res)
+            {
+                SeparateImage(layer);
+                return;
+            }
+            SeparateImageAndMerge(layer);
         }
 
         private void TapTransparent(object? _)
