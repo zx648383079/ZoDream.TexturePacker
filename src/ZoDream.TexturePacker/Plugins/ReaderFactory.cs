@@ -97,10 +97,10 @@ namespace ZoDream.TexturePacker.Plugins
             }
             return extension switch
             {
-                ".tres" => new Plugin.Readers.Godot.TresReader(),
+                ".tres" => new Plugin.Godot.TresReader(),
                 ".plist" => new Plugin.Readers.TexturePacker.PlistReader(),
                 ".atlas" => new Plugin.Readers.Cocos.AtlasReader(),
-                ".moc3" => new Plugin.Readers.Live2d.MocReader(),
+                ".moc3" => new Plugin.Live2d.MocReader(),
                 ".json" => new JsonFactoryReader(),
                 ".asset" => new Plugin.Readers.Unity.AssetReader(),
                 _ => null,
@@ -162,7 +162,7 @@ namespace ZoDream.TexturePacker.Plugins
         {
             IFileMetaReader[] metaReaderItems = [
                 new Plugin.Readers.Unity.MetaReader(),
-                new Plugin.Readers.Godot.ImportReader(),
+                new Plugin.Godot.ImportReader(),
             ];
             foreach (var reader in metaReaderItems)
             {

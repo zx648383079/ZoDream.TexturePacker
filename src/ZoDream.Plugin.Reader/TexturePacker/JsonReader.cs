@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Readers.TexturePacker
@@ -10,7 +11,7 @@ namespace ZoDream.Plugin.Readers.TexturePacker
     {
         private readonly JsonSerializerOptions _option = new()
         {
-            PropertyNamingPolicy = new LowcaseJsonNamingPolicy()
+            PropertyNamingPolicy = new LowCaseJsonNamingPolicy()
         };
         public override bool IsEnabled(string content)
         {

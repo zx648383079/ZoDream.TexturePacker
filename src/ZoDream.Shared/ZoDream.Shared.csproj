@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.118.0-preview.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\shared\ZoDream.Shared.Drawing\ZoDream.Shared.Drawing.csproj" />
   </ItemGroup>
 

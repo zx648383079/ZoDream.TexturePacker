@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ZoDream.Shared.Interfaces;
+using ZoDream.Shared.IO;
 
 namespace ZoDream.Plugin.Readers.Unity
 {

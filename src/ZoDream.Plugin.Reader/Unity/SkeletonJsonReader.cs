@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using ZoDream.Shared.Interfaces;
+using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Readers.Unity
@@ -11,7 +12,7 @@ namespace ZoDream.Plugin.Readers.Unity
     {
         private readonly JsonSerializerOptions _option = new()
         {
-            PropertyNamingPolicy = new LowcaseJsonNamingPolicy()
+            PropertyNamingPolicy = new LowCaseJsonNamingPolicy()
         };
         public override bool IsEnabled(string content)
         {

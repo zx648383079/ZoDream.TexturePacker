@@ -12,7 +12,7 @@ namespace ZoDream.TexturePacker.Plugins
     public class JsonFactoryReader: IPluginReader
     {
         private readonly ITextReader[] Items = [
-            new Plugin.Readers.Live2d.MocJsonReader(),
+            new Plugin.Live2d.MocJsonReader(),
             new Plugin.Readers.TexturePacker.JsonReader(),
             new Plugin.Readers.Egret.JsonReader(),
             new Plugin.Readers.Unity.JsonReader(),
