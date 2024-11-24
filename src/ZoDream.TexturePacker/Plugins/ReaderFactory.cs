@@ -99,7 +99,7 @@ namespace ZoDream.TexturePacker.Plugins
             {
                 ".tres" => new Plugin.Godot.TresReader(),
                 ".plist" => new Plugin.Readers.TexturePacker.PlistReader(),
-                ".atlas" => new Plugin.Readers.Cocos.AtlasReader(),
+                ".atlas" => new Plugin.Spine.AtlasReader(),
                 ".moc3" => new Plugin.Live2d.MocReader(),
                 ".json" => new JsonFactoryReader(),
                 ".asset" => new Plugin.Readers.Unity.AssetReader(),

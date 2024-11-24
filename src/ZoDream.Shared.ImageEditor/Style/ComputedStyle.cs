@@ -20,7 +20,7 @@ namespace ZoDream.Shared.ImageEditor
             Y = style.Y;
             Width = style.Width;
             Height = style.Height;
-            RotateDeg = rotate;
+            RotateDeg = rotate % 360;
             Compute();
         }
 
@@ -49,7 +49,7 @@ namespace ZoDream.Shared.ImageEditor
                 return;
             }
             (ActualWidth, ActualHeight) = 
-                Shared.Drawing.SkiaExtension.ComputedRotate(Width, Height, RotateDeg);
+                Drawing.SkiaExtension.ComputedRotate(Width, Height, RotateDeg);
         }
     }
 }

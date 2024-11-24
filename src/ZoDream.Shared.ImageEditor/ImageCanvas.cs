@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor
@@ -21,6 +22,39 @@ namespace ZoDream.Shared.ImageEditor
             };
         }
 
+        public void Mutate(IImageStyle style, Action<IImageCanvas> cb)
+        {
+            if (style.RotateDeg == 0)
+            {
+                cb(this);
+                return;
+            }
+            var width = style.Width;
+            var height = style.Height;
+            if (style is IImageComputedStyle s)
+            {
+                width = s.ActualWidth;
+                height = s.ActualHeight;
+            }
+            else
+            {
+                (width, height) =
+                Drawing.SkiaExtension.ComputedRotate(style.Width, style.Height,
+                style.RotateDeg);
+            }
+            var rotatedBitmap = new SKBitmap(width, height);
+            using var surface = new SKCanvas(rotatedBitmap);
+            surface.Translate(style.Width / 2, style.Height / 2);
+            surface.RotateDegrees(style.RotateDeg);
+            surface.Translate(-width / 2, -height / 2);
+            cb.Invoke(new ImageCanvas(surface, styler)
+            {
+                X = -style.X, 
+                Y = -style.Y
+            });
+            canvas.DrawBitmap(rotatedBitmap, style.X + X, style.Y + Y);
+        }
+
         public IImageStyle Compute(IImageLayer layer)
         {
             return styler.Compute(layer);
@@ -35,21 +69,42 @@ namespace ZoDream.Shared.ImageEditor
             canvas.DrawBitmap(source, x + X, y + Y);
         }
 
+        private void Mutate(IImageStyle style, Action<SKCanvas, SKPoint> cb)
+        {
+            var point = new SKPoint(style.X + X, style.Y + Y);
+            if (style.RotateDeg == 0)
+            {
+                cb(canvas, point);
+                return;
+            }
+            var width = style.Width;
+            var height = style.Height;
+            if (style is IImageComputedStyle s)
+            {
+                width = s.ActualWidth;
+                height = s.ActualHeight;
+            } else
+            {
+                (width, height) =
+                Drawing.SkiaExtension.ComputedRotate(style.Width, style.Height, 
+                style.RotateDeg);
+            }
+            var rotatedBitmap = new SKBitmap(width, height);
+            using var surface = new SKCanvas(rotatedBitmap);
+            surface.Translate(style.Width / 2, style.Height / 2);
+            surface.RotateDegrees(style.RotateDeg);
+            surface.Translate(-width / 2, -height / 2);
+            cb(surface, new SKPoint(0, 0));
+            canvas.DrawBitmap(rotatedBitmap, point);
+        }
+
         public void DrawBitmap(SKBitmap? source, IImageStyle style)
         {
             if (source is null)
             {
                 return;
             }
-            //var rotatedBitmap = new SKBitmap(rotatedWidth, rotatedHeight);
-            //using (var surface = new SKCanvas(rotatedBitmap))
-            //{
-            //    surface.Translate(rotatedWidth / 2, rotatedHeight / 2);
-            //    surface.RotateDegrees(angle);
-            //    surface.Translate(-layer.Width / 2, -layer.Height / 2);
-            //    layer.Paint(new ImageCanvas(surface));
-            //}
-            canvas.DrawBitmap(source, style.X + X, style.Y + Y);
+            DrawBitmap(source, style.X, style.Y);
         }
 
         public void DrawPicture(SKPicture? picture, int x, int y)
@@ -67,7 +122,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return;
             }
-            canvas.DrawPicture(picture, style.X + X, style.Y + Y);
+            DrawPicture(picture, style.X, style.Y);
         }
 
         public void DrawSurface(SKSurface? surface, int x, int y)
@@ -85,7 +140,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return;
             }
-            canvas.DrawSurface(surface, style.X + X, style.Y + Y);
+            DrawSurface(surface, style.X, style.Y);
         }
 
         public void DrawText(string text, int x, int y, SKTextAlign textAlign, SKFont font, SKPaint paint)
@@ -103,7 +158,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return;
             }
-            canvas.DrawText(text, style.X + X, style.Y + Y, textAlign, font, paint);
+            DrawText(text, style.X, style.Y, textAlign, font, paint);
         }
 
 

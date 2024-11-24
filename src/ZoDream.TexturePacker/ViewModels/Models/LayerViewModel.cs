@@ -84,16 +84,21 @@ namespace ZoDream.TexturePacker.ViewModels
         public void Paint(IImageCanvas canvas)
         {
             var isFolder = Source is FolderImageSource;
-            if (IsVisible)
-            {
-                var style = canvas.Compute(this);
-                Source?.Paint(canvas, style);
-            }
-            if (isFolder)
+            if (!IsVisible && (isFolder || Children.Count == 0))
             {
                 return;
             }
-            Children.Paint(canvas.Transform(Source?.X ?? 0, Source?.Y ?? 0));
+            var style = canvas.Compute(this);
+            canvas.Mutate(style, c => {
+                if (IsVisible)
+                {
+                    Source?.Paint(c, style);
+                }
+                if (!isFolder)
+                {
+                    Children.Paint(c.Transform(Source?.X ?? 0, Source?.Y ?? 0));
+                }
+            });
         }
 
         public void Dispose()

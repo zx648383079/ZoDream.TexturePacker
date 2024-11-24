@@ -166,10 +166,13 @@ namespace ZoDream.Plugin.Spine
                                 }
                             }
                         }
-                        break;
+                    break;
                 }
             }
-            yield break;
+            if (page is not null)
+            {
+                yield return page;
+            }
         }
 
         

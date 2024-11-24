@@ -225,7 +225,7 @@ namespace ZoDream.TexturePacker.ViewModels
                     {
                         continue;
                     }
-                    Instance!.Add(Create(kidLayer, kid.Name), parentLayer);;
+                    Instance!.Add(Create(kidLayer, kid.Name), parentLayer);
                 }
                 parentLayer.IsVisible = false;
             }

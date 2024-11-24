@@ -1,10 +1,12 @@
 ﻿using SkiaSharp;
+using System;
 
 namespace ZoDream.Shared.EditorInterface
 {
     public interface IImageCanvas : IImagePoint
     {
         public IImageCanvas Transform(int x, int y);
+        public void Mutate(IImageStyle style, Action<IImageCanvas> cb);
         public IImageStyle Compute(IImageLayer layer);
         public void DrawBitmap(SKBitmap? source, IImageStyle style);
         public void DrawSurface(SKSurface? surface, IImageStyle style);
