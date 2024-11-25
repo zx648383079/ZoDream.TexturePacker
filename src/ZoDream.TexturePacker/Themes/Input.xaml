@@ -8,6 +8,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ctl:ToggleIcon">
                     <Border
+                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">

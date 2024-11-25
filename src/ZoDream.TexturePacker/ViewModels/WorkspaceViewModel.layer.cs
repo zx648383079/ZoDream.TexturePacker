@@ -1,4 +1,5 @@
 ﻿using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Extensions;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -30,7 +31,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
-            SelectedLayer.Source.Rotate(deg);
+            SelectedLayer.Source.Rotate += deg;
             Instance?.Invalidate();
         }
 
@@ -183,63 +184,169 @@ namespace ZoDream.TexturePacker.ViewModels
 
         
 
-        private void TapLayerHorizontalLeft(object? _)
+        private void TapLayerHorizontalLeft(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.Source.X = 0;
         }
 
-        private void TapLayerHorizontalCenter(object? _)
+        private void TapLayerHorizontalCenter(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var (width, _) = GetParentSize(layer);
+            layer.Source.X = (width - layer.Source.Width) / 2;
         }
 
-        private void TapLayerHorizontalRight(object? _)
+        private (int, int) GetParentSize(IImageLayer layer)
         {
-
+            var x = 0;
+            var y = 0;
+            var parent = layer.Parent;
+            while(parent is not null)
+            {
+                if (parent.Source.Width > 0 && parent.Source.Height > 0)
+                {
+                    return (parent.Source.Width - x, parent.Source.Height - y);
+                }
+                x += parent.Source.X;
+                y += parent.Source.Y;
+                parent = parent.Parent;
+            }
+            return (Instance.ActualWidthI - x, Instance.ActualHeightI - y);
         }
 
-        private void TapLayerVerticalTop(object? _)
+        private void TapLayerHorizontalRight(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var (width, _) = GetParentSize(layer);
+            layer.Source.X = width - layer.Source.Width;
         }
 
-        private void TapLayerVerticalMid(object? _)
+        private void TapLayerVerticalTop(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.Source.Y = 0;
         }
 
-        private void TapLayerVerticalBottom(object? _)
+        private void TapLayerVerticalMid(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var (_, height) = GetParentSize(layer);
+            layer.Source.Y = (height - layer.Source.Height) / 2;
         }
 
-        private void TapLayerHorizontalFlip(object? _)
+        private void TapLayerVerticalBottom(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var (_, height) = GetParentSize(layer);
+            layer.Source.Y = height - layer.Source.Height;
         }
 
-        private void TapLayerVerticalFlip(object? _)
+        private void TapLayerHorizontalFlip(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.Source.ScaleX *= -1;
         }
 
-        private void TapLayerMoveTop(object? _)
+        private void TapLayerVerticalFlip(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            layer.Source.ScaleY *= -1;
         }
 
-        private void TapLayerMoveUp(object? _)
+        private void TapLayerMoveTop(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var items = layer.Parent is null ? LayerItems : layer.Parent.Children;
+            items.MoveToFirst(items.IndexOf(layer));
         }
 
-        private void TapLayerMoveDown(object? _)
+        private void TapLayerMoveUp(object? arg)
         {
-
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var items = layer.Parent is null ? LayerItems : layer.Parent.Children;
+            items.MoveUp(items.IndexOf(layer));
         }
-        private void TapLayerMoveBottom(object? _)
-        {
 
+        private void TapLayerMoveDown(object? arg)
+        {
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var items = layer.Parent is null ? LayerItems : layer.Parent.Children;
+            items.MoveDown(items.IndexOf(layer));
+        }
+        private void TapLayerMoveBottom(object? arg)
+        {
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            var items = layer.Parent is null ? LayerItems : layer.Parent.Children;
+            items.MoveToLast(items.IndexOf(layer));
+        }
+
+        private void TapLayerMoveParent(object? arg)
+        {
+            var layer = arg is IImageLayer o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            if (layer.Parent is null)
+            {
+                return;
+            }
+            layer.Source.X += layer.Parent.Source.X;
+            layer.Source.Y += layer.Parent.Source.Y;
+            layer.Source.Rotate += layer.Parent.Source.Rotate;
+            layer.Source.ScaleX *= layer.Parent.Source.ScaleX;
+            layer.Source.ScaleY *= layer.Parent.Source.ScaleY;
+            layer.Parent.Children.Remove(layer);
+            Instance?.InsertAfter([layer], layer.Parent);
         }
     }
 }

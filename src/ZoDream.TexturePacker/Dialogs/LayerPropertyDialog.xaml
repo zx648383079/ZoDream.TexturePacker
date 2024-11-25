@@ -36,30 +36,30 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderLb}" Text="名称：" />
+        <TextBlock Style="{StaticResource InlineHeader}" Text="名称：" />
         <TextBlock
             Grid.Row="1"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="位置：" />
         <TextBlock
             Grid.Row="2"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="尺寸：" />
         <TextBlock
             Grid.Row="3"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="旋转：" />
         <TextBlock
             Grid.Row="4"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="缩放：" />
         <TextBlock
             Grid.Row="5"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="可见：" />
         <TextBlock
             Grid.Row="6"
-            Style="{StaticResource HeaderLb}"
+            Style="{StaticResource InlineHeader}"
             Text="锁定：" />
 
         <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
@@ -69,6 +69,10 @@
             Orientation="Horizontal">
             <NumberBox Header="X" Value="{Binding X, Mode=TwoWay}" />
             <NumberBox Header="Y" Value="{Binding Y, Mode=TwoWay}" />
+            <Button
+                Command="{Binding OffsetRestoreCommand}"
+                Style="{StaticResource RestoreBtn}"
+                Visibility="{Binding OffsetRestoreEnabled, Converter={StaticResource ToggleCvt}}" />
         </StackPanel>
         <StackPanel
             Grid.Row="2"
@@ -76,27 +80,39 @@
             Orientation="Horizontal">
             <NumberBox Header="Width" Value="{Binding Width, Mode=TwoWay}" />
             <ctl:ToggleIcon
-                VerticalAlignment="Bottom"
                 IsOn="{Binding IsLockSize, Mode=TwoWay}"
                 OffIcon="&#xE785;"
-                OnIcon="&#xE72E;" />
+                OnIcon="&#xE72E;"
+                Style="{StaticResource LockBtn}" />
             <NumberBox Header="Height" Value="{Binding Height, Mode=TwoWay}" />
         </StackPanel>
-        <NumberBox
+
+        <StackPanel
             Grid.Row="3"
             Grid.Column="1"
-            Value="{Binding Rotate, Mode=TwoWay}" />
+            Orientation="Horizontal">
+            <NumberBox Value="{Binding Rotate, Mode=TwoWay}" />
+            <Button
+                Command="{Binding RotateRestoreCommand}"
+                Style="{StaticResource RestoreBtn}"
+                Visibility="{Binding RotateRestoreEnabled, Converter={StaticResource ToggleCvt}}" />
+
+        </StackPanel>
         <StackPanel
             Grid.Row="4"
             Grid.Column="1"
             Orientation="Horizontal">
             <NumberBox Header="ScaleX" Value="{Binding ScaleX, Mode=TwoWay}" />
             <ctl:ToggleIcon
-                VerticalAlignment="Bottom"
                 IsOn="{Binding IsLockScale, Mode=TwoWay}"
                 OffIcon="&#xE785;"
-                OnIcon="&#xE72E;" />
+                OnIcon="&#xE72E;"
+                Style="{StaticResource LockBtn}" />
             <NumberBox Header="ScaleY" Value="{Binding ScaleY, Mode=TwoWay}" />
+            <Button
+                Command="{Binding ScaleRestoreCommand}"
+                Style="{StaticResource RestoreBtn}"
+                Visibility="{Binding ScaleRestoreEnabled, Converter={StaticResource ToggleCvt}}" />
         </StackPanel>
         <ToggleSwitch
             Grid.Row="5"

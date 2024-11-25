@@ -58,7 +58,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 X = item.X,
                 Y = item.Y,
-                RotateDeg = item.Rotate
+                Rotate = item.Rotate
             };
         }
 

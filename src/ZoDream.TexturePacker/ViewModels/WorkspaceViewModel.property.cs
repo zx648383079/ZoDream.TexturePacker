@@ -5,6 +5,9 @@ namespace ZoDream.TexturePacker.ViewModels
 {
     public partial class WorkspaceViewModel
     {
+
+        private readonly AppViewModel _app = App.ViewModel;
+
         public CommandManager UndoRedo { get; private set; } = new();
         public IImageEditor? Instance { get; set; }
 

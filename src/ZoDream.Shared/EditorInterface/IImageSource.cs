@@ -5,8 +5,6 @@ namespace ZoDream.Shared.EditorInterface
 {
     public interface IImageSource: IImageStyle, IDisposable
     {
-        public void Rotate(float angle);
-
         public bool Contains(float x, float y);
 
         public void Paint(IImageCanvas canvas, IImageStyle computedStyle);

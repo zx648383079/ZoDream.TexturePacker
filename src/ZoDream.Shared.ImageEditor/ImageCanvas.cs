@@ -24,7 +24,7 @@ namespace ZoDream.Shared.ImageEditor
 
         public void Mutate(IImageStyle style, Action<IImageCanvas> cb)
         {
-            if (style.RotateDeg == 0)
+            if (style.Rotate == 0)
             {
                 cb(this);
                 return;
@@ -39,20 +39,23 @@ namespace ZoDream.Shared.ImageEditor
             else
             {
                 (width, height) =
-                Drawing.SkiaExtension.ComputedRotate(style.Width, style.Height,
-                style.RotateDeg);
+                Drawing.SkiaExtension.ComputedRotate((int)(style.Width * Math.Abs(style.ScaleX)), 
+                (int)(style.Height * Math.Abs(style.ScaleY)),
+                style.Rotate);
             }
-            var rotatedBitmap = new SKBitmap(width, height);
-            using var surface = new SKCanvas(rotatedBitmap);
-            surface.Translate(style.Width / 2, style.Height / 2);
-            surface.RotateDegrees(style.RotateDeg);
-            surface.Translate(-width / 2, -height / 2);
-            cb.Invoke(new ImageCanvas(surface, styler)
+            var info = new SKImageInfo(width, height);
+            using var surface = SKSurface.Create(info);
+            var c = surface.Canvas;
+            c.Translate(width / 2, height / 2);
+            c.RotateDegrees(style.Rotate);
+            c.Scale(style.ScaleX, style.ScaleY);
+            c.Translate(-style.Width / 2, -style.Height / 2);
+            cb.Invoke(new ImageCanvas(c, styler)
             {
                 X = -style.X, 
                 Y = -style.Y
             });
-            canvas.DrawBitmap(rotatedBitmap, style.X + X, style.Y + Y);
+            DrawSurface(surface, style.X, style.Y);
         }
 
         public IImageStyle Compute(IImageLayer layer)
@@ -72,7 +75,7 @@ namespace ZoDream.Shared.ImageEditor
         private void Mutate(IImageStyle style, Action<SKCanvas, SKPoint> cb)
         {
             var point = new SKPoint(style.X + X, style.Y + Y);
-            if (style.RotateDeg == 0)
+            if (style.Rotate == 0)
             {
                 cb(canvas, point);
                 return;
@@ -87,15 +90,16 @@ namespace ZoDream.Shared.ImageEditor
             {
                 (width, height) =
                 Drawing.SkiaExtension.ComputedRotate(style.Width, style.Height, 
-                style.RotateDeg);
+                style.Rotate);
             }
-            var rotatedBitmap = new SKBitmap(width, height);
-            using var surface = new SKCanvas(rotatedBitmap);
-            surface.Translate(style.Width / 2, style.Height / 2);
-            surface.RotateDegrees(style.RotateDeg);
-            surface.Translate(-width / 2, -height / 2);
-            cb(surface, new SKPoint(0, 0));
-            canvas.DrawBitmap(rotatedBitmap, point);
+            var info = new SKImageInfo(width, height);
+            using var surface = SKSurface.Create(info);
+            var c = surface.Canvas;
+            c.Translate(style.Width / 2, style.Height / 2);
+            c.RotateDegrees(style.Rotate);
+            c.Translate(-width / 2, -height / 2);
+            cb(c, new SKPoint(0, 0));
+            canvas.DrawSurface(surface, point);
         }
 
         public void DrawBitmap(SKBitmap? source, IImageStyle style)

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cvt="using:ZoDream.TexturePacker.Converters">
 
+    <cvt:ToggleConverter x:Key="ToggleCvt" />
 
     <Style x:Key="InlineHeader" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />

@@ -3,13 +3,88 @@
     x:Class="ZoDream.TexturePacker.Dialogs.PropertyDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctl="using:ZoDream.TexturePacker.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZoDream.TexturePacker.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
+    xmlns:wctl="using:CommunityToolkit.WinUI.Controls"
     Title="属性"
     PrimaryButtonText="确认"
     SecondaryButtonText="取消"
     mc:Ignorable="d">
 
-    <Grid />
+    <ContentDialog.DataContext>
+        <vm:PropertyDialogViewModel />
+    </ContentDialog.DataContext>
+
+    <ContentDialog.Resources>
+        <ResourceDictionary Source="ms-appx:///Themes/FormStyle.xaml" />
+    </ContentDialog.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{StaticResource InlineHeader}" Text="名称：" />
+        <TextBlock
+            Grid.Row="1"
+            Style="{StaticResource InlineHeader}"
+            Text="尺寸：" />
+
+        <TextBlock
+            Grid.Row="2"
+            Style="{StaticResource InlineHeader}"
+            Text="前景色：" />
+        <TextBlock
+            Grid.Row="3"
+            Style="{StaticResource InlineHeader}"
+            Text="背景色：" />
+        <TextBlock
+            Grid.Row="4"
+            Style="{StaticResource InlineHeader}"
+            Text="透明背景：" />
+
+        <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1"
+            Orientation="Horizontal">
+            <NumberBox Header="Width" Value="{Binding Width, Mode=TwoWay}" />
+            <ctl:ToggleIcon
+                IsOn="{Binding IsLockSize, Mode=TwoWay}"
+                OffIcon="&#xE785;"
+                OnIcon="&#xE72E;"
+                Style="{StaticResource LockBtn}" />
+            <NumberBox Header="Height" Value="{Binding Height, Mode=TwoWay}" />
+            <Button
+                Command="{Binding SizeRestoreCommand}"
+                Style="{StaticResource RestoreBtn}"
+                Visibility="{Binding SizeRestoreEnabled, Converter={StaticResource ToggleCvt}}" />
+        </StackPanel>
+
+        <wctl:ColorPickerButton
+            Grid.Row="2"
+            Grid.Column="1"
+            SelectedColor="{Binding Foreground, Mode=TwoWay}" />
+        <wctl:ColorPickerButton
+            Grid.Row="3"
+            Grid.Column="1"
+            SelectedColor="{Binding Background, Mode=TwoWay}" />
+        <ToggleSwitch
+            Grid.Row="4"
+            Grid.Column="1"
+            IsOn="{Binding IsTransparentBackground, Mode=TwoWay}"
+            OffContent="背景色"
+            OnContent="透明背景" />
+    </Grid>
 </ContentDialog>

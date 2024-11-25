@@ -14,7 +14,10 @@ namespace ZoDream.Shared.ImageEditor
         /// <summary>
         /// 旋转角度0 - 360
         /// </summary>
-        public float RotateDeg { get; set; }
+        public float Rotate { get; set; }
+
+        public float ScaleX { get; set; } = 1;
+        public float ScaleY { get; set; } = 1;
 
         public abstract void Paint(IImageCanvas canvas, IImageStyle computedStyle);
 
@@ -25,11 +28,6 @@ namespace ZoDream.Shared.ImageEditor
         public virtual void Dispose()
         {
 
-        }
-
-        public void Rotate(float angle)
-        {
-            RotateDeg += angle;
         }
 
         public virtual bool Contains(float x, float y)

@@ -6,8 +6,10 @@
         /// <summary>
         /// 旋转角度0 - 360
         /// </summary>
-        public float RotateDeg { get; set; }
+        public float Rotate { get; set; }
 
+        public float ScaleX { get; set; }
+        public float ScaleY { get; set; }
     }
 
     public interface IImageComputedStyle : IImageStyle

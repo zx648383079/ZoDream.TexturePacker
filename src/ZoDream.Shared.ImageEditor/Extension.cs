@@ -9,6 +9,20 @@ namespace ZoDream.Shared.ImageEditor
 {
     public static class EditorExtension
     {
+        /// <summary>
+        /// 修正角度
+        /// </summary>
+        /// <param name="deg"></param>
+        /// <returns></returns>
+        public static float ConvertAngle(float deg)
+        {
+            deg %= 360;
+            if (deg < 0)
+            {
+                return deg + 360;
+            }
+            return deg;
+        }
 
         public static SKBitmap CreateThumbnail(this SKBitmap source, SKSizeI size)
         {

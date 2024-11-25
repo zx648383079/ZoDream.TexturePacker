@@ -199,6 +199,10 @@
                         Command="{Binding LayerMoveBottomCommand}"
                         IsEnabled="{Binding IsSelectedLayer}"
                         Text="移至底层" />
+                    <MenuFlyoutItem
+                        Command="{Binding LayerMoveParentCommand}"
+                        IsEnabled="{Binding IsSelectedLayer}"
+                        Text="移出父层" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         Command="{Binding LayerHorizontalLeftCommand}"

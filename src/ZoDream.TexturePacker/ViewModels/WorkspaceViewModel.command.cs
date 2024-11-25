@@ -76,6 +76,7 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand LayerMoveUpCommand { get; private set; }
         public ICommand LayerMoveDownCommand { get; private set; }
         public ICommand LayerMoveBottomCommand { get; private set; }
+        public ICommand LayerMoveParentCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
         private async void TapAddLayer(object? _)
@@ -137,6 +138,7 @@ namespace ZoDream.TexturePacker.ViewModels
         private async void TapProperty(object? _)
         {
             var dialog = new PropertyDialog();
+            dialog.ViewModel.Load(Instance);
             await App.ViewModel.OpenDialogAsync(dialog);
         }
         private void TapUnselect(object? _)

@@ -10,7 +10,7 @@ namespace ZoDream.TexturePacker.ViewModels
     {
         private readonly SKSizeI _thumbnailSize = new(60, 60);
 
-        private readonly ImageStyleManager _styleManager = new();
+        private readonly ImageStyleManager _styleManager = [];
         public IImageStyler Styler => LayerMode ? RealStyler : DefaultStyler;
 
         public IImageStyler DefaultStyler => _styleManager.Default;

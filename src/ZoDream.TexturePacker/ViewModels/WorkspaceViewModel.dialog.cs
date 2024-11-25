@@ -1,9 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZoDream.TexturePacker.Dialogs;
 
 namespace ZoDream.TexturePacker.ViewModels
@@ -19,7 +15,7 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             var dialog = new RenameDialog();
             dialog.ViewModel.Name = layer.Name;
-            var res = await App.ViewModel.OpenDialogAsync(dialog);
+            var res = await _app.OpenDialogAsync(dialog);
             if (res != ContentDialogResult.Primary || string.IsNullOrWhiteSpace(dialog.ViewModel.Name))
             {
                 return;
@@ -27,10 +23,22 @@ namespace ZoDream.TexturePacker.ViewModels
             layer.Name = dialog.ViewModel.Name;
         }
 
-        private async void TapLayerProperty(object? _)
+        private async void TapLayerProperty(object? arg)
         {
+            var layer = arg is LayerViewModel o ? o : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
             var dialog = new LayerPropertyDialog();
-            await App.ViewModel.OpenDialogAsync(dialog);
+            var model = dialog.ViewModel;
+            model.Load(layer);
+            var res = await _app.OpenFormAsync(dialog);
+            if (!res)
+            {
+                return;
+            }
+            model.Save(layer);
         }
     }
 }

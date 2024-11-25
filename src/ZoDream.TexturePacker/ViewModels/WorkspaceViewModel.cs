@@ -64,6 +64,7 @@ namespace ZoDream.TexturePacker.ViewModels
             LayerMoveUpCommand = new RelayCommand(TapLayerMoveUp);
             LayerMoveDownCommand = new RelayCommand(TapLayerMoveDown);
             LayerMoveBottomCommand = new RelayCommand(TapLayerMoveBottom);
+            LayerMoveParentCommand = new RelayCommand(TapLayerMoveParent);
             ExitCommand = new RelayCommand(TapExit);
             LayerSelectedCommand = new RelayCommand<IImageLayer>(OnLayerSelected);
             EditorSelectedCommand = new RelayCommand<IImageLayer>(OnEditorSelected);

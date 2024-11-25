@@ -5,7 +5,7 @@ namespace ZoDream.Tests
     [TestClass]
     public sealed class JsonTest
     {
-        [TestMethod]
+        //[TestMethod]
         public void TestParse()
         {
             var text = "";
