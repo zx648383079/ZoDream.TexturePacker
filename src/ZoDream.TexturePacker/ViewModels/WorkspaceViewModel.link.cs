@@ -13,6 +13,11 @@ namespace ZoDream.TexturePacker.ViewModels
         public async Task LoadImageMetaAsync(string fileName, int layerId)
         {
             var items = await ReaderFactory.LoadImageMetaAsync(fileName);
+            AddLink(layerId, [..items]);
+        }
+
+        public void AddLink(int layerId, params string[] items)
+        {
             foreach (var item in items)
             {
                 ImageNameLinkItems.TryAdd(item, layerId);

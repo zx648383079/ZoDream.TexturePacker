@@ -13,11 +13,11 @@ namespace ZoDream.TexturePacker.Plugins
     public static class ReaderFactory
     {
 
-        private static string[] ImageFilterItems = [".png", ".jpg", 
+        private static readonly string[] ImageFilterItems = [".png", ".jpg", 
             ".jpeg", ".webp", ".svg", 
             ".bmp", ".pvr", ".ccz"];
 
-        private static string[] LayerFilterItems = [".json", ".tres", 
+        private static readonly string[] LayerFilterItems = [".json", ".tres", 
             ".moc3", ".atlas", ".txt", ".plist", ".asset"];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
 
@@ -107,6 +107,21 @@ namespace ZoDream.TexturePacker.Plugins
             };
         }
 
+        private static ISkeletonReader? GetSkeletonExtensionReader(
+            string extension, string fileName)
+        {
+            if (fileName.EndsWith(".skel.txt") || 
+                fileName.EndsWith(".skel.json"))
+            {
+                return new Plugin.Spine.SkeletonJsonReader();
+            }
+            return extension switch
+            {
+                ".skel" => new Plugin.Spine.SkeletonReader(),
+                _ => null,
+            };
+        }
+
         public static IPluginReader? GetSpriteReader(IStorageFile file)
         {
             return GetSpriteExtensionReader(file.FileType, file.Name);
@@ -116,6 +131,17 @@ namespace ZoDream.TexturePacker.Plugins
         {
             var extension = Path.GetExtension(fileName);
             return GetSpriteExtensionReader(extension, Path.GetFileName(fileName));
+        }
+
+        public static ISkeletonReader? GetSkeletonReader(IStorageFile file)
+        {
+            return GetSkeletonExtensionReader(file.FileType, file.Name);
+        }
+
+        public static ISkeletonReader? GetSkeletonReader(string fileName)
+        {
+            var extension = Path.GetExtension(fileName);
+            return GetSkeletonExtensionReader(extension, Path.GetFileName(fileName));
         }
 
         public static async Task<IImageData?> LoadImageAsync(string fileName)
