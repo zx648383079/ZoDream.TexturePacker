@@ -150,7 +150,9 @@ namespace ZoDream.TexturePacker.ViewModels
         {
             if (Enum.TryParse<CssSpritesAlgorithm>(arg as string, out var res))
             {
-                var (width, height) = new CssSprites(res).Compute([.. Instance!.LayerItems.Select(i => i.Source)]);
+                // TODO 层级问题
+                var (width, height) = new CssSprites(res)
+                    .Compute([.. Instance!.LayerItems.Select(i => i.Source)]);
                 Instance!.Resize(width, height);
                 Instance.Invalidate();
             }

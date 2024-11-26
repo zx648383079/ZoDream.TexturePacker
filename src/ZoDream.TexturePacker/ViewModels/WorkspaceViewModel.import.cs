@@ -27,6 +27,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
+            IsLoading = true;
             var trace = new ImageContourTrace(true);
             var items = await trace.GetContourAsync(image.Source);
             Instance!.Add(items.Select(path => {
@@ -47,6 +48,7 @@ namespace ZoDream.TexturePacker.ViewModels
             }), layer);
             layer.IsVisible = false;
             Instance.Invalidate();
+            IsLoading = false;
         }
         /// <summary>
         /// 分离图片对象并重新采样合并到子对象
@@ -58,6 +60,7 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
+            IsLoading = true;
             var trace = new ImageContourTrace(true);
             var items = await trace.GetContourAsync(image.Source);
             using var paint = new SKPaint();
@@ -83,6 +86,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 item.Resample();
             }
             Instance?.Invalidate();
+            IsLoading = false;
         }
 
         private static SKPath? GetContainPath(IImageBound image, IEnumerable<SKPath> items)
@@ -177,11 +181,13 @@ namespace ZoDream.TexturePacker.ViewModels
         }
         private async void OnDragImage(FileLoader loader)
         {
+            IsLoading = true;
             if (!await loader.LoadAsync())
             {
+                IsLoading = false;
                 return;
             }
-            foreach (var item in loader.EnumerateImage())
+            await foreach (var item in loader.EnumerateImage())
             {
                 var layer = Instance!.AddImage(item.Source);
                 if (layer is not null)
@@ -190,12 +196,13 @@ namespace ZoDream.TexturePacker.ViewModels
                     AddLink(layer.Id, item.MetaItems);
                 }
             }
-            foreach (var item in loader.EnumerateLayer())
+            await foreach (var item in loader.EnumerateLayer())
             {
                 await ImportSpriteAsync(item);
             }
             Instance!.Resize();
             Instance.Invalidate();
+            IsLoading = false;
         }
 
         private async Task ImportSpriteAsync(SpriteLayerSection data)

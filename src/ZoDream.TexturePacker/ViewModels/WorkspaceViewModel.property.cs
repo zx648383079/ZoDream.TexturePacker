@@ -26,6 +26,14 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _redoEnabled, value);
         }
 
+        private bool _isLoading;
+
+        public bool IsLoading {
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
+        }
+
+
         public bool IsSelectedLayer => SelectedLayer != null;
 
         

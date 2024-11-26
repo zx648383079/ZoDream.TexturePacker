@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using ZoDream.Plugin.Live2d.Models;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -18,7 +19,7 @@ namespace ZoDream.Plugin.Live2d
         public static string[] LoadTexture(string fileName)
         {
             var folder = Path.GetDirectoryName(fileName);
-            var data = JsonSerializer.Deserialize<LD_ModelRoot>(File.ReadAllText(fileName));
+            var data = JsonSerializer.Deserialize<JsonModelRoot>(File.ReadAllText(fileName));
             if (data is null)
             {
                 return [];
@@ -29,7 +30,7 @@ namespace ZoDream.Plugin.Live2d
         public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
         {
             var folder = Path.GetDirectoryName(fileName);
-            var data = JsonSerializer.Deserialize<LD_ModelRoot>(content);
+            var data = JsonSerializer.Deserialize<JsonModelRoot>(content);
             if (data is null) 
             {
                 return null;

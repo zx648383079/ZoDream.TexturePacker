@@ -5,10 +5,8 @@ using System.IO.Enumeration;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using ZoDream.Shared.Drawing;
 using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZoDream.TexturePacker.Plugins
 {
@@ -90,25 +88,25 @@ namespace ZoDream.TexturePacker.Plugins
             return Task.FromResult(_imageItems.Count > 0 || _layerItems.Count > 0 || _skeletonItems.Count > 0);
         }
 
-        public IEnumerable<ImageSection> EnumerateImage()
+        public async IAsyncEnumerable<ImageSection> EnumerateImage()
         {
             foreach (var item in _imageItems)
             {
-                var res = item.Value.ReadAsync(item.Key).GetAwaiter().GetResult();
+                var res = await item.Value.ReadAsync(item.Key);
                 if (res is null)
                 {
                     continue;
                 }
-                var metaItems = ReaderFactory.LoadImageMetaAsync(item.Key).GetAwaiter().GetResult();
+                var metaItems = await ReaderFactory.LoadImageMetaAsync(item.Key);
                 yield return new ImageSection(item.Key, res, [..metaItems]);
             }
         }
 
-        public IEnumerable<SpriteLayerSection> EnumerateLayer()
+        public async IAsyncEnumerable<SpriteLayerSection> EnumerateLayer()
         {
             foreach (var item in _layerItems)
             {
-                var res = item.Value.ReadAsync(item.Key).GetAwaiter().GetResult();
+                var res = await item.Value.ReadAsync(item.Key);
                 if (res is null)
                 {
                     continue;
@@ -129,11 +127,11 @@ namespace ZoDream.TexturePacker.Plugins
             }
         }
 
-        public IEnumerable<SkeletonSection> EnumerateSkeleton()
+        public async IAsyncEnumerable<SkeletonSection> EnumerateSkeleton()
         {
             foreach (var item in _skeletonItems)
             {
-                var res = item.Value.ReadAsync(item.Key).GetAwaiter().GetResult();
+                var res = await item.Value.ReadAsync(item.Key);
                 if (res is null)
                 {
                     continue;

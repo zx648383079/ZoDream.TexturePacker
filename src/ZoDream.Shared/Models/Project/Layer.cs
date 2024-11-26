@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZoDream.Shared.Models
+﻿namespace ZoDream.Shared.Models
 {
-    public class ImageLayer
+    public class ProjectImageLayer
     {
+        public string Name { get; set; } = string.Empty;
 
+        public int ParentIndex { get; set; }
+
+        public int ResourceIndex { get; set; }
     }
 
 }

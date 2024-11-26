@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ZoDream.Shared.Drawing;
 
 namespace ZoDream.Shared.Models
 {
@@ -15,9 +12,14 @@ namespace ZoDream.Shared.Models
 
         public string? BackgroundColor { get; set; }
 
-        public List<ImageLayer> LayerItems { get; set; } = [];
+        public List<ProjectImageLayer> LayerItems { get; set; } = [];
 
-        public List<ImageResource> ResourceItems { get; set; } = [];
+        public List<IImageData> ResourceItems { get; set; } = [];
+
+        public List<SpriteLayerSection> SpriteItems { get; set; } = [];
+        public List<SkeletonSection> SkeletonItems { get; set; } = [];
+
+
     }
 
 }

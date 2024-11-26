@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZoDream.Shared.Models
+namespace ZoDream.Plugin.Live2d.Models
 {
-    public class ImageResource
+    internal class MocKeyformSourcesBeginIndices
     {
-
     }
 }

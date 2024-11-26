@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdParser;
+using System;
 using System.Threading.Tasks;
 using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
@@ -9,7 +10,24 @@ namespace ZoDream.Plugin.Project.Adobe
     {
         public Task<ProjectDocument?> ReadAsync(string fileName)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => {
+                try
+                {
+                    return Read(fileName);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            });
+        }
+
+        private ProjectDocument Read(string fileName)
+        {
+            using var reader = new PsdFile(fileName);
+            var document = new ProjectDocument();
+            
+            return document;
         }
 
 
