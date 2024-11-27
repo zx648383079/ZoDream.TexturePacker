@@ -30,5 +30,6 @@ namespace ZoDream.Plugin.Spine.Models
         public int[] Edges { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
+        public Sequence? Sequence { get; internal set; }
     }
 }

@@ -201,6 +201,10 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 await ImportSpriteAsync(item);
             }
+            await foreach (var item in loader.EnumerateSkeleton())
+            {
+                _styleManager.Add(new SkeletonImageStyler(item));
+            }
             Instance!.Resize();
             Instance.Invalidate();
             IsLoading = false;

@@ -2,9 +2,11 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using ZoDream.Plugin.Spine.Models;
+using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
@@ -16,23 +18,46 @@ namespace ZoDream.Plugin.Spine
     {
         public const int BONE_ROTATE = 0;
         public const int BONE_TRANSLATE = 1;
-        public const int BONE_SCALE = 2;
-        public const int BONE_SHEAR = 3;
+        public const int BONE_TRANSLATEX = 2;
+        public const int BONE_TRANSLATEY = 3;
+        public const int BONE_SCALE = 4;
+        public const int BONE_SCALEX = 5;
+        public const int BONE_SCALEY = 6;
+        public const int BONE_SHEAR = 7;
+        public const int BONE_SHEARX = 8;
+        public const int BONE_SHEARY = 9;
+        public const int BONE_INHERIT = 10;
 
         public const int SLOT_ATTACHMENT = 0;
-        public const int SLOT_COLOR = 1;
-        public const int SLOT_TWO_COLOR = 2;
+        public const int SLOT_RGBA = 1;
+        public const int SLOT_RGB = 2;
+        public const int SLOT_RGBA2 = 3;
+        public const int SLOT_RGB2 = 4;
+        public const int SLOT_ALPHA = 5;
+
+        public const int ATTACHMENT_DEFORM = 0;
+        public const int ATTACHMENT_SEQUENCE = 1;
 
         public const int PATH_POSITION = 0;
         public const int PATH_SPACING = 1;
         public const int PATH_MIX = 2;
+
+        public const int PHYSICS_INERTIA = 0;
+        public const int PHYSICS_STRENGTH = 1;
+        public const int PHYSICS_DAMPING = 2;
+        public const int PHYSICS_MASS = 4;
+        public const int PHYSICS_WIND = 5;
+        public const int PHYSICS_GRAVITY = 6;
+        public const int PHYSICS_MIX = 7;
+        public const int PHYSICS_RESET = 8;
 
         public const int CURVE_LINEAR = 0;
         public const int CURVE_STEPPED = 1;
         public const int CURVE_BEZIER = 2;
 
         private float Scale = 1;
-
+        private string[] _cacheItems = [];
+        private Version _version = new();
 
         public IEnumerable<SkeletonSection>? Read(Stream input)
         {
@@ -40,36 +65,53 @@ namespace ZoDream.Plugin.Spine
             {
                 Skeleton = new()
             };
-            var reader = new BinaryReader(input);
-            res.Skeleton.Hash = ReadString(reader);
-            res.Skeleton.Version = ReadString(reader);
-            res.Skeleton.Width = ReadSingle(reader);
-            res.Skeleton.Height = ReadSingle(reader);
+            var reader = new EndianReader(input, EndianType.BigEndian);
+            ReadHeader(reader, res.Skeleton);
+            _version = Version.Parse(res.Skeleton.Version);
+            res.Skeleton.X = reader.ReadSingle();
+            res.Skeleton.Y = reader.ReadSingle();
+            res.Skeleton.Width = reader.ReadSingle();
+            res.Skeleton.Height = reader.ReadSingle();
+            if (_version.Major >= 4)
+            {
+                res.Skeleton.ReferenceScale = reader.ReadSingle() * Scale;
+            }
             var nonessential = reader.ReadBoolean();
             if (nonessential)
             {
-                res.Skeleton.Fps = ReadSingle(reader);
+                res.Skeleton.Fps = reader.ReadSingle();
                 res.Skeleton.ImagesPath = ReadString(reader);
+                res.Skeleton.AudioPath = ReadString(reader);
             }
+            // ? 
+            _cacheItems = ReadArray(reader, _ => ReadString(reader));
+
             // Bones
             res.Bones = ReadArray(reader, i => {
                 var bone = new Bone
                 {
                     Name = ReadString(reader),
-                    Parent = i == 0 ? string.Empty : res.Bones[reader.Read7BitEncodedInt()].Name,
-                    Rotation = ReadSingle(reader),
-                    X = ReadSingle(reader) * Scale,
-                    Y = ReadSingle(reader) * Scale,
-                    ScaleX = ReadSingle(reader),
-                    ScaleY = ReadSingle(reader),
-                    ShearX = ReadSingle(reader),
-                    ShearY = ReadSingle(reader),
-                    Length = ReadSingle(reader) * Scale,
-                    TransformMode = (TransformMode)reader.Read7BitEncodedInt()
+                    ParentIndex = i == 0 ? -1 : ReadInt(reader, true),
+                    Rotation = reader.ReadSingle(),
+                    X = reader.ReadSingle() * Scale,
+                    Y = reader.ReadSingle() * Scale,
+                    ScaleX = reader.ReadSingle(),
+                    ScaleY = reader.ReadSingle(),
+                    ShearX = reader.ReadSingle(),
+                    ShearY = reader.ReadSingle(),
+                    Length = reader.ReadSingle() * Scale,
+                    TransformMode = (TransformMode)ReadInt(reader, true)
                 };
+                //skinRequired
+                reader.ReadBoolean();
                 if (nonessential)
                 {
                     ReadColor(reader); // Skip bone color.
+                    if (_version.Major >= 4)
+                    {
+                        ReadString(reader);
+                        reader.ReadBoolean();
+                    }
                 }
                 return bone;
             }); 
@@ -78,12 +120,16 @@ namespace ZoDream.Plugin.Spine
                 var slot = new Slot
                 {
                     Name = ReadString(reader),
-                    Bone = res.Bones[reader.Read7BitEncodedInt()].Name
+                    Bone = res.Bones[ReadInt(reader, true)].Name
                 };
                 var color = ReadColor(reader);
                 var darkColor = ReadColor(reader, false); // 0x00rrggbb
-                slot.Attachment = ReadString(reader);
-                var blendMode = (BlendMode)reader.Read7BitEncodedInt();
+                slot.Attachment = ReadStringRef(reader);
+                var blendMode = (BlendMode)ReadInt(reader, true);
+                if (nonessential && _version.Major >= 4)
+                {
+                    reader.ReadBoolean();
+                }
                 return slot;
             });
             // IK constraints.
@@ -91,14 +137,39 @@ namespace ZoDream.Plugin.Spine
                 var ik = new IkConstraint
                 {
                     Name = ReadString(reader),
-                    Order = reader.Read7BitEncodedInt(),
-                    Bones = ReadArray(reader, _ => {
-                        return res.Bones[reader.Read7BitEncodedInt()].Name;
-                    }),
-                    Target = res.Bones[reader.Read7BitEncodedInt()].Name,
-                    Mix = ReadSingle(reader),
-                    BendDirection = reader.ReadByte()
+                    Order = ReadInt(reader, true),
                 };
+                if (_version.Major < 4)
+                {
+                    reader.ReadBoolean();
+                }
+                ik.Bones = ReadArray(reader, _ => {
+                    return res.Bones[ReadInt(reader, true)].Name;
+                });
+                ik.Target = res.Bones[ReadInt(reader, true)].Name;
+                if (_version.Major >= 4)
+                {
+                    var flags = reader.ReadByte();
+                    ik.BendDirection = (flags & 2) != 0 ? 1 : -1;
+                    if ((flags & 32) != 0)
+                    {
+                        ik.Mix = (flags & 64) != 0 ? reader.ReadSingle() : 1;
+                    }
+                    if ((flags & 128) != 0)
+                    {
+                        // ik.Softness = 
+                        reader.ReadSingle();// * Scale;
+                    }
+                } else
+                {
+                    ik.Mix = reader.ReadSingle();
+                    reader.ReadSingle();
+                    ik.BendDirection = reader.ReadByte();
+                    reader.ReadBoolean();
+                    reader.ReadBoolean();
+                    reader.ReadBoolean();
+                }
+
                 return ik;
             });
             // Transform constraints.
@@ -106,24 +177,86 @@ namespace ZoDream.Plugin.Spine
                 var tc = new TransformConstraint
                 {
                     Name = ReadString(reader),
-                    Order = reader.Read7BitEncodedInt(),
-                    Bones = ReadArray(reader, _ => {
-                        return res.Bones[reader.Read7BitEncodedInt()].Name;
-                    }),
-                    Target = res.Bones[reader.Read7BitEncodedInt()].Name,
-                    Local = reader.ReadBoolean(),
-                    Relative = reader.ReadBoolean(),
-                    OffsetRotation = ReadSingle(reader),
-                    OffsetX = ReadSingle(reader),
-                    OffsetY = ReadSingle(reader),
-                    OffsetScaleX = ReadSingle(reader),
-                    OffsetScaleY = ReadSingle(reader),
-                    OffsetShearY = ReadSingle(reader),
-                    RotateMix = ReadSingle(reader),
-                    TranslateMix = ReadSingle(reader),
-                    ScaleMix = ReadSingle(reader),
-                    ShearMix = ReadSingle(reader)
+                    Order = ReadInt(reader, true),
                 };
+                if (_version.Major < 4)
+                {
+                    reader.ReadBoolean();
+                }
+                tc.Bones = ReadArray(reader, _ => {
+                    return res.Bones[ReadInt(reader, true)].Name;
+                });
+                tc.Target = res.Bones[ReadInt(reader, true)].Name;
+                if (_version.Major >= 4)
+                {
+                    var flags = reader.ReadByte();
+                    tc.Local = (flags & 2) != 0;
+                    tc.Relative = (flags & 4) != 0;
+                    if ((flags & 8) != 0)
+                    {
+                        tc.OffsetRotation = reader.ReadSingle();
+                    }
+                    if ((flags & 16) != 0)
+                    {
+                        tc.OffsetX = reader.ReadSingle();
+                    }
+                    if ((flags & 32) != 0)
+                    {
+                        tc.OffsetY = reader.ReadSingle();
+                    }
+                    if ((flags & 64) != 0)
+                    {
+                        tc.OffsetScaleX = reader.ReadSingle();
+                    }
+                    if ((flags & 128) != 0)
+                    {
+                        tc.OffsetScaleY = reader.ReadSingle();
+                    }
+                    flags = reader.ReadByte();
+                    if ((flags & 1) != 0)
+                    {
+                        tc.OffsetShearY = reader.ReadSingle();
+                    }
+                    if ((flags & 2) != 0)
+                    {
+                        tc.RotateMix = reader.ReadSingle();
+                    }
+                    if ((flags & 4) != 0)
+                    {
+                        tc.TranslateXMix = reader.ReadSingle();
+                    }
+                    if ((flags & 8) != 0)
+                    {
+                        tc.TranslateYMix = reader.ReadSingle();
+                    }
+                    if ((flags & 16) != 0)
+                    {
+                        tc.ScaleXMix = reader.ReadSingle();
+                    }
+                    if ((flags & 32) != 0)
+                    {
+                        tc.ScaleYMix = reader.ReadSingle();
+                    }
+                    if ((flags & 64) != 0)
+                    {
+                        tc.ShearYMix = reader.ReadSingle();
+                    }
+                } else
+                {
+                    tc.Local = reader.ReadBoolean();
+                    tc.Relative = reader.ReadBoolean();
+                    tc.OffsetRotation = reader.ReadSingle();
+                    tc.OffsetX = reader.ReadSingle() * Scale;
+                    tc.OffsetY = reader.ReadSingle() * Scale;
+                    tc.OffsetScaleX = reader.ReadSingle();
+                    tc.OffsetScaleY = reader.ReadSingle();
+                    tc.OffsetShearY = reader.ReadSingle();
+                    tc.RotateMix = reader.ReadSingle();
+                    tc.TranslateXMix = reader.ReadSingle();
+                    tc.ScaleXMix = reader.ReadSingle();
+                    tc.ShearYMix = reader.ReadSingle();
+                }
+                
                 return tc;
             });
             // Path constraints
@@ -131,35 +264,99 @@ namespace ZoDream.Plugin.Spine
                 var pc = new PathConstraint
                 {
                     Name = ReadString(reader),
-                    Order = reader.Read7BitEncodedInt(),
-                    Bones = ReadArray(reader, _ => {
-                        return res.Bones[reader.Read7BitEncodedInt()].Name;
-                    }),
-                    Target = res.Bones[reader.Read7BitEncodedInt()].Name,
-                    PositionMode = (PositionMode)reader.Read7BitEncodedInt(),
-                    SpacingMode = (SpacingMode)reader.Read7BitEncodedInt(),
-                    RotateMode = (RotateMode)reader.Read7BitEncodedInt(),
-                    OffsetRotation = ReadSingle(reader),
-                    Position = ReadSingle(reader)
+                    Order = ReadInt(reader, true),
+                    
                 };
+                // skinRequired
+                reader.ReadBoolean();
+                pc.Bones = ReadArray(reader, _ => {
+                    return res.Bones[ReadInt(reader, true)].Name;
+                });
+                pc.Target = res.Bones[ReadInt(reader, true)].Name;
+                if (_version.Major >= 4)
+                {
+                    var flags = reader.ReadByte();
+                    pc.PositionMode = (PositionMode)(flags & 1);
+                    pc.SpacingMode = (SpacingMode)((flags >> 1) & 3);
+                    pc.RotateMode = (RotateMode)((flags >> 3) & 3);
+                    if ((flags & 128) != 0)
+                    {
+                        pc.OffsetRotation = reader.ReadSingle();
+                    }
+                } else
+                {
+                    pc.PositionMode = (PositionMode)ReadInt(reader, true);
+                    pc.SpacingMode = (SpacingMode)ReadInt(reader, true);
+                    pc.RotateMode = (RotateMode)ReadInt(reader, true);
+                    pc.OffsetRotation = reader.ReadSingle();
+                }
+                
+                pc.Position = reader.ReadSingle();
                 if (pc.PositionMode == PositionMode.Fixed)
                 {
                     pc.Position *= Scale;
                 }
-                pc.Spacing = ReadSingle(reader);
+                pc.Spacing = reader.ReadSingle();
                 if (pc.SpacingMode == SpacingMode.Fixed || pc.SpacingMode == SpacingMode.Length)
                 {
                     pc.Spacing *= Scale;
                 }
-                pc.RotateMix = ReadSingle(reader);
-                pc.TranslateMix = ReadSingle(reader);
+                pc.RotateMix = reader.ReadSingle();
+                pc.TranslateXMix = reader.ReadSingle();
+                pc.TranslateYMix = reader.ReadSingle();
                 return pc;
             });
+            if (_version.Major >= 4)
+            {
+                res.PhysicsConstraints = ReadArray(reader, _ => {
+                    var pc = new PhysicsConstraint()
+                    {
+                        Name = ReadString(reader),
+                        Order = ReadInt(reader, true),
+                        Bone = res.Bones[ReadInt(reader, true)].Name,
+                    };
+                    var flags = reader.ReadByte();
+                    // skinRequired = (flags & 1) != 0
+                    if ((flags & 2) != 0)
+                    {
+                        pc.X = reader.ReadSingle();
+                    }
+                    if ((flags & 4) != 0)
+                    {
+                        pc.Y = reader.ReadSingle();
+                    }
+                    if ((flags & 8) != 0)
+                    {
+                        pc.Rotate = reader.ReadSingle();
+                    }
+                    if ((flags & 16) != 0)
+                    {
+                        pc.ScaleX = reader.ReadSingle();
+                    }
+                    if ((flags & 32) != 0)
+                    {
+                        pc.ShearX = reader.ReadSingle();
+                    }
+                    pc.Limit = ((flags & 64) != 0 ? reader.ReadSingle() : 5000) * Scale;
+                    pc.Step = 1f / reader.ReadByte();
+                    pc.Inertia = reader.ReadSingle();
+                    pc.Strength = reader.ReadSingle();
+                    pc.Damping = reader.ReadSingle();
+                    pc.MassInverse = (flags & 128) != 0 ? reader.ReadSingle() : 1;
+                    pc.Wind = reader.ReadSingle();
+                    pc.Gravity = reader.ReadSingle();
+                    flags = reader.ReadByte();
+                    pc.Mix = (flags & 128) != 0 ? reader.ReadSingle() : 1;
+                    return pc;
+                });
+
+            }
+
             // Default skin.
-            var defaultSkin = ReadSkin(reader, "default", res, nonessential);
+            var defaultSkin = ReadSkin(reader, true, res, nonessential);
             // Skins.
             var skinItems = ReadArray(reader, _ => {
-                return ReadSkin(reader, ReadString(reader), res, nonessential);
+                return ReadSkin(reader, false, res, nonessential);
             });
             if (defaultSkin is null)
             {
@@ -173,35 +370,62 @@ namespace ZoDream.Plugin.Spine
                 var e = new Event()
                 {
                     Name = ReadString(reader),
-                    Int  = reader.Read7BitEncodedInt(),
-                    Float = ReadSingle(reader),
-                    String = ReadString(reader)
+                    Int  = ReadInt(reader, false),
+                    Float = reader.ReadSingle(),
+                    String = ReadString(reader),
+                    AudioPath = ReadString(reader),
                 };
+                if (!string.IsNullOrEmpty(e.AudioPath))
+                {
+                    e.Volume = reader.ReadSingle();
+                    e.Balance = reader.ReadSingle();
+                }
                 return e;
             });
             // Animations.
-            res.Animations = ReadArray(reader, _ => {
-                return ReadAnimation(reader, res);
-            });
+            //res.Animations = ReadArray(reader, _ => {
+            //    return ReadAnimation(reader, res);
+            //});
             return [res.ToSkeleton()];
         }
 
-        private Skin ReadSkin(BinaryReader reader, string name, 
+        private Skin ReadSkin(BinaryReader reader, bool defaultSkin, 
             SkeletonRoot res, bool nonessential)
         {
-            var slotCount = reader.Read7BitEncodedInt();
-            if (slotCount <= 0)
+            var skin = new Skin()
+            {
+                Name = defaultSkin ? "default" : ReadString(reader),
+            };
+            if (!defaultSkin)
+            {
+                if (nonessential)
+                {
+                    ReadColor(reader);
+                }
+                // bones
+                ReadArray(reader, _ => ReadInt(reader, true));
+                // ikConstraints
+                ReadArray(reader, _ => ReadInt(reader, true));
+                // transformConstraints
+                ReadArray(reader, _ => ReadInt(reader, true));
+                // pathConstraints
+                ReadArray(reader, _ => ReadInt(reader, true));
+                if (_version.Major >= 4)
+                {
+                    // physicsConstraints
+                    ReadArray(reader, _ => ReadInt(reader, true));
+                }
+                
+            }
+            var slotCount = ReadInt(reader, true);
+            if (slotCount <= 0 && defaultSkin)
             {
                 return null;
             }
-            var skin = new Skin
-            {
-                Name = name,
-            };
             ReadArray(slotCount, _ => {
-                var slotIndex = reader.Read7BitEncodedInt();
+                var slotIndex = ReadInt(reader, true);
                 ReadArray(reader, _ => {
-                    var name = ReadString(reader);
+                    var name = ReadStringRef(reader);
                     var attachment = ReadAttachment(reader, res, skin, slotIndex, name, nonessential);
                     if (attachment is null)
                     {
@@ -215,22 +439,40 @@ namespace ZoDream.Plugin.Spine
 
         private AttachmentBase ReadAttachment(BinaryReader reader, SkeletonRoot res, Skin skin, int slotIndex, string attachmentName, bool nonessential)
         {
-            var name = ReadString(reader);
-            var type = (AttachmentType)reader.ReadByte();
+            var flags = _version.Major >= 4 ? reader.ReadByte() : 255;
+            var name = (flags & 8) != 0 ? ReadStringRef(reader) : attachmentName;
+            var type = (AttachmentType)(_version.Major >= 4 ? (flags & 0x7) : reader.ReadByte());
             switch (type)
             {
                 case AttachmentType.Region:
+                    if (_version.Major >= 4)
+                    {
+                        return new RegionAttachment()
+                        {
+                            Name = name,
+                            Path = (flags & 16) != 0 ? ReadStringRef(reader) : name,
+                            Color = (flags & 32) != 0 ? ReadColor(reader) : SKColors.White,
+                            Sequence = (flags & 64) != 0 ? ReadSequence(reader) : null,
+                            Rotation = (flags & 128) != 0 ? reader.ReadSingle() : 0,
+                            X = reader.ReadSingle(),
+                            Y = reader.ReadSingle(),
+                            ScaleX = reader.ReadSingle(),
+                            ScaleY = reader.ReadSingle(),
+                            Width = reader.ReadSingle(),
+                            Height = reader.ReadSingle(),
+                        };
+                    }
                     return new RegionAttachment()
                     {
                         Name = name,
-                        Path = ReadString(reader) ?? name,
-                        Rotation = ReadSingle(reader),
-                        X = ReadSingle(reader),
-                        Y = ReadSingle(reader),
-                        ScaleX = ReadSingle(reader),
-                        ScaleY = ReadSingle(reader),
-                        Width = ReadSingle(reader),
-                        Height = ReadSingle(reader),
+                        Path = ReadStringRef(reader),
+                        Rotation = reader.ReadSingle(),
+                        X = reader.ReadSingle(),
+                        Y = reader.ReadSingle(),
+                        ScaleX = reader.ReadSingle(),
+                        ScaleY = reader.ReadSingle(),
+                        Width = reader.ReadSingle(),
+                        Height = reader.ReadSingle(),
                         Color = ReadColor(reader),
                     };
                 case AttachmentType.BoundingBox:
@@ -238,52 +480,83 @@ namespace ZoDream.Plugin.Spine
                     {
                         Name = name
                     };
-                    ReadVertices(reader, b);
+                    ReadVertices(reader, b, (flags & 16) != 0);
                     if (nonessential)
                     {
                         ReadColor(reader);
                     }
                     return b;
                 case AttachmentType.Mesh:
-                    var m = new MeshAttachment()
+                    var m = new MeshAttachment
                     {
                         Name = name,
-                        Path = ReadString(reader),
-                        Color = ReadColor(reader),
                     };
-                    ReadVertices(reader, m);
-                    m.HullLength = reader.Read7BitEncodedInt();
+                    if (_version.Major >= 4)
+                    {
+                        m.Path = (flags & 16) != 0 ? ReadStringRef(reader) : name;
+                        m.Color = (flags & 32) != 0 ? ReadColor(reader) : SKColors.White;
+                        m.Sequence = (flags & 64) != 0 ? ReadSequence(reader) : null;
+                        m.HullLength = ReadInt(reader, true);
+                    } else
+                    {
+                        m.Path = ReadStringRef(reader);
+                        m.Color = ReadColor(reader);
+                    }
+                    ReadVertices(reader, m, (flags & 128) != 0);
+                    if (_version.Major < 4)
+                    {
+                        m.HullLength = ReadInt(reader, true);
+                    }
                     if (nonessential)
                     {
-                        m.Edges = ReadArray(reader, _ => (int)ReadShort(reader));
-                        m.Width = ReadSingle(reader);
-                        m.Height = ReadSingle(reader);
+                        m.Edges = ReadArray(reader, _ => (int)reader.ReadInt16());
+                        m.Width = reader.ReadSingle();
+                        m.Height = reader.ReadSingle();
                     }
                     return m;
                 case AttachmentType.LinkedMesh:
                     var l = new MeshAttachment()
                     {
                         Name = name,
-                        Path = ReadString(reader),
-                        Color = ReadColor(reader),
                     };
-                    var skinName = ReadString(reader);
-                    var parent = ReadString(reader);
-                    l.InheritDeform = reader.ReadBoolean();
+                    if (_version.Major >= 4)
+                    {
+                        l.Path = (flags & 16) != 0 ? ReadStringRef(reader) : name;
+                        l.Color = (flags & 32) != 0 ? ReadColor(reader) : SKColors.White;
+                        l.Sequence = (flags & 64) != 0 ? ReadSequence(reader) : null;
+                        var skinIndex = ReadInt(reader, true);
+                    } else
+                    {
+                        l.Path = ReadStringRef(reader);
+                        l.Color = ReadColor(reader);
+                        var skinName = ReadStringRef(reader);
+                    }
+                    var inheritTimelines = (flags & 128) != 0;
+                    
+                    var parent = ReadStringRef(reader);
+
+                    l.InheritDeform = _version.Major >= 4 ? inheritTimelines : reader.ReadBoolean();
                     if (nonessential)
                     {
-                        l.Width = ReadSingle(reader);
-                        l.Height = ReadSingle(reader);
+                        l.Width = reader.ReadSingle();
+                        l.Height = reader.ReadSingle();
                     }
                     return l;
                 case AttachmentType.Path:
                     var p = new PathAttachment()
                     {
                         Name = name,
-                        Closed = reader.ReadBoolean(),
-                        ConstantSpeed = reader.ReadBoolean(),
                     };
-                    ReadVertices(reader, p);
+                    if (_version.Major >= 4)
+                    {
+                        p.Closed = (flags & 16) != 0;
+                        p.ConstantSpeed = (flags & 32) != 0;
+                    } else
+                    {
+                        p.Closed = reader.ReadBoolean();
+                        p.ConstantSpeed = reader.ReadBoolean();
+                    }
+                    ReadVertices(reader, p, (flags & 64) != 0);
                     if (nonessential)
                     {
                         ReadColor(reader);
@@ -292,9 +565,9 @@ namespace ZoDream.Plugin.Spine
                 case AttachmentType.Point:
                     var t = new PointAttachment()
                     {
-                        Rotation = ReadSingle(reader),
-                        X = ReadSingle(reader),
-                        Y = ReadSingle(reader),
+                        Rotation = reader.ReadSingle(),
+                        X = reader.ReadSingle(),
+                        Y = reader.ReadSingle(),
                     };
                     if (nonessential)
                     {
@@ -305,10 +578,10 @@ namespace ZoDream.Plugin.Spine
                     var c = new ClippingAttachment()
                     {
                         Name = name,
-                        EndSlot = res.Slots[reader.Read7BitEncodedInt()].Name,
+                        EndSlot = res.Slots[ReadInt(reader, true)].Name,
 
                     };
-                    ReadVertices(reader, c);
+                    ReadVertices(reader, c, (flags & 16) != 0);
                     if (nonessential)
                     {
                         ReadColor(reader);
@@ -327,10 +600,10 @@ namespace ZoDream.Plugin.Spine
 
             // Slot timelines.
             ReadArray(reader, _ => {
-                var slotIndex = reader.Read7BitEncodedInt();
+                var slotIndex = ReadInt(reader, true);
                 ReadArray(reader, _ => {
                     var timelineType = reader.ReadByte();
-                    var frameCount = reader.Read7BitEncodedInt();
+                    var frameCount = ReadInt(reader, true);
                     switch (timelineType)
                     {
                         case SLOT_ATTACHMENT:
@@ -340,21 +613,21 @@ namespace ZoDream.Plugin.Spine
                                     SlotIndex = slotIndex,
                                 };
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
-                                    timeline.AttachmentNames[i] = ReadString(reader);
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.AttachmentNames[i] = ReadStringRef(reader);
                                 });
                                 timelines.Add(timeline);
                                 duration = Math.Max(duration, timeline.Frames[frameCount - 1]);
                                 break;
                             }
-                        case SLOT_COLOR:
+                        case SLOT_RGBA:
                             {
                                 var timeline = new ColorTimeline(frameCount)
                                 {
                                     SlotIndex = slotIndex
                                 };
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
+                                    timeline.Frames[i] = reader.ReadSingle();
                                     timeline.ColorFrames[i] = ReadColor(reader);
                                     if (i < frameCount - 1)
                                     {
@@ -365,16 +638,71 @@ namespace ZoDream.Plugin.Spine
                                 duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
                                 break;
                             }
-                        case SLOT_TWO_COLOR:
+                        case SLOT_RGB:
+                            {
+                                var timeline = new RGBTimeline(frameCount)
+                                {
+                                    SlotIndex = slotIndex
+                                };
+                                ReadArray(frameCount, i => {
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.ColorFrames[i] = new SKColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                                    if (i < frameCount - 1)
+                                    {
+                                        ReadCurve(reader, i, timeline);
+                                    }
+                                });
+                                timelines.Add(timeline);
+                                duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
+                                break;
+                            }
+                        case SLOT_ALPHA:
+                            {
+                                var timeline = new AlphaTimeline(frameCount)
+                                {
+                                    SlotIndex = slotIndex
+                                };
+                                ReadArray(frameCount, i => {
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.ColorFrames[i] = new SKColor(0, 0, 0, reader.ReadByte());
+                                    if (i < frameCount - 1)
+                                    {
+                                        ReadCurve(reader, i, timeline);
+                                    }
+                                });
+                                timelines.Add(timeline);
+                                duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
+                                break;
+                            }
+                        case SLOT_RGBA2:
                             {
                                 var timeline = new TwoColorTimeline(frameCount)
                                 {
                                     SlotIndex = slotIndex,
                                 };
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
+                                    timeline.Frames[i] = reader.ReadSingle();
                                     timeline.ColorFrames[i] = ReadColor(reader);
-                                    timeline.Color2Frames[i] = ReadColor(reader, false);
+                                    timeline.Color2Frames[i] = new SKColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                                    if (i < frameCount - 1)
+                                    {
+                                        ReadCurve(reader, i, timeline);
+                                    }
+                                });
+                                timelines.Add(timeline);
+                                duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
+                                break;
+                            }
+                        case SLOT_RGB2:
+                            {
+                                var timeline = new RGB2Timeline(frameCount)
+                                {
+                                    SlotIndex = slotIndex,
+                                };
+                                ReadArray(frameCount, i => {
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.ColorFrames[i] = new SKColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                                    timeline.Color2Frames[i] = new SKColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
                                     if (i < frameCount - 1)
                                     {
                                         ReadCurve(reader, i, timeline);
@@ -390,10 +718,10 @@ namespace ZoDream.Plugin.Spine
 
             // Bone timelines.
             ReadArray(reader, _ => {
-                var boneIndex = reader.Read7BitEncodedInt();
+                var boneIndex = ReadInt(reader, true);
                 ReadArray(reader, _ => {
                     var timelineType = reader.ReadByte();
-                    var frameCount = reader.Read7BitEncodedInt();
+                    var frameCount = ReadInt(reader, true);
                     switch (timelineType)
                     {
                         case BONE_ROTATE:
@@ -403,8 +731,8 @@ namespace ZoDream.Plugin.Spine
                                     BoneIndex = boneIndex,
                                 };
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
-                                    timeline.AngleItems[i] = ReadSingle(reader);
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.AngleItems[i] = reader.ReadSingle();
                                     if (i < frameCount - 1)
                                     {
                                         ReadCurve(reader, i, timeline);
@@ -431,8 +759,8 @@ namespace ZoDream.Plugin.Spine
                                 }
                                 timeline.BoneIndex = boneIndex;
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
-                                    timeline.Points[i] = new SKPoint(ReadSingle(reader) * timelineScale, ReadSingle(reader) * timelineScale);
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.Points[i] = new SKPoint(reader.ReadSingle() * timelineScale, reader.ReadSingle() * timelineScale);
                                   
                                     if (i < frameCount - 1)
                                     {
@@ -449,15 +777,15 @@ namespace ZoDream.Plugin.Spine
 
             // IK timelines.
             ReadArray(reader, _ => {
-                var index = reader.Read7BitEncodedInt();
-                var frameCount = reader.Read7BitEncodedInt();
+                var index = ReadInt(reader, true);
+                var frameCount = ReadInt(reader, true);
                 var timeline = new IkConstraintTimeline(frameCount)
                 {
                     IkConstraintIndex = index,
                 };
                 ReadArray(frameCount, i => {
-                    timeline.Frames[i] = ReadSingle(reader);
-                    timeline.MixItems[i] = ReadSingle(reader);
+                    timeline.Frames[i] = reader.ReadSingle();
+                    timeline.MixItems[i] = reader.ReadSingle();
                     timeline.DirectionItems[i] = reader.ReadByte();
                     if (i < frameCount - 1)
                     {
@@ -470,18 +798,18 @@ namespace ZoDream.Plugin.Spine
 
             // Transform constraint timelines.
             ReadArray(reader, _ => {
-                var index = reader.Read7BitEncodedInt();
-                var frameCount = reader.Read7BitEncodedInt();
+                var index = ReadInt(reader, true);
+                var frameCount = ReadInt(reader, true);
                 var timeline = new TransformConstraintTimeline(frameCount)
                 {
                     TransformConstraintIndex = index
                 };
                 ReadArray(frameCount, i => {
-                    timeline.Frames[i] = ReadSingle(reader);
-                    timeline.RotateItems[i] = ReadSingle(reader);
-                    timeline.TranslateItems[i] = ReadSingle(reader);
-                    timeline.ScaleItems[i] = ReadSingle(reader);
-                    timeline.ShearItems[i] = ReadSingle(reader);
+                    timeline.Frames[i] = reader.ReadSingle();
+                    timeline.RotateItems[i] = reader.ReadSingle();
+                    timeline.TranslateItems[i] = reader.ReadSingle();
+                    timeline.ScaleItems[i] = reader.ReadSingle();
+                    timeline.ShearItems[i] = reader.ReadSingle();
                     if (i < frameCount - 1)
                     {
                         ReadCurve(reader, i, timeline);
@@ -493,11 +821,11 @@ namespace ZoDream.Plugin.Spine
 
             // Path constraint timelines.
             ReadArray(reader, _ => {
-                var index = reader.Read7BitEncodedInt();
+                var index = ReadInt(reader, true);
                 var data = res.PathConstraints[index];
                 ReadArray(reader, _ => {
                     var timelineType = reader.ReadByte();
-                    var frameCount = reader.Read7BitEncodedInt();
+                    var frameCount = ReadInt(reader, true);
                     switch (timelineType)
                     {
                         case PATH_POSITION:
@@ -523,8 +851,8 @@ namespace ZoDream.Plugin.Spine
                                 }
                                 timeline.PathConstraintIndex = index;
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
-                                    timeline.PositionItems[i] = ReadSingle(reader) * timelineScale;
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.PositionItems[i] = reader.ReadSingle() * timelineScale;
                                     if (i < frameCount - 1)
                                     {
                                         ReadCurve(reader, i, timeline);
@@ -541,9 +869,9 @@ namespace ZoDream.Plugin.Spine
                                     PathConstraintIndex = index,
                                 };
                                 ReadArray(frameCount, i => {
-                                    timeline.Frames[i] = ReadSingle(reader);
-                                    timeline.RotateItems[i] = ReadSingle(reader);
-                                    timeline.TranslateItems[i] = ReadSingle(reader);
+                                    timeline.Frames[i] = reader.ReadSingle();
+                                    timeline.RotateItems[i] = reader.ReadSingle();
+                                    timeline.TranslateItems[i] = reader.ReadSingle();
                                     if (i < frameCount - 1)
                                     {
                                         ReadCurve(reader, i, timeline);
@@ -559,10 +887,10 @@ namespace ZoDream.Plugin.Spine
 
             // Deform timelines.
             ReadArray(reader, _ => {
-                var skinIndex = reader.Read7BitEncodedInt();
+                var skinIndex = ReadInt(reader, true);
                 var skin = res.Skins[skinIndex];
                 ReadArray(reader, _ => {
-                    var slotIndex = reader.Read7BitEncodedInt();
+                    var slotIndex = ReadInt(reader, true);
                     ReadArray(reader, _ => {
                         var attachmentName = ReadString(reader);
                         skin.TryGet<VertexAttachment>(slotIndex, attachmentName, out var attachment);
@@ -570,7 +898,7 @@ namespace ZoDream.Plugin.Spine
                         float[] vertices = attachment.Vertices;
                         var deformLength = weighted ? vertices.Length / 3 * 2 : vertices.Length;
 
-                        var frameCount = reader.Read7BitEncodedInt();
+                        var frameCount = ReadInt(reader, true);
                         var timeline = new DeformTimeline(frameCount)
                         {
                             SlotIndex = slotIndex,
@@ -578,19 +906,19 @@ namespace ZoDream.Plugin.Spine
                         };
 
                         ReadArray(frameCount, i => {
-                            timeline.Frames[i] = ReadSingle(reader);
+                            timeline.Frames[i] = reader.ReadSingle();
                             float[] deform;
-                            int end = reader.Read7BitEncodedInt();
+                            int end = ReadInt(reader, true);
                             if (end == 0)
                                 deform = weighted ? new float[deformLength] : vertices;
                             else
                             {
                                 deform = new float[deformLength];
-                                int start = reader.Read7BitEncodedInt();
+                                int start = ReadInt(reader, true);
                                 end += start;
                                 for (int v = start; v < end; v++)
                                 {
-                                    deform[v] = ReadSingle(reader) * Scale;
+                                    deform[v] = reader.ReadSingle() * Scale;
                                 }
                                 if (!weighted)
                                 {
@@ -613,14 +941,14 @@ namespace ZoDream.Plugin.Spine
             });
 
             // Draw order timeline.
-            int drawOrderCount = reader.Read7BitEncodedInt();
+            int drawOrderCount = ReadInt(reader, true);
             if (drawOrderCount > 0)
             {
                 var timeline = new DrawOrderTimeline(drawOrderCount);
                 var slotCount = res.Slots.Length;
                 ReadArray(drawOrderCount, i => {
-                    timeline.Frames[i] = ReadSingle(reader);
-                    int offsetCount = reader.Read7BitEncodedInt();
+                    timeline.Frames[i] = reader.ReadSingle();
+                    int offsetCount = ReadInt(reader, true);
                     int[] drawOrder = new int[slotCount];
                     for (int ii = slotCount - 1; ii >= 0; ii--)
                     {
@@ -630,12 +958,12 @@ namespace ZoDream.Plugin.Spine
                     int originalIndex = 0, unchangedIndex = 0;
                     for (int ii = 0; ii < offsetCount; ii++)
                     {
-                        int slotIndex = reader.Read7BitEncodedInt();
+                        int slotIndex = ReadInt(reader, true);
                         // Collect unchanged items.
                         while (originalIndex != slotIndex)
                             unchanged[unchangedIndex++] = originalIndex++;
                         // Set changed items.
-                        drawOrder[originalIndex + reader.Read7BitEncodedInt()] = originalIndex++;
+                        drawOrder[originalIndex + ReadInt(reader, true)] = originalIndex++;
                     }
                     // Collect remaining unchanged items.
                     while (originalIndex < slotCount)
@@ -650,22 +978,27 @@ namespace ZoDream.Plugin.Spine
             }
 
             // Event timeline.
-            int eventCount = reader.Read7BitEncodedInt();
+            int eventCount = ReadInt(reader, true);
             if (eventCount > 0)
             {
                 var timeline = new EventTimeline(eventCount);
                 ReadArray(eventCount, i => {
-                    timeline.Frames[i] = ReadSingle(reader);
-                    var eventIndex = reader.Read7BitEncodedInt();
+                    timeline.Frames[i] = reader.ReadSingle();
+                    var eventIndex = ReadInt(reader, true);
                     var eventData = res.Events[eventIndex];
                     
                     var e = new Event
                     {
                         Name = eventData.Name,
-                        Int = reader.Read7BitEncodedInt(),
-                        Float = ReadSingle(reader),
-                        String = reader.ReadBoolean() ? ReadString(reader) : eventData.String
+                        Int = ReadInt(reader, false),
+                        Float = reader.ReadSingle(),
+                        String = ReadString(reader) ?? eventData.String
                     };
+                    if (eventData.AudioPath != null)
+                    {
+                        e.Volume = reader.ReadSingle();
+                        e.Balance = reader.ReadSingle();
+                    }
                     timeline.Events[i] = e;
                 });
                 timelines.Add(timeline);
@@ -690,43 +1023,46 @@ namespace ZoDream.Plugin.Spine
                     break;
                 case CURVE_BEZIER:
                     timeline.SetCurve(frameIndex, 
-                        ReadSingle(reader), ReadSingle(reader), 
-                        ReadSingle(reader), ReadSingle(reader));
+                        reader.ReadSingle(), reader.ReadSingle(), 
+                        reader.ReadSingle(), reader.ReadSingle());
                     break;
             }
         }
 
-        private void ReadVertices(BinaryReader reader, VertexAttachment res)
+        private void ReadVertices(BinaryReader reader, VertexAttachment res, bool weighted)
         {
-            var vertexCount = reader.Read7BitEncodedInt();
+            var vertexCount = ReadInt(reader, true);
             res.WorldVerticesLength = vertexCount << 1;
             if (res is MeshAttachment m)
             {
                 m.UVs = ReadArray(res.WorldVerticesLength, _ => {
-                    return ReadSingle(reader);
+                    return reader.ReadSingle();
                 });
                 m.Triangles = ReadArray(reader, _ => {
-                    return (int)ReadShort(reader);
+                    return (int)reader.ReadInt16();
                 });
             }
-
-            if (!reader.ReadBoolean())
+            if (_version.Major < 4)
+            {
+                weighted = reader.ReadBoolean();
+            }
+            if (!weighted)
             {
                 res.Vertices = ReadArray(res.WorldVerticesLength, _ => {
-                    return ReadSingle(reader) * Scale;
+                    return reader.ReadSingle() * Scale;
                 });
             } else
             {
                 var weights = new List<float>();
                 var bones = new List<int>();
                 ReadArray(vertexCount, _ => {
-                    var boneCount = reader.Read7BitEncodedInt();
+                    var boneCount = ReadInt(reader, true);
                     bones.Add(boneCount);
                     ReadArray(boneCount, _ => {
-                        bones.Add(reader.Read7BitEncodedInt());
-                        weights.Add(ReadSingle(reader) * Scale);
-                        weights.Add(ReadSingle(reader) * Scale);
-                        weights.Add(ReadSingle(reader) * Scale);
+                        bones.Add(ReadInt(reader, true));
+                        weights.Add(reader.ReadSingle() * Scale);
+                        weights.Add(reader.ReadSingle() * Scale);
+                        weights.Add(reader.ReadSingle() * Scale);
                     });
                 });
                 res.Vertices = [.. weights];
@@ -735,14 +1071,39 @@ namespace ZoDream.Plugin.Spine
             if (res is PathAttachment p)
             {
                 p.Lengths = ReadArray(vertexCount / 3, _ => {
-                    return ReadSingle(reader) * Scale;
+                    return reader.ReadSingle() * Scale;
                 });
             }
         }
 
+        private Sequence ReadSequence(BinaryReader reader)
+        {
+            return new Sequence(ReadInt(reader, true))
+            {
+                Start = ReadInt(reader, true),
+                Digits = ReadInt(reader, true),
+                SetupIndex = ReadInt(reader, true),
+            };
+        }
+        private void ReadHeader(BinaryReader reader, SkeletonHeader header) 
+        {
+            var pos = reader.BaseStream.Position;
+            reader.BaseStream.Seek(8, SeekOrigin.Current);
+            var stringByteCount = ReadInt(reader, true);
+            reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+            if (stringByteCount <= 13)
+            {
+                header.Hash = BinaryPrimitives.ReadInt64BigEndian(reader.ReadBytes(8)).ToString();
+                header.Version = ReadString(reader);
+                return;
+            }
+            header.Hash = ReadString(reader);
+            header.Version = ReadString(reader);
+        }
+
         private void ReadArray(BinaryReader reader, Action<int> cb)
         {
-            ReadArray(reader.Read7BitEncodedInt(), cb);
+            ReadArray(ReadInt(reader, true), cb);
         }
 
         private void ReadArray(int length, Action<int> cb)
@@ -754,7 +1115,7 @@ namespace ZoDream.Plugin.Spine
         }
         private T[] ReadArray<T>(BinaryReader reader, Func<int, T> cb)
         {
-            return ReadArray(reader.Read7BitEncodedInt(), cb);
+            return ReadArray(ReadInt(reader, true), cb);
         }
 
         private T[] ReadArray<T>(int length, Func<int, T> cb)
@@ -767,14 +1128,30 @@ namespace ZoDream.Plugin.Spine
             return items;
         }
 
-        private float ReadSingle(BinaryReader reader)
+        public int ReadInt(BinaryReader reader, bool optimizePositive)
         {
-            return BinaryPrimitives.ReadSingleBigEndian(reader.ReadBytes(4));
-        }
-
-        private float ReadShort(BinaryReader reader)
-        {
-            return BinaryPrimitives.ReadInt16BigEndian(reader.ReadBytes(2));
+            int b = reader.ReadByte();
+            int result = b & 0x7F;
+            if ((b & 0x80) != 0)
+            {
+                b = reader.ReadByte();
+                result |= (b & 0x7F) << 7;
+                if ((b & 0x80) != 0)
+                {
+                    b = reader.ReadByte();
+                    result |= (b & 0x7F) << 14;
+                    if ((b & 0x80) != 0)
+                    {
+                        b = reader.ReadByte();
+                        result |= (b & 0x7F) << 21;
+                        if ((b & 0x80) != 0)
+                        {
+                            result |= (reader.ReadByte() & 0x7F) << 28;
+                        }
+                    }
+                }
+            }
+            return optimizePositive ? result : ((result >> 1) ^ -(result & 1));
         }
 
         private SKColor ReadColor(BinaryReader reader, bool hasAlpha = true)
@@ -789,15 +1166,18 @@ namespace ZoDream.Plugin.Spine
             var a = hasAlpha ? reader.ReadByte() : byte.MaxValue;
             return new SKColor(r, g, b, a);
         }
-
-        private int ReadInt(BinaryReader reader)
+        private string ReadStringRef(BinaryReader reader)
         {
-            return BinaryPrimitives.ReadInt32BigEndian(reader.ReadBytes(4));
+            var index = ReadInt(reader, true);
+            if (index < 1)
+            {
+                return string.Empty;
+            }
+            return _cacheItems[index - 1];
         }
-
         private string ReadString(BinaryReader reader)
         {
-            var length = reader.Read7BitEncodedInt();
+            var length = ReadInt(reader, true);
             if (length < 2)
             {
                 return string.Empty;

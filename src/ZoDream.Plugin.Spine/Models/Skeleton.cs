@@ -8,7 +8,7 @@ namespace ZoDream.Plugin.Spine.Models
 
         public Bone[] Bones { get; set; }
 
-        public SkeletonInfo Skeleton { get; set; }
+        public SkeletonHeader Skeleton { get; set; }
 
         public Skin[] Skins { get; set; }
 
@@ -18,6 +18,7 @@ namespace ZoDream.Plugin.Spine.Models
         public IkConstraint[] IkConstraints { get; set; }
         public TransformConstraint[] TransformConstraints { get; set; }
         public PathConstraint[] PathConstraints { get; set; }
+        public PhysicsConstraint[] PhysicsConstraints { get; internal set; }
 
         public int GetSlotIndex(string name)
         {

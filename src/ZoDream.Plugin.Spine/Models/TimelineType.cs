@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZoDream.Plugin.Spine.Models
+﻿namespace ZoDream.Plugin.Spine.Models
 {
     internal enum TimelineType
     {
-        Rotate = 0, Translate, Scale, Shear, //
-        Attachment, Color, Deform, //
+        Rotate = 0, X, Y, ScaleX, ScaleY, ShearX, ShearY, Inherit, //
+        RGB, Alpha, RGB2, //
+        Attachment, Deform, //
         Event, DrawOrder, //
         IkConstraint, TransformConstraint, //
         PathConstraintPosition, PathConstraintSpacing, PathConstraintMix, //
-        TwoColor
+        PhysicsConstraintInertia, PhysicsConstraintStrength, PhysicsConstraintDamping, PhysicsConstraintMass, //
+        PhysicsConstraintWind, PhysicsConstraintGravity, PhysicsConstraintMix, PhysicsConstraintReset, //
+        Sequence
     }
 }

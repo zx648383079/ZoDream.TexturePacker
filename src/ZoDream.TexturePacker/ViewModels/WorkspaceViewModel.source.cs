@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
+using System.Linq;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ImageEditor;
 
@@ -11,7 +12,9 @@ namespace ZoDream.TexturePacker.ViewModels
         private readonly SKSizeI _thumbnailSize = new(60, 60);
 
         private readonly ImageStyleManager _styleManager = [];
-        public IImageStyler Styler => LayerMode ? RealStyler : DefaultStyler;
+
+
+        public IImageStyler Styler => _styleManager.TryGet(_styleMode, out var s) ? s : DefaultStyler;
 
         public IImageStyler DefaultStyler => _styleManager.Default;
 
@@ -19,12 +22,24 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public IImageLayerTree Source => LayerItems;
 
-        private bool _layerMode;
 
         public bool LayerMode {
-            get => _layerMode;
+            get => !string.IsNullOrWhiteSpace(_styleMode) && 
+                _styleMode != DefaultStyler.Name;
             set {
-                Set(ref _layerMode, value);
+                OnPropertyChanged(nameof(LayerMode));
+                _styleMode = value ? _styleManager.Last().Name : DefaultStyler.Name;
+                OnPropertyChanged(nameof(StyleMode));
+                Instance?.Invalidate();
+            }
+        }
+
+        private string _styleMode;
+
+        public string StyleMode {
+            get => _styleMode;
+            set {
+                Set(ref _styleMode, value);
                 Instance?.Invalidate();
             }
         }

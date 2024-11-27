@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZoDream.Plugin.Spine.Models
+﻿namespace ZoDream.Plugin.Spine.Models
 {
     internal class Bone
     {
@@ -13,6 +7,7 @@ namespace ZoDream.Plugin.Spine.Models
         public float? Length { get; set; }
 
         public string Parent { get; set; }
+        public int ParentIndex { get; set; }
 
         public float? Rotation { get; set; }
 

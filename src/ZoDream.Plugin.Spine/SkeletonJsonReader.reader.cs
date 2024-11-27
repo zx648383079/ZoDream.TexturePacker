@@ -25,7 +25,7 @@ namespace ZoDream.Plugin.Spine
             var data = new SkeletonRoot();
             if (root.TryGetProperty("skeleton", out var element))
             {
-                data.Skeleton = new SkeletonInfo()
+                data.Skeleton = new SkeletonHeader()
                 {
                     Hash = ReadString(element, "hash"),
                     Version = ReadString(element, "spine"),
@@ -92,9 +92,9 @@ namespace ZoDream.Plugin.Spine
                     OffsetScaleY = ReadSingle(e, "scaleY"),
                     OffsetShearY = ReadSingle(e, "shearY"),
                     RotateMix = ReadSingle(e, "rotateMix", 1),
-                    TranslateMix = ReadSingle(e, "translateMix", 1),
-                    ScaleMix = ReadSingle(e, "scaleMix", 1),
-                    ShearMix = ReadSingle(e, "shearMix", 1)
+                    TranslateXMix = ReadSingle(e, "translateMix", 1),
+                    ScaleXMix = ReadSingle(e, "scaleMix", 1),
+                    ShearYMix = ReadSingle(e, "shearMix", 1)
                 };
                 return tc;
             });
@@ -112,7 +112,7 @@ namespace ZoDream.Plugin.Spine
                     Position = ReadSingle(e, "position"),
                     Spacing = ReadSingle(e, "spacing"),
                     RotateMix = ReadSingle(e, "rotateMix", 1),
-                    TranslateMix = ReadSingle(e, "translateMix", 1)
+                    TranslateXMix = ReadSingle(e, "translateMix", 1)
                 };
                 if (pc.PositionMode == PositionMode.Fixed)
                 {

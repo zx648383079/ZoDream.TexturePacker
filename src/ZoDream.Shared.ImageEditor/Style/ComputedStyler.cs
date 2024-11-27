@@ -38,7 +38,7 @@ namespace ZoDream.Shared.ImageEditor
             }
         }
 
-        public void Compute(IEnumerable<IImageLayer> items)
+        public void Compute(IImageLayerTree items)
         {
             foreach (var item in items)
             {

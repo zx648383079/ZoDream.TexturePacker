@@ -355,12 +355,17 @@ namespace ZoDream.TexturePacker.Controls
         /// <returns></returns>
         private IImageComputedStyler Compute()
         {
-            var styler = new ImageComputedStyler(_commander.Styler);
+            var source = _commander.Styler;
+            var styler = source is IImageComputedStyler s ? 
+               s : new ImageComputedStyler(source);
+            styler.Clear();
             styler.Compute(LayerItems);
-            if (styler.ActualWidth == 0 || styler.ActualHeight == 0)
+            if ((styler.ActualWidth == 0
+                || styler.ActualHeight == 0) 
+                && styler is IImageSize c)
             {
-                styler.Width = ActualWidthI;
-                styler.Height = ActualHeightI;
+                c.Width = ActualWidthI;
+                c.Height = ActualHeightI;
             } 
             return styler;
         }

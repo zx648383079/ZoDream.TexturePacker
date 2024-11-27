@@ -34,5 +34,6 @@ namespace ZoDream.Plugin.Spine.Models
 
         public float[] Offset { get; set; }
         public float[] UVs { get; set; }
+        public Sequence? Sequence { get; internal set; }
     }
 }

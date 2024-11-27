@@ -43,6 +43,10 @@ namespace ZoDream.Shared.ImageEditor
                 (int)(style.Height * Math.Abs(style.ScaleY)),
                 style.Rotate);
             }
+            if (width == 0 || height == 0)
+            {
+                return;
+            }
             var info = new SKImageInfo(width, height);
             using var surface = SKSurface.Create(info);
             var c = surface.Canvas;

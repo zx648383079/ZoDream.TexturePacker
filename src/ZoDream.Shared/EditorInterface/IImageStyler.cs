@@ -19,6 +19,11 @@ namespace ZoDream.Shared.EditorInterface
     {
         public int ActualWidth { get; }
         public int ActualHeight { get; }
+        /// <summary>
+        /// 计算所有的样式
+        /// </summary>
+        /// <param name="items"></param>
+        public void Compute(IImageLayerTree items);
 
         public void Paint(IImageLayerTree items, IImageCanvas canvas);
         public void Paint(IImageLayerTree items, SKCanvas canvas);

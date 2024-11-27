@@ -12,6 +12,6 @@ namespace ZoDream.Plugin.Spine.Models
         {
             
         }
-        public override int PropertyId => ((int)TimelineType.Scale<< 24) + BoneIndex;
+        public override int PropertyId => ((int)TimelineType.ScaleX << 24) + BoneIndex;
     }
 }

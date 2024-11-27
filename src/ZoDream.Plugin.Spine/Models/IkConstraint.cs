@@ -20,6 +20,6 @@ namespace ZoDream.Plugin.Spine.Models
 
         public float Mix { get; set; }
 
-        public byte BendDirection { get; set; }
+        public int BendDirection { get; set; }
     }
 }

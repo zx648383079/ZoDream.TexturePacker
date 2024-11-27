@@ -10,6 +10,11 @@ namespace ZoDream.Shared.ImageEditor
             
         }
 
+        public ImageComputedStyle(int layerId)
+        {
+            LayerId = layerId;
+        }
+
         public ImageComputedStyle(IImageStyle style)
             : this(style, style.Rotate)
         {
@@ -27,6 +32,8 @@ namespace ZoDream.Shared.ImageEditor
             Compute();
         }
 
+        public int LayerId { get; private set; }
+
         public int X { get; set; }
         public int Y { get; set; }
         public int Width { get; set; }
@@ -34,8 +41,8 @@ namespace ZoDream.Shared.ImageEditor
 
         public float Rotate { get; set; }
 
-        public float ScaleX { get; set; }
-        public float ScaleY { get; set; }
+        public float ScaleX { get; set; } = 1;
+        public float ScaleY { get; set; } = 1;
 
         public int ZIndex { get; set; }
 
