@@ -37,6 +37,8 @@ namespace ZoDream.Shared.ImageEditor
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
 
+        public int ZIndex { get; set; }
+
         public int ActualLeft => X;
         public int ActualTop => Y;
 

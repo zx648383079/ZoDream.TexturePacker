@@ -9,6 +9,7 @@ namespace ZoDream.Shared.ImageEditor
     public class SelectionImageSource(IImageEditor editor): BaseImageSource(editor), ICommandImageSource
     {
         private SKSurface? _surface;
+        private IImageLayer? _target;
 
         public void Resize(int width, int height)
         {
@@ -17,20 +18,43 @@ namespace ZoDream.Shared.ImageEditor
             Invalidate();
         }
 
-        public void Resize(IImageSource layer)
+        public void With(IImageLayer layer)
         {
-            X = layer.X;
-            Y = layer.Y;
-            Resize(layer.Width, layer.Height);
+            _target = layer;
+            SyncSize();
+            Invalidate();
         }
+
         public void Invalidate()
         {
             _surface?.Dispose();
             _surface = null;
         }
 
+        private void SyncSize()
+        {
+            if (_target is null)
+            {
+                return;
+            }
+            var style = Editor.ComputedStyler.Compute(_target);
+            if (style is IImageComputedStyle c)
+            {
+                X = c.ActualLeft;
+                Y = c.ActualTop;
+                Width = c.ActualWidth;
+                Height = c.ActualHeight;
+                return;
+            }
+            X = style.X;
+            Y = style.Y;
+            Width = style.Width;
+            Height = style.Height;
+        }
+
         private void RenderSurface()
         {
+            SyncSize();
             var info = new SKImageInfo(Editor.ActualWidthI, Editor.ActualHeightI);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;

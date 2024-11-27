@@ -15,6 +15,10 @@ namespace ZoDream.Shared.EditorInterface
         public SKColor? BackgroundColor { get; set; }
 
         public IImageLayerTree LayerItems { get; }
+        /// <summary>
+        /// 当前计算的样式
+        /// </summary>
+        public IImageComputedStyler ComputedStyler { get; }
 
         public void GenerateLayerId(IImageLayer layer);
 

@@ -81,9 +81,9 @@ namespace ZoDream.Plugin.Spine
                 }
                 res.BoneItems.Add(b);
             }
-            foreach (var item in data.Animations)
-            {
-            }
+            //foreach (var item in data.Animations)
+            //{
+            //}
             return res;
         }
     }

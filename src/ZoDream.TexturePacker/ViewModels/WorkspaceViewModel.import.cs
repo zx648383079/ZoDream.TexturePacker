@@ -194,6 +194,7 @@ namespace ZoDream.TexturePacker.ViewModels
                 {
                     layer.Name = Path.GetFileNameWithoutExtension(item.FileName);
                     AddLink(layer.Id, item.MetaItems);
+                    AddLink(layer.Id, Path.GetFileName(item.FileName), layer.Name);
                 }
             }
             await foreach (var item in loader.EnumerateLayer())

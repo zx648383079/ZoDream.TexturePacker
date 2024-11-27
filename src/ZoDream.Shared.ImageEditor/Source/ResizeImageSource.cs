@@ -22,11 +22,11 @@ namespace ZoDream.Shared.ImageEditor
             _surface = null;
         }
 
-        public void Resize(IImageSource layer)
+        public void With(IImageLayer layer)
         {
-            X = layer.X; 
-            Y = layer.Y;
-            Resize(layer.Width, layer.Height);
+            X = layer.Source.X; 
+            Y = layer.Source.Y;
+            Resize(layer.Source.Width, layer.Source.Height);
         }
 
         public void Invalidate()

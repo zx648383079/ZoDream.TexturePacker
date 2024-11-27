@@ -33,6 +33,8 @@ namespace ZoDream.TexturePacker.Controls
             }
         }
 
+        public IImageComputedStyler ComputedStyler { get; private set; }
+
         public IImageLayerTree LayerItems => _commander.Source;
 
         public SKColor? BackgroundColor { get; set; }
@@ -286,7 +288,7 @@ namespace ZoDream.TexturePacker.Controls
         /// <param name="y"></param>
         public void Tap(float x, float y)
         {
-            var layer = LayerItems.Get(x, y);
+            var layer = ComputedStyler.Where(LayerItems, new SKPoint(x, y)).FirstOrDefault();
             if (layer == null)
             {
                 return;
@@ -310,7 +312,7 @@ namespace ZoDream.TexturePacker.Controls
                 return;
             }
             _commandLayer ??= new SelectionImageSource(this);
-            _commandLayer.Resize(layer.Source);
+            _commandLayer.With(layer);
             Invalidate();
         }
 
@@ -327,19 +329,19 @@ namespace ZoDream.TexturePacker.Controls
 
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
-            var styler = Compute();
-            if (styler.ActualWidth != ActualWidthI || styler.ActualHeight != ActualHeightI)
+            ComputedStyler = Compute();
+            if (ComputedStyler.ActualWidth != ActualWidthI || ComputedStyler.ActualHeight != ActualHeightI)
             {
-                Resize(styler.ActualWidth, styler.ActualHeight);
+                Resize(ComputedStyler.ActualWidth, ComputedStyler.ActualHeight);
             }
             canvas.Clear(BackgroundColor ?? SKColors.Transparent);
-            var c = new ImageCanvas(canvas, styler);
+            var c = new ImageCanvas(canvas, ComputedStyler);
             if (BackgroundColor is null)
             {
                 _transparentBackground ??= new TransparentImageSource(this);
                 _transparentBackground.Paint(c);
             }
-            LayerItems?.Paint(c);
+            ComputedStyler.Paint(LayerItems, c);
             _commandLayer?.Paint(c);
         }
 
@@ -368,9 +370,7 @@ namespace ZoDream.TexturePacker.Controls
             var styler = Compute();
             using var bitmap = new SKBitmap(styler.ActualWidth, styler.ActualHeight);
             using var canvas = new SKCanvas(bitmap);
-            var c = new ImageCanvas(canvas, styler);
-            LayerItems?.Paint(c);
-            canvas.Flush();
+            styler.Paint(LayerItems, canvas);
             bitmap.SaveAs(fileName);
         }
 

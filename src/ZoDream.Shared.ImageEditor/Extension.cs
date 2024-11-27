@@ -136,5 +136,15 @@ namespace ZoDream.Shared.ImageEditor
             }
             return new BitmapImageSource(bitmap, editor);
         }
+
+        public static SKRect ToRect(this IImageBound bound) 
+        {
+            if (bound is IImageComputedStyle style)
+            {
+                return SKRect.Create(style.ActualLeft, style.ActualTop, style.ActualWidth, style.ActualHeight);
+            }
+            return SKRect.Create(bound.X, bound.Y, bound.Width, bound.Height);
+        }
+
     }
 }

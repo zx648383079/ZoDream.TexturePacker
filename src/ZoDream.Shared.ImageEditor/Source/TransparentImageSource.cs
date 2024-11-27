@@ -24,7 +24,7 @@ namespace ZoDream.Shared.ImageEditor
             Invalidate();
         }
 
-        public void Resize(IImageSource layer)
+        public void With(IImageLayer layer)
         {
         }
         public void Invalidate()

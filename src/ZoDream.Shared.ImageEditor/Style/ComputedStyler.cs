@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor
@@ -15,7 +17,9 @@ namespace ZoDream.Shared.ImageEditor
 
         public int ActualHeight => Height;
 
-        private readonly Dictionary<int, IImageStyle> _cacheItems = [];
+        private int _zIndex = 0;
+
+        private readonly Dictionary<int, IImageComputedStyle> _cacheItems = [];
 
         private void Add(IImageLayer layer, IImageStyle style)
         {
@@ -27,12 +31,10 @@ namespace ZoDream.Shared.ImageEditor
             var computed = style is IImageComputedStyle c ? c : new ImageComputedStyle(style);
             Width = Math.Max(Width, computed.ActualOuterWidth);
             Height = Math.Max(Height, computed.ActualOuterHeight);
-            if (_cacheItems.ContainsKey(id))
+            computed.ZIndex = _zIndex --;
+            if (!_cacheItems.TryAdd(id, computed))
             {
                 _cacheItems[id] = computed;
-            } else
-            {
-                _cacheItems.Add(id, computed);
             }
         }
 
@@ -98,11 +100,56 @@ namespace ZoDream.Shared.ImageEditor
             return (width, height);
         }
 
+        public IEnumerable<IImageLayer> Where(IImageLayerTree items, SKPoint point)
+        {
+            foreach (var item in _cacheItems.OrderByDescending(i => i.Value.ZIndex))
+            {
+                if (!item.Value.ToRect().Contains(point))
+                {
+                    continue;
+                }
+                var layer = items.Get(item.Key);
+                if (layer is null || !layer.IsVisible)
+                {
+                    continue;
+                }
+                yield return layer;
+            }
+        }
+
+        public IEnumerable<IImageLayer> Where(IImageLayerTree items, SKRect rect)
+        {
+            foreach (var item in _cacheItems.OrderByDescending(i => i.Value.ZIndex))
+            {
+                if (!item.Value.ToRect().IntersectsWith(rect))
+                {
+                    continue;
+                }
+                var layer = items.Get(item.Key);
+                if (layer is null || !layer.IsVisible)
+                {
+                    continue;
+                }
+                yield return layer;
+            }
+        }
+
+        public void Paint(IImageLayerTree items, IImageCanvas canvas)
+        {
+            items.Paint(canvas);
+        }
+        public void Paint(IImageLayerTree items, SKCanvas canvas)
+        {
+            Paint(items, new ImageCanvas(canvas, this));
+        }
+
         public void Clear()
         {
             _cacheItems.Clear();
             Width = 0;
             Height = 0;
         }
+
+        
     }
 }

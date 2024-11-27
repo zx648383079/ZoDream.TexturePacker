@@ -14,6 +14,7 @@
 
     public interface IImageComputedStyle : IImageStyle
     {
+        public int ZIndex { get; set; }
 
         public int ActualLeft { get; }
         public int ActualTop { get; }
