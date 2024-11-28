@@ -10,12 +10,12 @@ namespace ZoDream.Shared.ImageEditor
     {
         public string Name => string.Empty;
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
-        public int ActualWidth => Width;
+        public float ActualWidth => Width;
 
-        public int ActualHeight => Height;
+        public float ActualHeight => Height;
 
         private int _zIndex = 0;
 
@@ -59,10 +59,10 @@ namespace ZoDream.Shared.ImageEditor
             return _cacheItems[layer.Id];
         }
 
-        private (int, int) ComputeSize(IImageLayer layer)
+        private (float, float) ComputeSize(IImageLayer layer)
         {
-            var width = 0;
-            var height = 0;
+            var width = 0f;
+            var height = 0f;
             if (layer.IsChildrenEnabled)
             {
                 var (w, h) = ComputeSize(layer.Children);
@@ -87,10 +87,10 @@ namespace ZoDream.Shared.ImageEditor
             return (width, height);
         }
 
-        private (int, int) ComputeSize(IEnumerable<IImageLayer> items)
+        private (float, float) ComputeSize(IEnumerable<IImageLayer> items)
         {
-            var width = 0;
-            var height = 0;
+            var width = 0f;
+            var height = 0f;
             foreach (var item in items)
             {
                 var (w, h) = ComputeSize(item);

@@ -13,7 +13,7 @@ namespace ZoDream.TexturePacker.Plugins
         /// </summary>
         /// <param name="items"></param>
         /// <returns>整个区域的宽，高</returns>
-        public (int, int) Compute(IList<IImageBound> items)
+        public (float, float) Compute(IList<IImageBound> items)
         {
             return algorithm switch
             {
@@ -34,19 +34,19 @@ namespace ZoDream.TexturePacker.Plugins
             }
             return algorithm switch
             {
-                CssSpritesAlgorithm.TopDown => a.Height - b.Height,
-                CssSpritesAlgorithm.LeftRight => a.Width - b.Width,
+                CssSpritesAlgorithm.TopDown => (int)(a.Height - b.Height),
+                CssSpritesAlgorithm.LeftRight => (int)(a.Width - b.Width),
                 CssSpritesAlgorithm.Diagonal or CssSpritesAlgorithm.AltDiagonal => (int)(Math.Sqrt(Math.Pow(a.Height, 2) + Math.Pow(a.Width, 2)) - Math.Sqrt(Math.Pow(b.Height, 2) + Math.Pow(b.Width, 2))),
-                CssSpritesAlgorithm.BinaryTree => (b.Width * b.Height) - (a.Width * a.Height),
+                CssSpritesAlgorithm.BinaryTree => (int)((b.Width * b.Height) - (a.Width * a.Height)),
                 _ => 0,
             };
         }
 
-        private (int, int) PlaceTopDown(IList<IImageBound> items)
+        private (float, float) PlaceTopDown(IList<IImageBound> items)
         {
             var data = items.Order(this);
-            var y = 0;
-            var width = 0;
+            var y = 0f;
+            var width = 0f;
             foreach (var item in data)
             {
                 item.X = 0;
@@ -60,11 +60,11 @@ namespace ZoDream.TexturePacker.Plugins
             return (width, y);
         }
 
-        private (int, int) PlaceLeftRight(IList<IImageBound> items)
+        private (float, float) PlaceLeftRight(IList<IImageBound> items)
         {
             var data = items.Order(this);
-            var x = 0;
-            var height = 0;
+            var x = 0f;
+            var height = 0f;
             foreach (var item in data)
             {
                 item.X = x;
@@ -78,11 +78,11 @@ namespace ZoDream.TexturePacker.Plugins
             return (x, height);
         }
 
-        private (int, int) PlaceDiagonal(IList<IImageBound> items)
+        private (float, float) PlaceDiagonal(IList<IImageBound> items)
         {
             var data = items.Order(this);
-            var x = 0;
-            var y = 0;
+            var x = 0f;
+            var y = 0f;
             foreach (var item in data)
             {
                 item.X = x;
@@ -93,16 +93,16 @@ namespace ZoDream.TexturePacker.Plugins
             return (x, y);
         }
 
-        private (int, int) PlaceAltDiagonal(IList<IImageBound> items)
+        private (float, float) PlaceAltDiagonal(IList<IImageBound> items)
         {
             var data = items.Order(this);
-            var width = 0;
+            var width = 0f;
             foreach (var item in data)
             {
                 width += item.Width;
             }
             var x = width;
-            var y = 0;
+            var y = 0f;
             foreach (var item in data)
             {
                 x -= item.Width;
@@ -116,7 +116,7 @@ namespace ZoDream.TexturePacker.Plugins
         #region BinaryTree
         private BinaryTreeNode? _rootNode;
 
-        private (int, int) PlaceBinaryTree(IList<IImageBound> items)
+        private (float, float) PlaceBinaryTree(IList<IImageBound> items)
         {
             var data = items.Order(this);
             var width = items.Count > 0 ? data.First().Width : 0;
@@ -128,8 +128,8 @@ namespace ZoDream.TexturePacker.Plugins
                 Width = width,
                 Height=  height 
             };
-            var outerWidth = 0;
-            var outerHeight = 0;
+            var outerWidth = 0f;
+            var outerHeight = 0f;
             foreach (var item in data)
             {
                 var node = TreeFindNode(_rootNode, item.Width, item.Height);
@@ -155,7 +155,9 @@ namespace ZoDream.TexturePacker.Plugins
             return (outerWidth, outerHeight);
         }
 
-        private BinaryTreeNode? TreeFindNode(BinaryTreeNode root, int width, int height)
+        private BinaryTreeNode? TreeFindNode(
+            BinaryTreeNode root, 
+            float width, float height)
         {
             if (root.Used)
             {
@@ -171,7 +173,8 @@ namespace ZoDream.TexturePacker.Plugins
         }
 
 
-        private BinaryTreeNode TreeSplitNode(BinaryTreeNode node, int width, int height)
+        private BinaryTreeNode TreeSplitNode(
+            BinaryTreeNode node, float width, float height)
         {
             node.Used = true;
             node.Down = new BinaryTreeNode() 
@@ -191,7 +194,8 @@ namespace ZoDream.TexturePacker.Plugins
             return node;
         }
 
-        private BinaryTreeNode? TreeGrowNode(int width, int height)
+        private BinaryTreeNode? TreeGrowNode(
+            float width, float height)
         {
             var canGrowDown = (width <= _rootNode!.Width);
             var canGrowRight = (height <= _rootNode.Height);
@@ -211,7 +215,7 @@ namespace ZoDream.TexturePacker.Plugins
                 return null;
         }
 
-        private BinaryTreeNode? TreeGrowDown(int width, int height)
+        private BinaryTreeNode? TreeGrowDown(float width, float height)
         {
             _rootNode = new BinaryTreeNode()
             {
@@ -237,7 +241,7 @@ namespace ZoDream.TexturePacker.Plugins
             return null;
         }
 
-        private BinaryTreeNode? TreeGrowRight(int width, int height)
+        private BinaryTreeNode? TreeGrowRight(float width, float height)
         {
             _rootNode = new BinaryTreeNode()
             {
@@ -278,10 +282,10 @@ namespace ZoDream.TexturePacker.Plugins
     internal class BinaryTreeNode
     {
         public bool Used { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
         public BinaryTreeNode? Down { get; set; }
 

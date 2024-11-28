@@ -6,17 +6,17 @@ namespace ZoDream.Shared.Models
     {
         public string Name { get; set; } = string.Empty;
 
-        public int X { get; set; }
+        public float X { get; set; }
 
-        public int Y { get; set; }
+        public float Y { get; set; }
 
         /// <summary>
         /// 旋转角度0 - 360
         /// </summary>
-        public int Rotate { get; set; }
+        public float Rotate { get; set; }
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
     }
 
 }

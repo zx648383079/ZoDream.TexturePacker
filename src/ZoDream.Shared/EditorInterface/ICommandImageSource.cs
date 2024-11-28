@@ -2,7 +2,7 @@
 {
     public interface ICommandImageSource: IImageSource
     {
-        public void Resize(int width, int height);
+        public void Resize(float width, float height);
         /// <summary>
         /// 设置面向的图层
         /// </summary>

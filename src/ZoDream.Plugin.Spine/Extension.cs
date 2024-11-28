@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Linq;
+using System.Numerics;
 using ZoDream.Plugin.Spine.Models;
 using ZoDream.Shared.Models;
 
@@ -64,26 +66,56 @@ namespace ZoDream.Plugin.Spine
                     {
                         continue;
                     }
-                    if (item.Value is not RegionAttachment region)
+                    if (item.Value is RegionAttachment region)
                     {
-                        // TODO UV
-                        continue;
+                        b.SkinItems.Add(new SpriteLayer()
+                        {
+                            Name = item.Key.Name,
+                            X = region.X,
+                            Y = region.Y,
+                            Height = region.Height,
+                            Width = region.Width,
+                            Rotate = region.Rotation
+                        });
+                    } else if (item.Value is MeshAttachment mesh)
+                    {
+                        b.SkinItems.Add(new SpriteUvLayer()
+                        {
+                            Name = item.Key.Name,
+                            X = mesh.RegionOffsetX,
+                            Y = mesh.RegionOffsetY,
+                            Height = mesh.Height,
+                            Width = mesh.Width,
+                            VertexItems = ToVector(mesh.UVs),
+                            PointItems = ToPoint(mesh.Vertices)
+                        });
                     }
-                    b.SkinItems.Add(new SkeletonBoneTexture()
-                    {
-                        Name = item.Key.Name,
-                        X = region.X,
-                        Y = region.Y,
-                        Height = region.Height,
-                        Width = region.Width,
-                        Rotate = region.Rotation
-                    });
                 }
                 res.BoneItems.Add(b);
             }
             //foreach (var item in data.Animations)
             //{
             //}
+            return res;
+        }
+
+        internal static Vector2[] ToVector(float[] items)
+        {
+            var res = new Vector2[items.Length / 2];
+            for (int i = 0; i < items.Length; i+=2)
+            {
+                res[i / 2] = new Vector2(items[i], items[i + 1]);
+            }
+            return res;
+        }
+
+        internal static SKPoint[] ToPoint(float[] items)
+        {
+            var res = new SKPoint[items.Length / 2];
+            for (int i = 0; i < items.Length; i += 2)
+            {
+                res[i / 2] = new SKPoint(items[i], items[i + 1]);
+            }
             return res;
         }
     }

@@ -85,7 +85,7 @@ namespace ZoDream.Plugin.Readers.Cocos
         }
 
 
-        private bool IsRotate90(int deg)
+        private bool IsRotate90(float deg)
         {
             return Math.Abs(deg) % 180 == 90;
         }

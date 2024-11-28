@@ -60,7 +60,7 @@ namespace ZoDream.Shared.EditorInterface
 
         public void Resize();
 
-        public void Resize(int width, int height);
+        public void Resize(float width, float height);
 
         public void Tap(float x, float y);
 

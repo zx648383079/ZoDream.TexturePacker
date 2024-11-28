@@ -1,19 +1,19 @@
 ﻿using SkiaSharp;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace ZoDream.Shared.Models
 {
-    public class SpriteUvLayer: SpriteLayer
+    public class SpritePathLayer: SpriteLayer
     {
-        /// <summary>
-        /// 原图上的顶点 UV
-        /// </summary>
-        public IList<Vector2> VertexItems { get; set; } = [];
         /// <summary>
         /// 实际绘制的顶点
         /// </summary>
         public IList<SKPoint> PointItems { get; set; } = [];
+
+        public SKColor FillColor { get; set; }
+        public SKColor StrokeColor { get; set; }
+
+        public float StrokeWidth { get; set; }
     }
 
 }

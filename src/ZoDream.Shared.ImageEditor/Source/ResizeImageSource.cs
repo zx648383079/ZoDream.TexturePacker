@@ -14,7 +14,7 @@ namespace ZoDream.Shared.ImageEditor
         public float ActualLeft => X - _dotSize / 2;
         public float ActualTop => Y - _dotSize / 2;
 
-        public void Resize(int width, int height)
+        public void Resize(float width, float height)
         {
             Width = width;
             Height = height;
@@ -36,7 +36,7 @@ namespace ZoDream.Shared.ImageEditor
 
         private void RenderSurface()
         {
-            var info = new SKImageInfo(Width + _dotSize, Height + _dotSize);
+            var info = new SKImageInfo((int)Width + _dotSize, (int)Height + _dotSize);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
             canvas.Clear(SKColors.Transparent);

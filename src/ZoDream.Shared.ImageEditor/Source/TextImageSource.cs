@@ -30,9 +30,9 @@ namespace ZoDream.Shared.ImageEditor
                 return;
             }
             var r = font.MeasureText(Text, out var bound, paint);
-            Width = (int)bound.Width;
-            Height = (int)bound.Height + 3;
-            var info = new SKImageInfo(Width, Height);
+            Width = bound.Width;
+            Height = bound.Height + 3;
+            var info = new SKImageInfo((int)Width, (int)Height);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
             canvas.Clear(SKColors.Transparent);

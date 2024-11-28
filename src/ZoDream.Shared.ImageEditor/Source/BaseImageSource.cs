@@ -7,10 +7,10 @@ namespace ZoDream.Shared.ImageEditor
     {
 
         protected IImageEditor Editor { get; private set; } = editor;
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
         /// <summary>
         /// 旋转角度0 - 360
         /// </summary>

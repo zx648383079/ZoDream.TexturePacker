@@ -30,12 +30,12 @@ namespace ZoDream.Shared.ImageEditor
 
         public string Name => _name;
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
-        public int ActualWidth => Width;
+        public float ActualWidth => Width;
 
-        public int ActualHeight => Height;
+        public float ActualHeight => Height;
 
         public IImageStyle Compute(IImageLayer layer)
         {

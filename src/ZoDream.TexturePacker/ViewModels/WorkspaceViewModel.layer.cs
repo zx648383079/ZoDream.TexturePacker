@@ -205,10 +205,10 @@ namespace ZoDream.TexturePacker.ViewModels
             layer.Source.X = (width - layer.Source.Width) / 2;
         }
 
-        private (int, int) GetParentSize(IImageLayer layer)
+        private (float, float) GetParentSize(IImageLayer layer)
         {
-            var x = 0;
-            var y = 0;
+            var x = 0f;
+            var y = 0f;
             var parent = layer.Parent;
             while(parent is not null)
             {

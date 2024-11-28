@@ -17,8 +17,8 @@ namespace ZoDream.Shared.EditorInterface
 
     public interface IImageComputedStyler: IImageStyler
     {
-        public int ActualWidth { get; }
-        public int ActualHeight { get; }
+        public float ActualWidth { get; }
+        public float ActualHeight { get; }
         /// <summary>
         /// 计算所有的样式
         /// </summary>

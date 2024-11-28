@@ -27,7 +27,7 @@ namespace ZoDream.Shared.ImageEditor
         {
             using var paint = new SKPaint();
             return items.Select(item => {
-                var bitmap = new SKBitmap(item.Width, item.Height);
+                var bitmap = new SKBitmap((int)item.Width, (int)item.Height);
                 using var canvas = new SKCanvas(bitmap);
                 // canvas.Clear(SKColors.Transparent);
                 canvas.DrawBitmap(Source, SKRect.Create(item.X, item.Y, item.Width, item.Height), SKRect.Create(0, 0, item.Width, item.Height), paint);

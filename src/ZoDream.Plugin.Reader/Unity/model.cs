@@ -238,7 +238,7 @@ namespace ZoDream.Plugin.Readers.Unity
 
         public Dictionary<string, float> Transform { get; set; }
 
-        public void TryParse(SkeletonBoneTexture bone)
+        public void TryParse(SpriteLayer bone)
         {
             bone.X = Transform.TryGetValue("x", out var x) ? x : 0;
             bone.Y = Transform.TryGetValue("y", out x) ? x : 0;

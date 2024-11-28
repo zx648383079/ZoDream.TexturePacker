@@ -11,7 +11,7 @@ namespace ZoDream.Shared.ImageEditor
         private SKSurface? _surface;
         private IImageLayer? _target;
 
-        public void Resize(int width, int height)
+        public void Resize(float width, float height)
         {
             Width = width;
             Height = height;

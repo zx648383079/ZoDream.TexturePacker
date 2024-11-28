@@ -144,10 +144,10 @@ namespace ZoDream.TexturePacker.ViewModels
         public void Load(IImageLayer layer)
         {
             Name = layer.Name;
-            X = layer.Source.X;
-            Y = layer.Source.Y;
-            Width = layer.Source.Width;
-            Height = layer.Source.Height;
+            X = (int)layer.Source.X;
+            Y = (int)layer.Source.Y;
+            Width = (int)layer.Source.Width;
+            Height = (int)layer.Source.Height;
             ScaleX = layer.Source.ScaleX;
             ScaleY = layer.Source.ScaleY;
             Rotate = layer.Source.Rotate;

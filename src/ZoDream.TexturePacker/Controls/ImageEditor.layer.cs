@@ -258,8 +258,8 @@ namespace ZoDream.TexturePacker.Controls
         /// </summary>
         public void Resize()
         {
-            var outerWidth = 0;
-            var outerHeight = 0;
+            var outerWidth = 0f;
+            var outerHeight = 0f;
             foreach (var item in LayerItems)
             {
                 outerWidth = Math.Max(outerWidth, item.Source.X + item.Source.Width);
@@ -271,11 +271,11 @@ namespace ZoDream.TexturePacker.Controls
             }
             Resize(outerWidth, outerHeight);
         }
-        public void Resize(int width, int height)
+        public void Resize(float width, float height)
         {
-            _widthI = width; 
-            _heightI = height;
-            ResizeWithControl(width, height);
+            _widthI = (int)width; 
+            _heightI = (int)height;
+            ResizeWithControl(_widthI, _heightI);
             _transparentBackground?.Invalidate();
             //_surface?.Dispose();
             //_surface = null;
@@ -373,7 +373,7 @@ namespace ZoDream.TexturePacker.Controls
         public void SaveAs(string fileName)
         {
             var styler = Compute();
-            using var bitmap = new SKBitmap(styler.ActualWidth, styler.ActualHeight);
+            using var bitmap = new SKBitmap((int)styler.ActualWidth, (int)styler.ActualHeight);
             using var canvas = new SKCanvas(bitmap);
             styler.Paint(LayerItems, canvas);
             bitmap.SaveAs(fileName);
@@ -387,7 +387,7 @@ namespace ZoDream.TexturePacker.Controls
             }
             var styler = new ImageComputedStyler(_commander.RealStyler);
             styler.Compute(layer);
-            var bitmap = new SKBitmap(styler.ActualWidth, styler.ActualHeight);
+            var bitmap = new SKBitmap((int)styler.ActualWidth, (int)styler.ActualHeight);
             using (var surface = new SKCanvas(bitmap))
             {
                 var c = new ImageCanvas(surface, styler);

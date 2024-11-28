@@ -19,7 +19,7 @@ namespace ZoDream.Shared.ImageEditor
 
         private SKSurface? _surface;
 
-        public void Resize(int width, int height)
+        public void Resize(float width, float height)
         {
             Invalidate();
         }
@@ -41,7 +41,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return;
             }
-            var info = new SKImageInfo(Width, Height);
+            var info = new SKImageInfo((int)Width, (int)Height);
             _surface = SKSurface.Create(info);
             var canvas = _surface.Canvas;
             canvas.Clear(SKColors.White);

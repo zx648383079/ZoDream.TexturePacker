@@ -17,14 +17,14 @@
 
         public int ZIndex { get; set; }
 
-        public int ActualLeft { get; }
-        public int ActualTop { get; }
+        public float ActualLeft { get; }
+        public float ActualTop { get; }
 
-        public int ActualWidth { get; }
-        public int ActualHeight { get; }
+        public float ActualWidth { get; }
+        public float ActualHeight { get; }
 
-        public int ActualOuterWidth { get; }
-        public int ActualOuterHeight { get; }
+        public float ActualOuterWidth { get; }
+        public float ActualOuterHeight { get; }
         /// <summary>
         /// 重新计算
         /// </summary>

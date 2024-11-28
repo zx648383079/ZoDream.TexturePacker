@@ -24,6 +24,18 @@ namespace ZoDream.Shared.ImageEditor
             return deg;
         }
 
+        public static (float, float) ComputedRotate(float width, float height, float angle)
+        {
+            var radians = Math.PI * angle / 180;
+            var sine = Math.Abs(Math.Sin(radians));
+            var cosine = Math.Abs(Math.Cos(radians));
+            var originalWidth = width;
+            var originalHeight = height;
+            var rotatedWidth = (float)(cosine * originalWidth + sine * originalHeight);
+            var rotatedHeight = (float)(cosine * originalHeight + sine * originalWidth);
+            return (rotatedWidth, rotatedHeight);
+        }
+
         public static SKBitmap CreateThumbnail(this SKBitmap source, SKSizeI size)
         {
             return SkiaExtension.Mutate(size.Width, size.Height, canvas => {
@@ -87,7 +99,7 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return source.Clip(uv);
             }
-            var bitmap = new SKBitmap(layer.Width, layer.Height);
+            var bitmap = new SKBitmap((int)layer.Width, (int)layer.Height);
             using var canvas = new SKCanvas(bitmap);
             // canvas.Clear(SKColors.Transparent);
             canvas.DrawBitmap(source, SKRect.Create(layer.X, layer.Y, 

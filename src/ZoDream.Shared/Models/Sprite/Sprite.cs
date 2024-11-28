@@ -10,8 +10,8 @@ namespace ZoDream.Shared.Models
 
         public string FileName { get; set; } = string.Empty;
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
         public IList<SpriteLayer> Items { get; set; } = [];
         

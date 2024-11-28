@@ -34,10 +34,10 @@ namespace ZoDream.Shared.ImageEditor
 
         public int LayerId { get; private set; }
 
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
         public float Rotate { get; set; }
 
@@ -46,19 +46,19 @@ namespace ZoDream.Shared.ImageEditor
 
         public int ZIndex { get; set; }
 
-        public int ActualLeft => X;
-        public int ActualTop => Y;
+        public float ActualLeft => X;
+        public float ActualTop => Y;
 
-        public int ActualWidth { get; private set; }
-        public int ActualHeight { get; private set; }
+        public float ActualWidth { get; private set; }
+        public float ActualHeight { get; private set; }
 
-        public int ActualOuterWidth => ActualLeft + ActualWidth;
-        public int ActualOuterHeight => ActualTop + ActualHeight;
+        public float ActualOuterWidth => ActualLeft + ActualWidth;
+        public float ActualOuterHeight => ActualTop + ActualHeight;
 
         public void Compute()
         {
-            var width = (int)(Width * Math.Abs(ScaleX));
-            var height = (int)(Height * Math.Abs(ScaleY));
+            var width = (float)(Width * Math.Abs(ScaleX));
+            var height = (float)(Height * Math.Abs(ScaleY));
             if (Rotate == 0)
             {
                 ActualWidth = width;
@@ -66,7 +66,7 @@ namespace ZoDream.Shared.ImageEditor
                 return;
             }
             (ActualWidth, ActualHeight) = 
-                Drawing.SkiaExtension.ComputedRotate(width, height, Rotate);
+                EditorExtension.ComputedRotate(width, height, Rotate);
         }
     }
 }

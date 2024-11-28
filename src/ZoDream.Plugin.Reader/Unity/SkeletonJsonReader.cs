@@ -43,7 +43,7 @@ namespace ZoDream.Plugin.Readers.Unity
                         {
                             if (skin.Name == item.Name)
                             {
-                                var t = new SkeletonBoneTexture()
+                                var t = new SpriteLayer()
                                 {
                                     Name = skin.Name,
                                 };

@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using ZoDream.Shared.Drawing;
+using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.Models
 {
-    public class ProjectDocument
+    public class ProjectDocument: IImageSize
     {
 
-        public int Width { get; set; }
+        public float Width { get; set; }
 
-        public int Height { get; set; }
+        public float Height { get; set; }
 
         public string? BackgroundColor { get; set; }
 
