@@ -2,7 +2,7 @@
 
 namespace ZoDream.Shared.Models
 {
-    public class SpriteLayer: IImageBound
+    public class SpriteLayer: IImageBound, IImageStyle
     {
         public string Name { get; set; } = string.Empty;
 
@@ -17,6 +17,9 @@ namespace ZoDream.Shared.Models
 
         public float Width { get; set; }
         public float Height { get; set; }
+
+        public float ScaleX { get; set; } = 1f;
+        public float ScaleY { get; set; } = 1f;
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using SkiaSharp;
+using System.Text.Json;
 
 namespace ZoDream.Tests
 {
@@ -12,8 +13,12 @@ namespace ZoDream.Tests
             var h = 180;
             var angle = 270;
             var (a, b) = Shared.Drawing.SkiaExtension.ComputedRotate(w, h, angle);
+            var m = SKMatrix.CreateRotationDegrees(angle);
+            var p = m.MapPoint(w, h);
             Assert.AreEqual(h, a);
             Assert.AreEqual(w, b);
+            Assert.AreEqual(h, p.X);
+            Assert.AreEqual(w, p.Y);
         }
     }
 }

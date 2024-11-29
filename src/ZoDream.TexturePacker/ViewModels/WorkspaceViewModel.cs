@@ -37,6 +37,7 @@ namespace ZoDream.TexturePacker.ViewModels
             SelectParentCommand = new RelayCommand(TapSelectParent);
             SelectPreviousCommand = new RelayCommand(TapSelectPrevious);
             SelectNextCommand = new RelayCommand(TapSelectNext);
+            LayerApplyCommand = new RelayCommand<IImageLayer>(TapLayerApply);
             LayerRotateCommand = new RelayCommand(TapLayerRotate);
             LayerScaleCommand = new RelayCommand(TapLayerScale);
             LayerScaleXCommand = new RelayCommand(TapLayerScaleX);

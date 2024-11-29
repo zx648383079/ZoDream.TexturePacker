@@ -1,5 +1,7 @@
-﻿using ZoDream.Shared.EditorInterface;
+﻿using SkiaSharp;
+using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.Extensions;
+using ZoDream.Shared.ImageEditor;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -15,6 +17,35 @@ namespace ZoDream.TexturePacker.ViewModels
             Instance?.InsertAfter(layer.Children, layer);
             layer.Children.Clear();
             Instance?.Remove(layer);
+        }
+
+
+        private async void TapLayerApply(IImageLayer? arg)
+        {
+            var layer = arg is not null ? arg : SelectedLayer;
+            if (layer is null)
+            {
+                return;
+            }
+            if (layer.Source.ScaleY == 1 && layer.Source.ScaleX == 1 && layer.Source.Rotate % 360 == 0)
+            {
+                return;
+            }
+            if (!await _app.ConfirmAsync("确定应用属性？将删除子图层..."))
+            {
+                return;
+            }
+            var styler = new ImageComputedStyler(RealStyler);
+            styler.Compute(layer);
+            var bitmap = new SKBitmap((int)styler.ActualWidth, (int)styler.ActualHeight);
+            using var surface = new SKCanvas(bitmap);
+            var c = new ImageCanvas(surface, styler);
+            layer.Paint(c);
+            layer.Dispose();
+            layer.Children.Clear();
+            layer.Source = new BitmapImageSource(bitmap, Instance);
+            layer.Resample();
+            Instance?.Invalidate();
         }
 
         private void TapLayerRotate(object? arg)

@@ -29,14 +29,9 @@ namespace ZoDream.Shared.ImageEditor
 
         public static (float, float) ComputedRotate(float width, float height, float angle)
         {
-            var radians = Math.PI * angle / 180;
-            var sine = Math.Abs(Math.Sin(radians));
-            var cosine = Math.Abs(Math.Cos(radians));
-            var originalWidth = width;
-            var originalHeight = height;
-            var rotatedWidth = (float)(cosine * originalWidth + sine * originalHeight);
-            var rotatedHeight = (float)(cosine * originalHeight + sine * originalWidth);
-            return (rotatedWidth, rotatedHeight);
+            var m = SKMatrix.CreateRotationDegrees(angle);
+            var p = m.MapPoint(width, height);
+            return (Math.Abs(p.X), Math.Abs(p.Y));
         }
 
         public static SKBitmap CreateThumbnail(this SKBitmap source, SKSizeI size)
@@ -167,9 +162,13 @@ namespace ZoDream.Shared.ImageEditor
         /// <param name="items"></param>
         /// <param name="bound"></param>
         /// <returns></returns>
-        public static SKPoint[] ComputeVertex(IEnumerable<Vector2> items, IImageBound bound)
+        public static SKPoint[] ComputeVertex(IEnumerable<Vector2> items, IImageStyle bound)
         {
-            return items.Select(i => new SKPoint(i.X * bound.Width + bound.X, i.Y * bound.Height + bound.Y)).ToArray();
+            var m = SKMatrix.CreateScale(bound.ScaleX * bound.Width, bound.ScaleY * bound.Height);
+            m = m.PostConcat(SKMatrix.CreateRotationDegrees(bound.Rotate, bound.Width/ 2, bound.Height/ 2));
+            // var p = m.MapPoint(bound.Width, bound.Height);
+       
+            return items.Select(i => m.MapPoint(i.X, i.Y)).ToArray();
         }
     }
 }

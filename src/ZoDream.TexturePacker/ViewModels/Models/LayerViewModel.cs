@@ -62,7 +62,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public int Depth { get; set; }
 
-        public IImageSource Source { get; private set; }
+        public IImageSource Source { get; set; }
 
         public bool IsChildrenEnabled => IsVisible || Source is not FolderImageSource;
 

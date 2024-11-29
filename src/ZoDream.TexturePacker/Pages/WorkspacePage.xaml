@@ -72,6 +72,12 @@
                             Text="删除" />
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
+                            Command="{Binding Workspace.LayerApplyCommand}"
+                            CommandParameter="{Binding}"
+                            Text="应用"
+                            ToolTipService.ToolTip="应用属性中的缩放旋转" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
                             Command="{Binding Workspace.AddGroupCommand}"
                             CommandParameter="{Binding}"
                             Text="分组" />
@@ -80,6 +86,7 @@
                             CommandParameter="{Binding}"
                             IsEnabled="{Binding Children, Converter={StaticResource IsGroup}}"
                             Text="取消分组" />
+
                     </MenuFlyout>
                 </TreeViewItem.ContextFlyout>
                 <Grid Height="60">

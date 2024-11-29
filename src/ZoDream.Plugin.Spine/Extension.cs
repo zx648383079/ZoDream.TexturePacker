@@ -23,7 +23,7 @@ namespace ZoDream.Plugin.Spine
                         Name = item.Name,
                         X = item.X,
                         Y = item.Y,
-                        Rotate = item.Rotate,
+                        Rotate = - item.Rotate,
                         Width = item.Width,
                         Height = item.Height,
                     };
@@ -79,6 +79,8 @@ namespace ZoDream.Plugin.Spine
                             Name = item.Key.Name,
                             X = region.X,
                             Y = region.Y,
+                            ScaleX = region.ScaleX,
+                            ScaleY = region.ScaleY,
                             Height = region.Height,
                             Width = region.Width,
                             Rotate = region.Rotation

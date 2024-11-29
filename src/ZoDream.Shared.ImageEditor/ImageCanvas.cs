@@ -116,6 +116,7 @@ namespace ZoDream.Shared.ImageEditor
             }
             if (style is IImageComputedVertexStyle u)
             {
+                canvas.DrawBitmap(source, new SKPoint(style.X, style.Y));
                 DrawTexture(source, u.SourceItems, u.PointItems);
                 return;
             }

@@ -46,6 +46,8 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public ICommand ImportFolderCommand { get; private set; }
         public ICommand DeleteLayerCommand { get; private set; }
+        public ICommand LayerApplyCommand { get; private set; }
+
 
         public ICommand LayerPropertyCommand { get; private set; }
         public ICommand LayerRotateCommand { get; private set; }

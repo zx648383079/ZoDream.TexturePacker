@@ -17,7 +17,7 @@ namespace ZoDream.Shared.EditorInterface
 
         public int Depth { get; set; }
 
-        public IImageSource Source { get; }
+        public IImageSource Source { get; set; }
 
         public IImageLayerTree Children { get; }
         /// <summary>
