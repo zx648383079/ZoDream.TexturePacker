@@ -1,15 +1,19 @@
 ﻿using Microsoft.UI;
 using SkiaSharp;
+using SkiaSharp.Views.Windows;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using Windows.UI;
+using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ViewModel;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public class LayerDialogViewModel: BindableBase, IFormValidator
+    public class CreateTextDialogViewModel: BindableBase, 
+        IFormValidator, ILayerCreator
     {
-        public LayerDialogViewModel()
+        public CreateTextDialogViewModel()
         {
             FamilyName = SKTypeface.Default.FamilyName;
             TextChangedCommand = new RelayCommand<bool>(OnTextChanged);
@@ -60,6 +64,16 @@ namespace ZoDream.TexturePacker.ViewModels
         private void OnTextChanged(bool changed)
         {
             IsValid = changed;
+        }
+
+        public bool TryCreate(IImageEditor editor)
+        {
+            if (!IsValid)
+            {
+                return false;
+            }
+            editor.AddText(Text, FamilyName, Size, Foreground.ToSKColor());
+            return true;
         }
     }
 }

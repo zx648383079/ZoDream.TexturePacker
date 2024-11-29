@@ -1,6 +1,9 @@
 ﻿using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Reflection.Emit;
 using ZoDream.Shared.Drawing;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.Models;
@@ -158,5 +161,15 @@ namespace ZoDream.Shared.ImageEditor
             return SKRect.Create(bound.X, bound.Y, bound.Width, bound.Height);
         }
 
+        /// <summary>
+        /// 将UV转为图上坐标
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="bound"></param>
+        /// <returns></returns>
+        public static SKPoint[] ComputeVertex(IEnumerable<Vector2> items, IImageBound bound)
+        {
+            return items.Select(i => new SKPoint(i.X * bound.Width + bound.X, i.Y * bound.Height + bound.Y)).ToArray();
+        }
     }
 }

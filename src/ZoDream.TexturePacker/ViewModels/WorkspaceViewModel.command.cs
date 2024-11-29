@@ -1,5 +1,5 @@
-﻿using SkiaSharp;
-using SkiaSharp.Views.Windows;
+﻿using Microsoft.UI.Xaml.Controls;
+using SkiaSharp;
 using System;
 using System.Linq;
 using System.Windows.Input;
@@ -79,16 +79,22 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand LayerMoveParentCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
-        private async void TapAddLayer(object? _)
+        private async void TapAddLayer(string? cmd)
         {
-            var dialog = new LayerDialog();
-            var model = dialog.ViewModel;
+            ContentDialog dialog = cmd switch
+            {
+                "text" => new CreateTextDialog(),
+                "rect" => new CreateRectDialog(),
+                "circle" => new CreateCircleDialog(),
+                "path" => new CreatePathDialog(),
+                _ => new LayerDialog(),
+            };
+            var model = dialog.DataContext as ILayerCreator;
             var res = await App.ViewModel.OpenFormAsync(dialog);
-            if (!res)
+            if (!res || model is null || !model.TryCreate(Instance!))
             {
                 return;
             }
-            Instance?.AddText(model.Text, model.FamilyName, model.Size, model.Foreground.ToSKColor());
             Instance?.Invalidate();
         }
 

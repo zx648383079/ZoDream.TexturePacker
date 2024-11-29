@@ -1,5 +1,7 @@
 ﻿using SkiaSharp;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor
@@ -112,6 +114,16 @@ namespace ZoDream.Shared.ImageEditor
             {
                 return;
             }
+            if (style is IImageComputedVertexStyle u)
+            {
+                DrawTexture(source, u.SourceItems, u.PointItems);
+                return;
+            }
+            if (style is IImageVertexStyle v)
+            {
+                DrawTexture(source, EditorExtension.ComputeVertex(v.VertexItems, style), v.PointItems);
+                return;
+            }
             DrawBitmap(source, style.X, style.Y);
         }
 
@@ -183,6 +195,12 @@ namespace ZoDream.Shared.ImageEditor
         public void DrawTexture(SKBitmap source, 
             SKPoint[] sourceVertices, SKPoint[] vertices)
         {
+            canvas.DrawPoints(SKPointMode.Polygon, sourceVertices, new SKPaint()
+            {
+                Color = SKColors.Red,
+                IsStroke = true,
+            });
+            return;
             using var paint = new SKPaint()
             {
                 IsAntialias = true,

@@ -20,5 +20,9 @@
         public float ShearY { get; set; }
 
         public TransformMode TransformMode { get; set; }
+
+
+
+
     }
 }

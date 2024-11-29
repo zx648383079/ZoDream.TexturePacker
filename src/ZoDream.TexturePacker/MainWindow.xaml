@@ -119,7 +119,24 @@
                     </MenuFlyoutSubItem>
                 </MenuBarItem>
                 <MenuBarItem Title="图层">
-                    <MenuFlyoutItem Command="{Binding AddLayerCommand}" Text="新建图层" />
+                    <MenuFlyoutSubItem Text="新建图层">
+                        <MenuFlyoutItem
+                            Command="{Binding AddLayerCommand}"
+                            CommandParameter="text"
+                            Text="文字" />
+                        <MenuFlyoutItem
+                            Command="{Binding AddLayerCommand}"
+                            CommandParameter="rect"
+                            Text="矩形" />
+                        <MenuFlyoutItem
+                            Command="{Binding AddLayerCommand}"
+                            CommandParameter="circle"
+                            Text="椭圆" />
+                        <MenuFlyoutItem
+                            Command="{Binding AddLayerCommand}"
+                            CommandParameter="path"
+                            Text="路径" />
+                    </MenuFlyoutSubItem>
                     <MenuFlyoutItem Command="{Binding AddGroupCommand}" Text="新建组" />
                     <MenuFlyoutItem
                         Command="{Binding LayerRenameCommand}"

@@ -1,5 +1,4 @@
-﻿using ExCSS;
-using SkiaSharp;
+﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +19,8 @@ namespace ZoDream.Shared.ImageEditor
         {
             _name = string.IsNullOrWhiteSpace(name) ? "SKEL_" + DateTime.Now.Ticks : name;
             _skeleton = skeleton;
+            Width = _skeleton.Width;
+            Height = _skeleton.Height;
         }
 
         private readonly string _name;
@@ -62,6 +63,20 @@ namespace ZoDream.Shared.ImageEditor
                     var layer = items.Get(i => i.Name == item.Name);
                     if (layer is null)
                     {
+                        continue;
+                    }
+                    if (item is SpriteUvLayer u)
+                    {
+                        _cacheItems.Add(new ImageComputedVertexStyle(layer.Id)
+                        {
+                            X = item.X + layer.Source.X,
+                            Y = item.Y + layer.Source.Y,
+                            Width = item.Width,
+                            Height = item.Height,
+                            Rotate = item.Rotate,
+                            SourceItems = EditorExtension.ComputeVertex(u.VertexItems, layer.Source),
+                            PointItems = [..u.PointItems]
+                        });
                         continue;
                     }
                     _cacheItems.Add(new ImageComputedStyle(layer.Id)

@@ -48,7 +48,13 @@ namespace ZoDream.Plugin.Spine
             var res = new SkeletonSection()
             {
                 Name = data.Skeleton.Hash,
+                Width = data.Skeleton.Width,
+                Height = data.Skeleton.Height,
             };
+            if (data.Skins.Length == 0)
+            {
+                return res;
+            }
             foreach (var bone in data.Bones)
             {
                 var b = new SkeletonBone()
@@ -79,6 +85,8 @@ namespace ZoDream.Plugin.Spine
                         });
                     } else if (item.Value is MeshAttachment mesh)
                     {
+                        var vertices = new float[mesh.WorldVerticesLength];
+                        mesh.ComputeVertices(data, data.Slots[item.Key.SlotIndex], vertices);
                         b.SkinItems.Add(new SpriteUvLayer()
                         {
                             Name = item.Key.Name,
@@ -86,8 +94,11 @@ namespace ZoDream.Plugin.Spine
                             Y = mesh.RegionOffsetY,
                             Height = mesh.Height,
                             Width = mesh.Width,
-                            VertexItems = ToVector(mesh.UVs),
-                            PointItems = ToPoint(mesh.Vertices)
+                            VertexItems = ToVector(mesh.RegionUVs),
+                            PointItems = ToPoint(vertices,
+                                mesh.RegionUVs.Length,
+                                data.Skeleton.X, 
+                                data.Skeleton.Y)
                         });
                     }
                 }
@@ -102,19 +113,23 @@ namespace ZoDream.Plugin.Spine
         internal static Vector2[] ToVector(float[] items)
         {
             var res = new Vector2[items.Length / 2];
-            for (int i = 0; i < items.Length; i+=2)
+            for (var i = 0; i < res.Length; i ++ )
             {
-                res[i / 2] = new Vector2(items[i], items[i + 1]);
+                var j = i * 2;
+                res[i] = new Vector2(items[j], items[j + 1]);
             }
             return res;
         }
 
-        internal static SKPoint[] ToPoint(float[] items)
+        internal static SKPoint[] ToPoint(float[] items, 
+            int count,
+            float x, float y)
         {
-            var res = new SKPoint[items.Length / 2];
-            for (int i = 0; i < items.Length; i += 2)
+            var res = new SKPoint[count / 2];
+            for (var i = 0; i < res.Length; i ++ )
             {
-                res[i / 2] = new SKPoint(items[i], items[i + 1]);
+                var j = i * 2;
+                res[i] = new SKPoint(items[j] - x, items[j + 1] - y);
             }
             return res;
         }

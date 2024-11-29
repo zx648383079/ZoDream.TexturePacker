@@ -21,7 +21,11 @@
     <None Remove="Controls\ImageEditor.xaml" />
     <None Remove="Dialogs\AboutDialog.xaml" />
     <None Remove="Dialogs\ConfirmDialog.xaml" />
+    <None Remove="Dialogs\CreateCircleDialog.xaml" />
+    <None Remove="Dialogs\CreatePathDialog.xaml" />
     <None Remove="Dialogs\CreateProjectDialog.xaml" />
+    <None Remove="Dialogs\CreateRectDialog.xaml" />
+    <None Remove="Dialogs\CreateTextDialog.xaml" />
     <None Remove="Dialogs\ExportDialog.xaml" />
     <None Remove="Dialogs\GroupDialog.xaml" />
     <None Remove="Dialogs\ImportDialog.xaml" />
@@ -145,6 +149,18 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Themes\FormStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\CreateTextDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\CreateRectDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\CreateCircleDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\CreatePathDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Themes\Generic.xaml">

@@ -8,6 +8,10 @@ namespace ZoDream.Shared.Models
 
         public string Name { get; set; } = string.Empty;
 
+        public float Width { get; set; }
+
+        public float Height { get; set; }
+
         public IList<SkeletonBone> BoneItems { get; set; } = [];
 
         public IList<SkeletonAnimationSection> AnimationItems { get; set; } = [];

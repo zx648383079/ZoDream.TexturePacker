@@ -3,7 +3,7 @@ using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor
 {
-    public class CircleImageSource(SKPath path, IImageEditor editor) : BaseImageSource(editor)
+    public class CircleImageSource(IImageEditor editor) : BaseImageSource(editor)
     {
         public SKColor FillColor { get; set; }
         public SKColor StrokeColor { get; set; }

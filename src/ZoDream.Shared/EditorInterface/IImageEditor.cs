@@ -35,9 +35,11 @@ namespace ZoDream.Shared.EditorInterface
         public IImageLayer AddText(string text, string fontFamily, int fontSize, SKColor color);
 
         public IImageLayer AddFolder(string name);
-
+        public IImageLayer Add(IImageSource source);
         public void Add(IEnumerable<IImageLayer?> items);
         public void Add(IEnumerable<IImageLayer?> items, IImageLayer parent);
+
+ 
 
         public void Add(IImageLayer layer);
         public void Add(IImageLayer layer, IImageLayer? parent);

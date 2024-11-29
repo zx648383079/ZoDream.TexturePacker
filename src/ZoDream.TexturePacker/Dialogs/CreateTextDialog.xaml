@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentDialog
-    x:Class="ZoDream.TexturePacker.Dialogs.LayerDialog"
+    x:Class="ZoDream.TexturePacker.Dialogs.CreateTextDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bhv="using:ZoDream.TexturePacker.Behaviors"

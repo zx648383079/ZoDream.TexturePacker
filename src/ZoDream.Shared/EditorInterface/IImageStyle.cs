@@ -1,4 +1,7 @@
-﻿namespace ZoDream.Shared.EditorInterface
+﻿using SkiaSharp;
+using System.Numerics;
+
+namespace ZoDream.Shared.EditorInterface
 {
     public interface IImageStyle: IImageBound
     {
@@ -10,6 +13,30 @@
 
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
+    }
+
+    public interface IImageVertexStyle
+    {
+        /// <summary>
+        /// 原图上的顶点 UV
+        /// </summary>
+        public Vector2[] VertexItems { get; }
+        /// <summary>
+        /// 实际绘制的顶点
+        /// </summary>
+        public SKPoint[] PointItems { get; }
+    }
+
+    public interface IImageComputedVertexStyle
+    {
+        /// <summary>
+        /// 原图上的顶点
+        /// </summary>
+        public SKPoint[] SourceItems { get; }
+        /// <summary>
+        /// 实际绘制的顶点
+        /// </summary>
+        public SKPoint[] PointItems { get; }
     }
 
     public interface IImageComputedStyle : IImageStyle

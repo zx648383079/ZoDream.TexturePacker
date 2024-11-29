@@ -1033,9 +1033,9 @@ namespace ZoDream.Plugin.Spine
         {
             var vertexCount = ReadInt(reader, true);
             res.WorldVerticesLength = vertexCount << 1;
-            if (res is MeshAttachment m)
+            if (_version.Major < 4 && res is MeshAttachment m)
             {
-                m.UVs = ReadArray(res.WorldVerticesLength, _ => {
+                m.RegionUVs = ReadArray(res.WorldVerticesLength, _ => {
                     return reader.ReadSingle();
                 });
                 m.Triangles = ReadArray(reader, _ => {
@@ -1072,6 +1072,15 @@ namespace ZoDream.Plugin.Spine
             {
                 p.Lengths = ReadArray(vertexCount / 3, _ => {
                     return reader.ReadSingle() * Scale;
+                });
+            }
+            if (_version.Major >= 4 && res is MeshAttachment m2)
+            {
+                m2.RegionUVs = ReadArray(res.WorldVerticesLength, _ => {
+                    return reader.ReadSingle();
+                });
+                m2.Triangles = ReadArray((res.WorldVerticesLength - m2.HullLength - 2) * 3, _ => {
+                    return (int)reader.ReadInt16();
                 });
             }
         }
