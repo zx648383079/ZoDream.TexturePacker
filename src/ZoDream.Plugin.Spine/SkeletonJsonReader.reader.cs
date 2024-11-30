@@ -43,7 +43,7 @@ namespace ZoDream.Plugin.Spine
                     Length = ReadSingle(e, "length") * Scale,
                     X = ReadSingle(e, "x") * Scale,
                     Y = ReadSingle(e, "y") * Scale,
-                    Rotation = ReadSingle(e, "rotation"),
+                    Rotate = ReadSingle(e, "rotation"),
                     ScaleX = ReadSingle(e, "scaleX", 1),
                     ScaleY = ReadSingle(e, "scaleY", 1),
                     ShearX = ReadSingle(e, "shearX"),

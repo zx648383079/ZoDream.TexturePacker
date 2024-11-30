@@ -44,6 +44,9 @@ namespace ZoDream.Shared.ImageEditor
         public float ScaleX { get; set; } = 1;
         public float ScaleY { get; set; } = 1;
 
+        public float ShearX { get; set; }
+        public float ShearY { get; set; }
+
         public int ZIndex { get; set; }
 
         public float ActualLeft => X;

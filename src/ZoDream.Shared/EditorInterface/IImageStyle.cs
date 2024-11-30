@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System.Numerics;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.EditorInterface
 {
@@ -13,6 +14,11 @@ namespace ZoDream.Shared.EditorInterface
 
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
+        /// <summary>
+        /// 错切 相当 skewX
+        /// </summary>
+        public float ShearX { get; set; }
+        public float ShearY { get; set; }
     }
 
     public interface IImageVertexStyle
@@ -39,7 +45,7 @@ namespace ZoDream.Shared.EditorInterface
         public SKPoint[] PointItems { get; }
     }
 
-    public interface IImageComputedStyle : IImageStyle
+    public interface IImageComputedStyle : IImageStyle, IReadOnlyStyle
     {
 
         public int ZIndex { get; set; }

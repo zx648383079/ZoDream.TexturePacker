@@ -1,15 +1,16 @@
-﻿namespace ZoDream.Plugin.Spine.Models
+﻿using ZoDream.Shared.Interfaces;
+
+namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Bone
+    internal class Bone : IReadOnlyStyle
     {
         public string Name { get; set; }
 
         public float? Length { get; set; }
 
         public string Parent { get; set; }
-        public int ParentIndex { get; set; }
 
-        public float? Rotation { get; set; }
+        public float Rotate { get; set; }
 
         public float X { get; set; }
 

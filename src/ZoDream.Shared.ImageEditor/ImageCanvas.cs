@@ -196,18 +196,18 @@ namespace ZoDream.Shared.ImageEditor
         public void DrawTexture(SKBitmap source, 
             SKPoint[] sourceVertices, SKPoint[] vertices)
         {
-            canvas.DrawPoints(SKPointMode.Polygon, sourceVertices, new SKPaint()
-            {
-                Color = SKColors.Red,
-                IsStroke = true,
-            });
-            return;
+            //canvas.DrawPoints(SKPointMode.Polygon, vertices, new SKPaint()
+            //{
+            //    Color = SKColors.Red,
+            //    IsStroke = true,
+            //});
+            //return;
             using var paint = new SKPaint()
             {
                 IsAntialias = true,
                 Shader = SKShader.CreateBitmap(source, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp)
             };
-            canvas.DrawVertices(SKVertexMode.Triangles, 
+            canvas.DrawVertices(SKVertexMode.TriangleFan, 
                 vertices, 
                 sourceVertices, null, paint);
         }

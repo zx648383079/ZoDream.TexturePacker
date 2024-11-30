@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Reflection.Emit;
 using ZoDream.Shared.Drawing;
 using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Shared.ImageEditor
@@ -156,6 +157,19 @@ namespace ZoDream.Shared.ImageEditor
             return SKRect.Create(bound.X, bound.Y, bound.Width, bound.Height);
         }
 
+        public static SKMatrix ToMatrix(this IReadOnlyStyle style)
+        {
+            var scale = .1f;
+            var x = 100;
+            var y = 400;
+            // return new SKMatrix(scale, 0, x, 0, scale, y, 0, 0, 1);
+            return SKMatrix.Concat(
+                new SKMatrix(style.ScaleX * scale, style.ShearX, style.X + x, 
+                style.ShearY, style.ScaleY * scale, style.Y + y, 0, 0, 1),
+                SKMatrix.CreateRotationDegrees(style.Rotate)
+                );
+        }
+
         /// <summary>
         /// 将UV转为图上坐标
         /// </summary>
@@ -169,6 +183,19 @@ namespace ZoDream.Shared.ImageEditor
             // var p = m.MapPoint(bound.Width, bound.Height);
        
             return items.Select(i => m.MapPoint(i.X, i.Y)).ToArray();
+        }
+        /// <summary>
+        /// 将UV转为图上坐标
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="matrix"></param>
+        /// <param name="bound"></param>
+        /// <returns></returns>
+        public static SKPoint[] ComputeVertex(IEnumerable<Vector2> items, 
+            SKMatrix matrix, 
+            IImageSize bound)
+        {
+            return items.Select(i => matrix.MapPoint(i.X * bound.Width, i.Y * bound.Height)).ToArray();
         }
     }
 }

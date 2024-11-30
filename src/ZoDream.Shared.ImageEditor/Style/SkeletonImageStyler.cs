@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.Models;
+using ZoDream.Shared.Stylers;
 
 namespace ZoDream.Shared.ImageEditor
 {
@@ -56,8 +57,10 @@ namespace ZoDream.Shared.ImageEditor
 
         public void Compute(IImageLayerTree items)
         {
+            var boneStyler = new ComputedStyler();
             foreach (var bone in _skeleton.BoneItems)
             {
+                var style = boneStyler.Compute(bone.Name, bone, bone.Name);
                 foreach (var item in bone.SkinItems)
                 {
                     var layer = items.Get(i => i.Name == item.Name);
@@ -67,25 +70,33 @@ namespace ZoDream.Shared.ImageEditor
                     }
                     if (item is SpriteUvLayer u)
                     {
-                        _cacheItems.Add(new ImageComputedVertexStyle(layer.Id)
+                        var computed = new ImageComputedVertexStyle(layer.Id)
                         {
-                            X = item.X + layer.Source.X,
-                            Y = item.Y + layer.Source.Y,
+                            X = style.X + item.X,
+                            Y = style.Y + item.Y,
+                            Rotate = style.Rotate + item.Rotate,
+                            ScaleX = style.ScaleX * item.ScaleX,
+                            ScaleY = style.ScaleY * item.ScaleY,
                             Width = item.Width,
                             Height = item.Height,
-                            Rotate = item.Rotate,
-                            SourceItems = EditorExtension.ComputeVertex(u.VertexItems, layer.Source),
-                            PointItems = [..u.PointItems]
-                        });
+                        };
+                        var matrix = style.ToMatrix();
+                        computed.SourceItems = EditorExtension.ComputeVertex(u.VertexItems, layer.Source);
+                        computed.PointItems = matrix.MapPoints([.. u.PointItems]);
+                        _cacheItems.Add(computed);
                         continue;
                     }
                     _cacheItems.Add(new ImageComputedStyle(layer.Id)
                     {
-                        X = (int)item.X,
-                        Y = (int)item.Y,
-                        Width = (int)item.Width,
-                        Height = (int)item.Height,
-                        Rotate = item.Rotate,
+                        X = style.X + item.X,
+                        Y = style.Y + item.Y,
+                        Rotate = style.Rotate + item.Rotate,
+                        ScaleX = style.ScaleX * item.ScaleX,
+                        ScaleY = style.ScaleY * item.ScaleY,
+                        ShearX = style.ShearX + item.ShearX,
+                        ShearY = style.ShearY + item.ShearY,
+                        Width = item.Width,
+                        Height = item.Height,
                     });
                 }
             }
@@ -104,9 +115,7 @@ namespace ZoDream.Shared.ImageEditor
                 {
                     continue;
                 }
-                canvas.Mutate(item, c => {
-                    layer.Source?.Paint(c, item);
-                });
+                layer.Source?.Paint(canvas, item);
             }
         }
 

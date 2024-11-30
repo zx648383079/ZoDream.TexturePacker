@@ -60,10 +60,14 @@ namespace ZoDream.Plugin.Spine
                 var b = new SkeletonBone()
                 {
                     Name = bone.Name,
-                    X = bone.X,
                     Parent = bone.Parent ?? string.Empty,
                     Y = bone.Y,
-                    Rotate = bone.Rotation ?? 0,
+                    X = bone.X,
+                    Rotate = bone.Rotate,
+                    ScaleX = bone.ScaleX,
+                    ScaleY = bone.ScaleY,
+                    ShearX = bone.ShearX,
+                    ShearY = bone.ShearY,
                     Length = bone.Length ?? 0,
                 };
                 foreach (var item in data.Skins[0].Attachments)

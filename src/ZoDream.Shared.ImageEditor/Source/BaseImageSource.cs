@@ -1,9 +1,11 @@
 ﻿using SkiaSharp;
 using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.ImageEditor
 {
-    public abstract class BaseImageSource(IImageEditor editor) : IImageSource
+    public abstract class BaseImageSource(IImageEditor editor) : 
+        IImageSource, IReadOnlyStyle
     {
 
         protected IImageEditor Editor { get; private set; } = editor;
@@ -18,6 +20,9 @@ namespace ZoDream.Shared.ImageEditor
 
         public float ScaleX { get; set; } = 1;
         public float ScaleY { get; set; } = 1;
+
+        public float ShearX { get; set; }
+        public float ShearY { get; set; }
 
         public abstract void Paint(IImageCanvas canvas, IImageStyle computedStyle);
 

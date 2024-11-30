@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -330,6 +331,7 @@ namespace ZoDream.TexturePacker.Controls
         public void Paint(SKCanvas canvas, SKImageInfo info)
         {
             ComputedStyler = Compute();
+            Debug.WriteLine($"{ComputedStyler.ActualWidth}x{ComputedStyler.ActualHeight}");
             if (ComputedStyler.ActualWidth != ActualWidthI || ComputedStyler.ActualHeight != ActualHeightI)
             {
                 Resize(ComputedStyler.ActualWidth, ComputedStyler.ActualHeight);

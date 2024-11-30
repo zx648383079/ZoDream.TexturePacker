@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
-    public class SkeletonBone
+    public class SkeletonBone : IReadOnlyStyle
     {
         public string Name { get; set; } = string.Empty;
 
@@ -16,6 +17,10 @@ namespace ZoDream.Shared.Models
 
         public float Rotate { get; set; }
 
+        public float ScaleX { get; set; }
+        public float ScaleY { get; set; }
+        public float ShearX { get; set; }
+        public float ShearY { get; set; }
         public IList<SpriteLayer> SkinItems { get; set; } = [];
     }
 

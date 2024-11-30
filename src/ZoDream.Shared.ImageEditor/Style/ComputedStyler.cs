@@ -42,7 +42,7 @@ namespace ZoDream.Shared.ImageEditor
         {
             foreach (var item in items)
             {
-                if (item.IsVisible)
+                if (item.IsVisible || item.IsChildrenEnabled)
                 {
                     Compute(item);
                 }

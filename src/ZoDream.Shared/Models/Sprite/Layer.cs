@@ -1,8 +1,9 @@
 ﻿using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
-    public class SpriteLayer: IImageBound, IImageStyle
+    public class SpriteLayer: IImageBound, IImageStyle, IReadOnlyStyle
     {
         public string Name { get; set; } = string.Empty;
 
@@ -20,6 +21,9 @@ namespace ZoDream.Shared.Models
 
         public float ScaleX { get; set; } = 1f;
         public float ScaleY { get; set; } = 1f;
+
+        public float ShearX { get; set; }
+        public float ShearY { get; set; }
     }
 
 }

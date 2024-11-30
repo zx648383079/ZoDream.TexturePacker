@@ -86,13 +86,19 @@ namespace ZoDream.Plugin.Spine
             // ? 
             _cacheItems = ReadArray(reader, _ => ReadString(reader));
 
+
             // Bones
+            var boneMap = new Dictionary<int, int>();
             res.Bones = ReadArray(reader, i => {
+                var name = ReadString(reader);
+                if (i > 0)
+                {
+                    boneMap.Add(i, ReadInt(reader, true));
+                }
                 var bone = new Bone
                 {
-                    Name = ReadString(reader),
-                    ParentIndex = i == 0 ? -1 : ReadInt(reader, true),
-                    Rotation = reader.ReadSingle(),
+                    Name = name,
+                    Rotate = reader.ReadSingle(),
                     X = reader.ReadSingle() * Scale,
                     Y = reader.ReadSingle() * Scale,
                     ScaleX = reader.ReadSingle(),
@@ -114,7 +120,13 @@ namespace ZoDream.Plugin.Spine
                     }
                 }
                 return bone;
-            }); 
+            });
+            foreach (var item in boneMap)
+            {
+                res.Bones[item.Key].Parent = res.Bones[item.Value].Name;
+            }
+            boneMap.Clear();
+
             // Slots.
             res.Slots = ReadArray(reader, _ => {
                 var slot = new Slot
