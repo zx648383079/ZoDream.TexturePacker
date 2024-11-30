@@ -161,7 +161,7 @@ namespace ZoDream.Shared.ImageEditor
         {
             var scale = .1f;
             var x = 100;
-            var y = 400;
+            var y = -300;
             // return new SKMatrix(scale, 0, x, 0, scale, y, 0, 0, 1);
             return SKMatrix.Concat(
                 new SKMatrix(style.ScaleX * scale, style.ShearX, style.X + x, 
