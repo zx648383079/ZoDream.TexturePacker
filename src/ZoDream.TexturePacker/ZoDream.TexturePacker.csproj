@@ -60,8 +60,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.241114004-experimental1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="SkiaSharp" Version="3.118.0-preview.1.2" />
-    <PackageReference Include="SkiaSharp.Views.WinUI" Version="3.118.0-preview.1.2" />
+    <PackageReference Include="SkiaSharp" Version="3.116.0" />
+    <PackageReference Include="SkiaSharp.Views.WinUI" Version="3.116.0" />
     <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
