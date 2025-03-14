@@ -106,7 +106,7 @@ namespace ZoDream.Plugin.Spine
                     ShearX = reader.ReadSingle(),
                     ShearY = reader.ReadSingle(),
                     Length = reader.ReadSingle() * Scale,
-                    TransformMode = (TransformMode)ReadInt(reader, true)
+                    Transform = (TransformMode)ReadInt(reader, true)
                 };
                 //skinRequired
                 reader.ReadBoolean();

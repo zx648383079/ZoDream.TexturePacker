@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace ZoDream.Plugin.Spine.Models
 {
@@ -19,6 +20,9 @@ namespace ZoDream.Plugin.Spine.Models
         public TransformConstraint[] TransformConstraints { get; set; }
         public PathConstraint[] PathConstraints { get; set; }
         public PhysicsConstraint[] PhysicsConstraints { get; internal set; }
+
+        [JsonIgnore]
+        public SkeletonRuntime Runtime { get; private set; } = new();
 
         public int GetSlotIndex(string name)
         {

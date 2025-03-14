@@ -57,6 +57,7 @@ namespace ZoDream.Plugin.Spine
             }
             foreach (var bone in data.Bones)
             {
+                bone.Runtime.UpdateWorldTransform(data);
                 var b = new SkeletonBone()
                 {
                     Name = bone.Name,
@@ -72,7 +73,8 @@ namespace ZoDream.Plugin.Spine
                 };
                 foreach (var item in data.Skins[0].Attachments)
                 {
-                    if (item.Key.Name != bone.Name)
+                    var slot = data.Slots[item.Key.SlotIndex];
+                    if (slot.Bone != bone.Name)
                     {
                         continue;
                     }
@@ -92,7 +94,7 @@ namespace ZoDream.Plugin.Spine
                     } else if (item.Value is MeshAttachment mesh)
                     {
                         var vertices = new float[mesh.WorldVerticesLength];
-                        mesh.ComputeVertices(data, data.Slots[item.Key.SlotIndex], vertices);
+                        mesh.ComputeVertices(data, slot, vertices);
                         b.SkinItems.Add(new SpriteUvLayer()
                         {
                             Name = item.Key.Name,

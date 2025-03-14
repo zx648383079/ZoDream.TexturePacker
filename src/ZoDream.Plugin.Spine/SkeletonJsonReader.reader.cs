@@ -1,11 +1,9 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using System.Text.Json;
 using ZoDream.Plugin.Spine.Models;
-using ZoDream.Shared.Interfaces;
-using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
@@ -35,7 +33,7 @@ namespace ZoDream.Plugin.Spine
                     ImagesPath = ReadString(element, "images")
                 };
             }
-            data.Bones = ReadArray(element, "bones", (e, _) => {
+            data.Bones = ReadArray(root, "bones", (e, _) => {
                 var bone = new Bone()
                 {
                     Parent = ReadString(e, "parent"),
@@ -48,11 +46,11 @@ namespace ZoDream.Plugin.Spine
                     ScaleY = ReadSingle(e, "scaleY", 1),
                     ShearX = ReadSingle(e, "shearX"),
                     ShearY = ReadSingle(e, "shearY"),
-                    TransformMode = ReadEnum<TransformMode>(e, "transform")
+                    Transform = ReadEnum<TransformMode>(e, "transform")
                 };
                 return bone;
             });
-            data.Slots = ReadArray(element, "slots", (e, _) => {
+            data.Slots = ReadArray(root, "slots", (e, _) => {
                 var slot = new Slot()
                 {
                     Name = ReadString(e, "name"),
@@ -64,7 +62,7 @@ namespace ZoDream.Plugin.Spine
                 };
                 return slot;
             });
-            data.IkConstraints = ReadArray(element, "ik", (e, _) => {
+            data.IkConstraints = ReadArray(root, "ik", (e, _) => {
                 var ik = new IkConstraint()
                 {
                     Name = ReadString(e, "name"),
@@ -76,7 +74,7 @@ namespace ZoDream.Plugin.Spine
                 };
                 return ik;
             });
-            data.TransformConstraints = ReadArray(element, "transform", (e, _) => {
+            data.TransformConstraints = ReadArray(root, "transform", (e, _) => {
                 var tc = new TransformConstraint()
                 {
                     Name = ReadString(e, "name"),
@@ -98,7 +96,7 @@ namespace ZoDream.Plugin.Spine
                 };
                 return tc;
             });
-            data.PathConstraints = ReadArray(element, "path", (e, _) => {
+            data.PathConstraints = ReadArray(root, "path", (e, _) => {
                 var pc = new PathConstraint()
                 {
                     Name = ReadString(e, "name"),
@@ -124,26 +122,61 @@ namespace ZoDream.Plugin.Spine
                 }
                 return pc;
             });
-            data.Skins = ReadObject(element, "skins", (e, name) => {
-                var skin = new Skin()
+            if (root.TryGetProperty("skins", out element))
+            {
+                if (element.ValueKind == JsonValueKind.Array)
                 {
-                    Name = name,
-                };
-                foreach (var item in e.EnumerateObject())
-                {
-                    var slotIndex = data.GetSlotIndex(item.Name);
-                    foreach (var it in item.Value.EnumerateObject())
-                    {
-                        var attachment = ReadAttachment(it.Value, skin, slotIndex, it.Name, data);
-                        if (attachment != null)
+                    data.Skins = element.EnumerateArray().Select(item => {
+                        var skin = new Skin()
                         {
-                            skin.Add(slotIndex, it.Name, attachment);
+                            Name = ReadString(item, "name"),
+                        };
+                        if (item.TryGetProperty("attachments", out var itemValue))
+                        {
+                            foreach (var item2 in itemValue.EnumerateObject())
+                            {
+                                var slotIndex = data.GetSlotIndex(item2.Name);
+                                foreach (var it in item2.Value.EnumerateObject())
+                                {
+                                    var attachment = ReadAttachment(it.Value, skin, slotIndex, it.Name, data);
+                                    if (attachment != null)
+                                    {
+                                        skin.Add(slotIndex, it.Name, attachment);
+                                    }
+                                }
+                            }
                         }
-                    }
+                        return skin;
+                    }).ToArray();
                 }
-                return skin;
-            });
-            data.Events = ReadObject(element, "events", (e, name) => {
+                else
+                {
+                    data.Skins = element.EnumerateObject().Select(item => {
+                        var skin = new Skin()
+                        {
+                            Name = item.Name,
+                        };
+                        foreach (var item2 in item.Value.EnumerateObject())
+                        {
+                            var slotIndex = data.GetSlotIndex(item2.Name);
+                            foreach (var it in item2.Value.EnumerateObject())
+                            {
+                                var attachment = ReadAttachment(it.Value, skin, slotIndex, it.Name, data);
+                                if (attachment != null)
+                                {
+                                    skin.Add(slotIndex, it.Name, attachment);
+                                }
+                            }
+                        }
+                        return skin;
+                    }).ToArray();
+                }
+            }
+            else
+            {
+                data.Skins = [];
+            }
+            data.Events = ReadObject(root, "events", (e, name) => {
                 return new Event()
                 {
                     Name = name,
@@ -152,7 +185,7 @@ namespace ZoDream.Plugin.Spine
                     String = ReadString(e, "string"),
                 };
             });
-            data.Animations = ReadObject(element, "animations", (e, name) => {
+            data.Animations = ReadObject(root, "animations", (e, name) => {
                 return ReadAnimation(e, name, data);
             });
             return [data.ToSkeleton()];
@@ -197,7 +230,7 @@ namespace ZoDream.Plugin.Spine
                         foreach (var it in e.EnumerateArray())
                         {
                             timeline.Frames[frameIndex] = ReadSingle(it, "time");
-                            timeline.ColorFrames[frameIndex] = ReadColor(it, "color")??SKColor.Empty;
+                            timeline.ColorFrames[frameIndex] = ReadColor(it, "color") ?? SKColor.Empty;
                             ReadCurve(it, timeline, frameIndex);
                             frameIndex++;
                         }
@@ -303,7 +336,7 @@ namespace ZoDream.Plugin.Spine
                 }
                 timelines.Add(timeline);
                 duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
-                
+
             });
 
             // Transform constraint timelines.
@@ -344,7 +377,7 @@ namespace ZoDream.Plugin.Spine
                         {
                             timeline = new PathConstraintSpacingTimeline(e.GetArrayLength());
                             if (pc.SpacingMode == SpacingMode.Length || pc.SpacingMode == SpacingMode.Fixed)
-                            { 
+                            {
                                 timelineScale = Scale;
                             }
                         }
@@ -420,8 +453,8 @@ namespace ZoDream.Plugin.Spine
                             {
                                 deform = new float[deformLength];
                                 var start = ReadInt(it, "offset");
-                                float[] verticesValue = ReadArray(it, "vertices", (i,_) => i.GetSingle()! * Scale);
-                                Array.Copy(verticesValue, 0, deform, start, verticesValue.Length);
+                                float[] verticesValue = ReadArray(it, "vertices", (i, _) => i.GetSingle()! * Scale);
+                                Array.Copy(verticesValue, 0, deform, start, Math.Min(verticesValue.Length, deformLength - start));
                                 if (!weighted)
                                 {
                                     for (int i = 0; i < deformLength; i++)
@@ -512,20 +545,25 @@ namespace ZoDream.Plugin.Spine
             return new Animation
             {
                 Name = name,
-                Timelines = [..timelines],
+                Timelines = [.. timelines],
                 Duration = duration,
             };
         }
 
         private void ReadCurve(JsonElement element, CurveTimeline timeline, int frameIndex)
         {
-            var c = ReadString(element, "curve");
-            if (c == "stepped")
+            if (!element.TryGetProperty("curve", out var el))
+            {
+                return;
+            }
+            if (el.ValueKind == JsonValueKind.String && el.GetString() == "stepped")
             {
                 timeline.SetStepped(frameIndex);
-            } else
+            }
+            else
             {
-                var items = ReadArray(element, "curve", (e, _) => e.GetSingle());
+                var items = el.ValueKind == JsonValueKind.Array ?
+                    el.EnumerateArray().Select(e => e.GetSingle()).ToArray() : [el.GetSingle()];
                 if (items.Length >= 4)
                 {
                     timeline.SetCurve(frameIndex, items[0], items[1], items[2], items[3]);
@@ -548,7 +586,7 @@ namespace ZoDream.Plugin.Spine
             switch (type)
             {
                 case AttachmentType.Region:
-                    var region = new RegionAttachment() 
+                    var region = new RegionAttachment()
                     {
                         Name = name,
                         Path = path,
@@ -579,18 +617,18 @@ namespace ZoDream.Plugin.Spine
                             Color = ReadColor(element, "color"),
                             Width = ReadSingle(element, "width") * Scale,
                             Height = ReadSingle(element, "height") * Scale,
-                            
+
                         };
                         var parent = ReadString(element, "parent");
                         if (string.IsNullOrEmpty(parent))
                         {
                             mesh.InheritDeform = ReadBoolean(element, "deform", true);
-                            return mesh;
+                            //return mesh;
                         }
 
                         var uvs = ReadArray(element, "uvs", (e, _) => e.GetSingle()!);
                         ReadVertices(element, mesh, uvs.Length);
-                        mesh.Triangles = ReadArray(element, "triangles", (e,_) => e.GetInt32());
+                        mesh.Triangles = ReadArray(element, "triangles", (e, _) => e.GetInt32());
                         mesh.RegionUVs = uvs;
 
                         mesh.HullLength = ReadInt(element, "hull") * 2;
@@ -668,7 +706,7 @@ namespace ZoDream.Plugin.Spine
             box.Vertices = [.. weights];
         }
 
-        private static T[] ReadArray<T>(JsonElement element, string key, 
+        private static T[] ReadArray<T>(JsonElement element, string key,
             Func<JsonElement, int, T> cb)
         {
             if (element.TryGetProperty(key, out var res))
@@ -761,7 +799,7 @@ namespace ZoDream.Plugin.Spine
             {
                 if (res.GetString()?.Length >= 8)
                 {
-                    return new SKColor(color.Alpha, color.Red, color.Green, color.Blue);    
+                    return new SKColor(color.Alpha, color.Red, color.Green, color.Blue);
                 }
                 return color;
             }
@@ -773,7 +811,7 @@ namespace ZoDream.Plugin.Spine
         {
             if (element.TryGetProperty(key, out var res))
             {
-                return Enum.Parse<T>(res.GetString());
+                return Enum.Parse<T>(res.GetString(), true);
             }
             return def;
         }
