@@ -58,11 +58,18 @@ namespace ZoDream.Shared.ImageEditor
         public void Compute(IImageLayerTree items)
         {
             var boneStyler = new ComputedStyler();
+            var g = SKMatrix.CreateTranslation(500, 500).PostConcat(
+                SKMatrix.CreateScale(.9f, .9f)
+                );
             foreach (var bone in _skeleton.BoneItems)
             {
                 var style = boneStyler.Compute(bone.Name, bone, bone.Name);
                 foreach (var item in bone.SkinItems)
                 {
+                    if (item.Name != "1_37")
+                    {
+                        continue;
+                    }
                     var layer = items.Get(i => i.Name == item.Name);
                     if (layer is null)
                     {
@@ -82,7 +89,7 @@ namespace ZoDream.Shared.ImageEditor
                         };
                         var matrix = style.ToMatrix();
                         computed.SourceItems = EditorExtension.ComputeVertex(u.VertexItems, layer.Source);
-                        computed.PointItems = matrix.MapPoints([.. u.PointItems]);
+                        computed.PointItems = g.MapPoints([.. u.PointItems]);
                         _cacheItems.Add(computed);
                         continue;
                     }

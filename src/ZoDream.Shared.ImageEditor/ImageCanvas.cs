@@ -1,7 +1,5 @@
 ﻿using SkiaSharp;
 using System;
-using System.Diagnostics;
-using System.Linq;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor
@@ -195,12 +193,19 @@ namespace ZoDream.Shared.ImageEditor
         public void DrawTexture(SKBitmap source, 
             SKPoint[] sourceVertices, SKPoint[] vertices)
         {
-            //canvas.DrawPoints(SKPointMode.Polygon, vertices, new SKPaint()
-            //{
-            //    Color = SKColors.Red,
-            //    IsStroke = true,
-            //});
-            //return;
+            canvas.DrawBitmap(source, new SKPoint(0, 0));
+            canvas.DrawPoints(SKPointMode.Polygon, vertices, new SKPaint()
+            {
+                Color = SKColors.Red,
+                IsStroke = true,
+            });
+            canvas.DrawPoints(SKPointMode.Polygon, sourceVertices, new SKPaint()
+            {
+                Color = SKColors.Yellow,
+                IsStroke = true,
+            });
+            
+            return;
             using var paint = new SKPaint()
             {
                 IsAntialias = true,
