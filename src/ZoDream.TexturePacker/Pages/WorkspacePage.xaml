@@ -203,15 +203,37 @@
                 </ivy:Interaction.Behaviors>
             </ctl:ImageEditor>
 
-            <TreeView
-                Grid.Column="1"
-                ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"
-                ItemsSource="{Binding LayerItems}"
-                SelectedItem="{Binding SelectedLayer, Mode=TwoWay}">
-                <ivy:Interaction.Behaviors>
-                    <bhv:SelectionChangedBehavior Command="{Binding LayerSelectedCommand}" />
-                </ivy:Interaction.Behaviors>
-            </TreeView>
+            <Pivot Grid.Column="1">
+                <PivotItem Header="图层">
+                    <TreeView
+                        ItemTemplateSelector="{StaticResource LayerItemTemplateSelector}"
+                        ItemsSource="{Binding LayerItems}"
+                        SelectedItem="{Binding SelectedLayer, Mode=TwoWay}">
+                        <ivy:Interaction.Behaviors>
+                            <bhv:SelectionChangedBehavior Command="{Binding LayerSelectedCommand}" />
+                        </ivy:Interaction.Behaviors>
+                    </TreeView>
+                </PivotItem>
+                <PivotItem Header="Slot">
+                    <ListBox Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Name" />
+                                    <Slider />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </PivotItem>
+                <PivotItem Header="动画">
+                    <ListBox Background="Transparent" />
+                </PivotItem>
+                <PivotItem Header="资源">
+                    <ListBox Background="Transparent" />
+                </PivotItem>
+            </Pivot>
+
         </Grid>
     </Grid>
 </Page>
