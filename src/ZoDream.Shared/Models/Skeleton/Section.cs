@@ -14,6 +14,9 @@ namespace ZoDream.Shared.Models
 
         public IList<SkeletonBone> BoneItems { get; set; } = [];
 
+        public IList<SkeletonSkin> SkinItems { get; set; } = [];
+        public IList<SkeletonSlot> SlotItems { get; set; } = [];
+
         public IList<SkeletonAnimationSection> AnimationItems { get; set; } = [];
 
     }

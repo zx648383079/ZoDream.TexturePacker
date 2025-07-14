@@ -57,7 +57,7 @@ namespace ZoDream.TexturePacker.Plugins
         {
             IImageReader? reader = extension switch
             {
-                ".pvr" or ".ccz" => new Plugin.Readers.TexturePacker.PvrReader(),
+                ".pvr" or ".ccz" => new Plugin.TexturePacker.PvrReader(),
                 ".svg" => new SvgReader(),
                 _ => null,
             };
@@ -93,16 +93,16 @@ namespace ZoDream.TexturePacker.Plugins
         {
             if (fileName.EndsWith(".atlas.txt"))
             {
-                return new Plugin.Readers.Unity.AtlasReader();
+                return new Plugin.Unity.AtlasReader();
             }
             return extension switch
             {
                 ".tres" => new Plugin.Godot.TresReader(),
-                ".plist" => new Plugin.Readers.TexturePacker.PlistReader(),
+                ".plist" => new Plugin.TexturePacker.PlistReader(),
                 ".atlas" => new Plugin.Spine.AtlasReader(),
                 ".moc3" => new Plugin.Live2d.MocReader(),
                 ".json" => new JsonFactoryReader(),
-                ".asset" => new Plugin.Readers.Unity.AssetReader(),
+                ".asset" => new Plugin.Unity.AssetReader(),
                 _ => null,
             };
         }
@@ -187,7 +187,7 @@ namespace ZoDream.TexturePacker.Plugins
         public static async Task<IEnumerable<string>> LoadImageMetaAsync(string fileName)
         {
             IFileMetaReader[] metaReaderItems = [
-                new Plugin.Readers.Unity.MetaReader(),
+                new Plugin.Unity.MetaReader(),
                 new Plugin.Godot.ImportReader(),
             ];
             foreach (var reader in metaReaderItems)

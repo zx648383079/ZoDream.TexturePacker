@@ -215,22 +215,66 @@
                     </TreeView>
                 </PivotItem>
                 <PivotItem Header="Slot">
-                    <ListBox Background="Transparent">
+                    <ListBox ItemsSource="{Binding SlotItems}" Style="{StaticResource CustomListBox}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Name" />
-                                    <Slider />
-                                </StackPanel>
+                            <DataTemplate x:DataType="vm:SlotItemViewModel">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind Name}" />
+                                    <Slider
+                                        Grid.Column="1"
+                                        Maximum="{x:Bind FrameCount}"
+                                        Visibility="{x:Bind cvt:ConverterHelper.VisibleIf(FrameCount)}"
+                                        Value="{x:Bind FrameIndex, Mode=TwoWay}" />
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </PivotItem>
                 <PivotItem Header="动画">
-                    <ListBox Background="Transparent" />
+                    <ListBox ItemsSource="{Binding AnimationItems}" Style="{StaticResource CustomListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:AnimationItemViewModel">
+                                <Grid>
+                                    <TextBlock Text="{x:Bind Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </PivotItem>
+                <PivotItem Header="Skin">
+                    <ListBox ItemsSource="{Binding SkinItems}" Style="{StaticResource CustomListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SkinItemViewModel">
+                                <Grid>
+                                    <TextBlock Text="{x:Bind Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </PivotItem>
                 <PivotItem Header="资源">
-                    <ListBox Background="Transparent" />
+                    <ListBox ItemsSource="{Binding ResourceItems}" Style="{StaticResource CustomListBox}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ResourceItemViewModel">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{x:Bind Name}" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        FontSize="12"
+                                        Foreground="Gray"
+                                        Text="{x:Bind FullPath}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </PivotItem>
             </Pivot>
 

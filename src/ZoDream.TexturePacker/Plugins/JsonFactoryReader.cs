@@ -13,12 +13,12 @@ namespace ZoDream.TexturePacker.Plugins
     {
         private readonly ITextReader[] Items = [
             new Plugin.Live2d.MocJsonReader(),
-            new Plugin.Readers.TexturePacker.JsonReader(),
-            new Plugin.Readers.Egret.JsonReader(),
-            new Plugin.Readers.Unity.JsonReader(),
+            new Plugin.TexturePacker.JsonReader(),
+            new Plugin.Egret.JsonReader(),
+            new Plugin.Unity.JsonReader(),
         ];
 
-        protected virtual ITextReader Default => Items.First() ?? new Plugin.Readers.Unity.JsonReader();
+        protected virtual ITextReader Default => Items.First() ?? new Plugin.Unity.JsonReader();
 
         public async Task<IEnumerable<SpriteLayerSection>?> ReadAsync(string fileName)
         {

@@ -32,6 +32,8 @@ namespace ZoDream.TexturePacker.Plugins
         private readonly Dictionary<string, IPluginReader> _layerItems = [];
         private readonly Dictionary<string, ISkeletonReader> _skeletonItems = [];
 
+        public IEnumerable<string> ResourceItems => [.. _imageItems.Keys, .. _layerItems.Keys, .. _skeletonItems.Keys];
+
         public async Task<bool> LoadAsync()
         {
             return await LoadAsync(_storageItems);

@@ -13,9 +13,10 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
-	  <LangVersion>12</LangVersion>
+	  <LangVersion>13</LangVersion>
 	  <Nullable>Enable</Nullable>
 	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	  <BaseOutputPath>..\bin</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\ImageEditor.xaml" />
@@ -79,11 +80,17 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\ZoDream.Shared.Drawing\ZoDream.Shared.Drawing.csproj" />
     <ProjectReference Include="..\..\shared\ZoDream.Shared.UndoRedo\ZoDream.Shared.UndoRedo.csproj" />
-    <ProjectReference Include="..\ZoDream.Plugin.GoDot\ZoDream.Plugin.Godot.csproj" />
-    <ProjectReference Include="..\ZoDream.Plugin.Live2d\ZoDream.Plugin.Live2d.csproj" />
-    <ProjectReference Include="..\ZoDream.Plugin.Project\ZoDream.Plugin.Project.csproj" />
-    <ProjectReference Include="..\ZoDream.Plugin.Reader\ZoDream.Plugin.Reader.csproj" />
-    <ProjectReference Include="..\ZoDream.Plugin.Spine\ZoDream.Plugin.Spine.csproj" />
+    <ProjectReference Include="..\plugins\Adobe\Adobe.csproj" />
+    <ProjectReference Include="..\plugins\Affinity\Affinity.csproj" />
+    <ProjectReference Include="..\plugins\Cocos\Cocos.csproj" />
+    <ProjectReference Include="..\plugins\DragonBones\DragonBones.csproj" />
+    <ProjectReference Include="..\plugins\Egret\Egret.csproj" />
+    <ProjectReference Include="..\plugins\Gimp\Gimp.csproj" />
+    <ProjectReference Include="..\plugins\Godot\Godot.csproj" />
+    <ProjectReference Include="..\plugins\Live2d\Live2d.csproj" />
+    <ProjectReference Include="..\plugins\Spine\Spine.csproj" />
+    <ProjectReference Include="..\plugins\TexturePacker\TexturePacker.csproj" />
+    <ProjectReference Include="..\plugins\Unity\Unity.csproj" />
     <ProjectReference Include="..\ZoDream.Shared.ImageEditor\ZoDream.Shared.ImageEditor.csproj" />
     <ProjectReference Include="..\ZoDream.Shared.IO\ZoDream.Shared.IO.csproj" />
     <ProjectReference Include="..\ZoDream.Shared\ZoDream.Shared.csproj" />

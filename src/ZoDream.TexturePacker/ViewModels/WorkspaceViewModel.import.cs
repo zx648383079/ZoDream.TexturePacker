@@ -203,8 +203,12 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             await foreach (var item in loader.EnumerateSkeleton())
             {
+                AddSkin(item.SkinItems);
+                AddSlot(item.SlotItems);
+                AddAnimation(item.AnimationItems);
                 _styleManager.Add(new SkeletonImageStyler(item));
             }
+            AddResource(loader.ResourceItems);
             Instance!.Resize();
             Instance.Invalidate();
             IsLoading = false;
