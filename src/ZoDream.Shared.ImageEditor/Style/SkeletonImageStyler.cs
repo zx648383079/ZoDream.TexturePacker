@@ -61,7 +61,7 @@ namespace ZoDream.Shared.ImageEditor
             var g = SKMatrix.CreateTranslation(500, 500).PostConcat(
                 SKMatrix.CreateScale(.9f, .9f)
                 );
-            foreach (var bone in _skeleton.BoneItems)
+            foreach (var bone in _skeleton.Bones)
             {
                 var style = boneStyler.Compute(bone.Name, bone, bone.Name);
                 foreach (var item in bone.SkinItems)

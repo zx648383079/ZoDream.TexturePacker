@@ -3,7 +3,7 @@ using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
-    public class SkeletonBone : IReadOnlyStyle
+    public class SkeletonBone : IReadOnlyStyle, ISkeletonBone
     {
         public string Name { get; set; } = string.Empty;
 

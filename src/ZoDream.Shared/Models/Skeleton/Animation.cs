@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
 
-    public class SkeletonAnimationSection 
+    public class SkeletonAnimationSection : ISkeletonAnimation
     {
         public string Name { get; set; } = string.Empty;
         public int Duration { get; set; }

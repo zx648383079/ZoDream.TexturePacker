@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
-    public class SkeletonSection
+    public class SkeletonSection : ISkeleton
     {
         public int FrameRate { get; set; }
 
@@ -12,12 +13,12 @@ namespace ZoDream.Shared.Models
 
         public float Height { get; set; }
 
-        public IList<SkeletonBone> BoneItems { get; set; } = [];
+        public IList<SkeletonBone> Bones { get; set; } = [];
 
-        public IList<SkeletonSkin> SkinItems { get; set; } = [];
-        public IList<SkeletonSlot> SlotItems { get; set; } = [];
+        public IList<SkeletonSkin> Skins { get; set; } = [];
+        public IList<SkeletonSlot> Slots { get; set; } = [];
 
-        public IList<SkeletonAnimationSection> AnimationItems { get; set; } = [];
+        public IList<SkeletonAnimationSection> Animations { get; set; } = [];
 
     }
 

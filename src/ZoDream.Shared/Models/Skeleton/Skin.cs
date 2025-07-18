@@ -1,6 +1,8 @@
-﻿namespace ZoDream.Shared.Models
+﻿using ZoDream.Shared.Interfaces;
+
+namespace ZoDream.Shared.Models
 {
-    public class SkeletonSkin
+    public class SkeletonSkin: ISkeletonSkin
     {
         public string Name { get; set; } = string.Empty;
     }

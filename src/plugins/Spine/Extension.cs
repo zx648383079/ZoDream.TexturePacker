@@ -55,11 +55,11 @@ namespace ZoDream.Plugin.Spine
             {
                 return res;
             }
-            res.SlotItems = data.Slots.Select(i => new SkeletonSlot()
+            res.Slots = data.Slots.Select(i => new SkeletonSlot()
             {
                 Name = i.Name,
             }).ToArray();
-            res.SkinItems = data.Skins.Select(i => new SkeletonSkin()
+            res.Skins = data.Skins.Select(i => new SkeletonSkin()
             {
                 Name = i.Name,
             }).ToArray();
@@ -118,7 +118,7 @@ namespace ZoDream.Plugin.Spine
                         });
                     }
                 }
-                res.BoneItems.Add(b);
+                res.Bones.Add(b);
             }
             //foreach (var item in data.Animations)
             //{

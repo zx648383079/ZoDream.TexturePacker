@@ -31,7 +31,7 @@ namespace ZoDream.Plugin.Unity
                 {
                     Name = group.Name,
                     FrameRate = group.FrameRate,
-                    BoneItems = group.Bone.Select(item => {
+                    Bones = group.Bone.Select(item => {
                         var bone = new SkeletonBone()
                         {
                             Name = item.Name,
@@ -53,7 +53,7 @@ namespace ZoDream.Plugin.Unity
                         }
                         return bone;
                     }).ToArray(),
-                    AnimationItems = group.Animation.Select(item => {
+                    Animations = group.Animation.Select(item => {
                         return new SkeletonAnimationSection()
                         {
                             PayTimes = item.PlayTimes,
