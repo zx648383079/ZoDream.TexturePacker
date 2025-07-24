@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class ColorTimeline: CurveTimeline
+    public class ColorTimeline : CurveTimeline
     {
         public ColorTimeline(int frameCount): base(frameCount)
         {
@@ -16,7 +16,7 @@ namespace ZoDream.Plugin.Spine.Models
         public override int PropertyId => ((int)TimelineType.RGB << 24) + SlotIndex;
     }
 
-    internal class RGBTimeline : CurveTimeline
+    public class RGBTimeline : CurveTimeline
     {
         public RGBTimeline(int frameCount) : base(frameCount)
         {
@@ -30,7 +30,7 @@ namespace ZoDream.Plugin.Spine.Models
         public override int PropertyId => ((int)TimelineType.RGB << 24) + SlotIndex;
     }
 
-    internal class AlphaTimeline : CurveTimeline
+    public class AlphaTimeline : CurveTimeline
     {
         public AlphaTimeline(int frameCount) : base(frameCount)
         {

@@ -1,13 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Skin
+    public class Skin: ISkeletonSkin
     {
         public Dictionary<AttachmentKeyTuple, AttachmentBase> Attachments { get; set; } = [];
 
         public string Name { get; set; }
+
+        public string[] Bones { get; set; }
+        /// <summary>
+        /// ikConstraints
+        /// </summary>
+        public string[] Ik { get; set; }
+        /// <summary>
+        /// transformConstraints
+        /// </summary>
+        public string[] Transform { get; set; }
+        /// <summary>
+        /// pathConstraints
+        /// </summary>
+        public string[] Path { get; set; }
+        /// <summary>
+        /// physicsConstraints
+        /// </summary>
+        public string[] Physics { get; set; }
 
         public void Add(int slotIndex, string name, AttachmentBase attachment)
         {
@@ -27,7 +46,7 @@ namespace ZoDream.Plugin.Spine.Models
         }
     }
 
-    internal class AttachmentKeyTuple(int slotIndex, string name)
+    public class AttachmentKeyTuple(int slotIndex, string name)
     {
         public int SlotIndex => slotIndex;
         public string Name => name;

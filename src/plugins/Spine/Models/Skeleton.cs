@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class SkeletonRoot
+    public class SkeletonRoot
     {
         public Animation[] Animations { get; set; }
 
@@ -22,7 +22,8 @@ namespace ZoDream.Plugin.Spine.Models
         public PhysicsConstraint[] PhysicsConstraints { get; internal set; }
 
         [JsonIgnore]
-        public SkeletonRuntime Runtime { get; private set; } = new();
+        public SkeletonRuntime Runtime { get; internal set; }
+
 
         public int GetSlotIndex(string name)
         {

@@ -9,6 +9,7 @@ using Windows.Storage.Pickers;
 using ZoDream.Shared.Drawing;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ImageEditor;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.Plugins;
@@ -206,7 +207,13 @@ namespace ZoDream.TexturePacker.ViewModels
                 AddSkin(item.Skins);
                 AddSlot(item.Slots);
                 AddAnimation(item.Animations);
-                _styleManager.Add(new SkeletonImageStyler(item));
+                if (item is ISkeletonController ctl)
+                {
+                    _styleManager.Add(new SkeletonImageStyler("ctl", ctl));
+                } else if (item is SkeletonSection s)
+                {
+                    _styleManager.Add(new SkeletonImageStyler(s));
+                }
             }
             AddResource(loader.ResourceItems);
             Instance!.Resize();

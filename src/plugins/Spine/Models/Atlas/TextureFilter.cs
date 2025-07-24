@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum TextureFilter
+    public enum TextureFilter
     {
         Nearest,
 		Linear,

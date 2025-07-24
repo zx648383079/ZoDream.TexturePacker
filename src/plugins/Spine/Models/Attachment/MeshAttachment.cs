@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class MeshAttachment: VertexAttachment
+    public class MeshAttachment : VertexAttachment
     {
         public int HullLength { get; set; }
         public float[] RegionUVs { get; set; }

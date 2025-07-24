@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 using ZoDream.Shared.Stylers;
 
@@ -11,21 +12,21 @@ namespace ZoDream.Shared.ImageEditor
     public class SkeletonImageStyler : IImageStyler, IImageComputedStyler, IImageSize
     {
         public SkeletonImageStyler(SkeletonSection skeleton)
-            : this (skeleton.Name, skeleton)
+            : this (skeleton.Name, new SkeletonController(skeleton))
         {
             
         }
 
-        public SkeletonImageStyler(string name, SkeletonSection skeleton)
+        public SkeletonImageStyler(string name, ISkeletonController controller)
         {
             _name = string.IsNullOrWhiteSpace(name) ? "SKEL_" + DateTime.Now.Ticks : name;
-            _skeleton = skeleton;
-            Width = _skeleton.Width;
-            Height = _skeleton.Height;
+            _controller = controller;
+            Width = controller.Width;
+            Height = controller.Height;
         }
 
         private readonly string _name;
-        private readonly SkeletonSection _skeleton;
+        private readonly ISkeletonController _controller;
 
         private readonly List<ImageComputedStyle> _cacheItems = [];
         private ImageComputedStyle? _lastStyle;
@@ -57,55 +58,58 @@ namespace ZoDream.Shared.ImageEditor
 
         public void Compute(IImageLayerTree items)
         {
-            var boneStyler = new ComputedStyler();
-            var g = SKMatrix.CreateTranslation(500, 500).PostConcat(
-                SKMatrix.CreateScale(.9f, .9f)
-                );
-            foreach (var bone in _skeleton.Bones)
+            
+            foreach (var item in _controller.Items)
             {
-                var style = boneStyler.Compute(bone.Name, bone, bone.Name);
-                foreach (var item in bone.SkinItems)
+                if (item is SpriteUvLayer uv)
                 {
-                    if (item.Name != "1_37")
-                    {
-                        continue;
-                    }
-                    var layer = items.Get(i => i.Name == item.Name);
+                    var layer = items.Get(i => i.Name == uv.Name);
                     if (layer is null)
                     {
                         continue;
                     }
-                    if (item is SpriteUvLayer u)
+                    var computed = new ImageComputedVertexStyle(layer.Id)
                     {
-                        var computed = new ImageComputedVertexStyle(layer.Id)
-                        {
-                            X = style.X + item.X,
-                            Y = style.Y + item.Y,
-                            Rotate = style.Rotate + item.Rotate,
-                            ScaleX = style.ScaleX * item.ScaleX,
-                            ScaleY = style.ScaleY * item.ScaleY,
-                            Width = item.Width,
-                            Height = item.Height,
-                        };
-                        var matrix = style.ToMatrix();
-                        computed.SourceItems = EditorExtension.ComputeVertex(u.VertexItems, layer.Source);
-                        computed.PointItems = g.MapPoints([.. u.PointItems]);
-                        _cacheItems.Add(computed);
+                        X = item.X,
+                        Y = item.Y,
+                        Rotate = item.Rotate,
+                        ScaleX = item.ScaleX,
+                        ScaleY = item.ScaleY,
+                        Width = uv.Width,
+                        Height = uv.Height,
+                    };
+                    computed.SourceItems = [..uv.VertexItems];
+                    computed.PointItems = [..uv.PointItems];
+                    _cacheItems.Add(computed);
+                    continue;
+                }
+                if (item is SpritePathLayer path)
+                {
+
+                    continue;
+                }
+                if (item is SpriteLayer sprite)
+                {
+                    var layer = items.Get(i => i.Name == sprite.Name);
+                    if (layer is null)
+                    {
                         continue;
                     }
                     _cacheItems.Add(new ImageComputedStyle(layer.Id)
                     {
-                        X = style.X + item.X,
-                        Y = style.Y + item.Y,
-                        Rotate = style.Rotate + item.Rotate,
-                        ScaleX = style.ScaleX * item.ScaleX,
-                        ScaleY = style.ScaleY * item.ScaleY,
-                        ShearX = style.ShearX + item.ShearX,
-                        ShearY = style.ShearY + item.ShearY,
-                        Width = item.Width,
-                        Height = item.Height,
+                        X = item.X,
+                        Y = item.Y,
+                        Rotate = item.Rotate,
+                        ScaleX = item.ScaleX,
+                        ScaleY = item.ScaleY,
+                        ShearX = item.ShearX,
+                        ShearY = item.ShearY,
+                        Width = sprite.Width,
+                        Height = sprite.Height,
                     });
+                    continue;
                 }
+                
             }
         }
 

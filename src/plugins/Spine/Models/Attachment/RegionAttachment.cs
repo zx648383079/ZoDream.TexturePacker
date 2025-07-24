@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class RegionAttachment: AttachmentBase
+    public class RegionAttachment : AttachmentBase
     {
         public const int BLX = 0;
         public const int BLY = 1;

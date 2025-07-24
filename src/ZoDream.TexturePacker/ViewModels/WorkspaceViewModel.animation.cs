@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ZoDream.Shared.Models;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -14,7 +13,7 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref _animationItems, value);
         }
 
-        private void AddAnimation(IEnumerable<SkeletonAnimationSection> items)
+        private void AddAnimation(IEnumerable<ISkeletonAnimation> items)
         {
             foreach (var item in items)
             {

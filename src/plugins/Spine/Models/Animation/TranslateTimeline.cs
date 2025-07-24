@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class TranslateTimeline: CurveTimeline
+    public class TranslateTimeline : CurveTimeline
     {
         public TranslateTimeline(int frameCount): base(frameCount)
         {

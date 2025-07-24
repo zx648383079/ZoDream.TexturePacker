@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class VertexAttachment: AttachmentBase
+    public class VertexAttachment : AttachmentBase
     {
         public int Id { get; set; }
         public int[] Bones { get; set; }

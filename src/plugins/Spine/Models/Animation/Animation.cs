@@ -1,6 +1,8 @@
-﻿namespace ZoDream.Plugin.Spine.Models
+﻿using ZoDream.Shared.Interfaces;
+
+namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Animation
+    public class Animation : ISkeletonAnimation
     {
         public string Name { get; set; }
         public Timeline[] Timelines { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum MixDirection
+    public enum MixDirection
     {
         In,
 		Out

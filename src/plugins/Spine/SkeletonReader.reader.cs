@@ -2,10 +2,10 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using ZoDream.Plugin.Spine.Models;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -59,7 +59,7 @@ namespace ZoDream.Plugin.Spine
         private string[] _cacheItems = [];
         private Version _version = new();
 
-        public IEnumerable<SkeletonSection>? Read(Stream input)
+        public IEnumerable<ISkeleton>? Read(Stream input)
         {
             var res = new SkeletonRoot()
             {
@@ -398,7 +398,7 @@ namespace ZoDream.Plugin.Spine
             //res.Animations = ReadArray(reader, _ => {
             //    return ReadAnimation(reader, res);
             //});
-            return [res.ToSkeleton()];
+            return [new SpineSkeletonController(res)];
         }
 
         private Skin ReadSkin(BinaryReader reader, bool defaultSkin, 
@@ -415,17 +415,17 @@ namespace ZoDream.Plugin.Spine
                     ReadColor(reader);
                 }
                 // bones
-                ReadArray(reader, _ => ReadInt(reader, true));
+                skin.Bones = ReadArray(reader, _ => res.Bones[ReadInt(reader, true)].Name);
                 // ikConstraints
-                ReadArray(reader, _ => ReadInt(reader, true));
+                skin.Ik = ReadArray(reader, _ => res.IkConstraints[ReadInt(reader, true)].Name);
                 // transformConstraints
-                ReadArray(reader, _ => ReadInt(reader, true));
+                skin.Transform = ReadArray(reader, _ => res.TransformConstraints[ReadInt(reader, true)].Name);
                 // pathConstraints
-                ReadArray(reader, _ => ReadInt(reader, true));
+                skin.Path = ReadArray(reader, _ => res.PathConstraints[ReadInt(reader, true)].Name);
                 if (_version.Major >= 4)
                 {
                     // physicsConstraints
-                    ReadArray(reader, _ => ReadInt(reader, true));
+                    skin.Physics = ReadArray(reader, _ => res.PhysicsConstraints[ReadInt(reader, true)].Name);
                 }
                 
             }

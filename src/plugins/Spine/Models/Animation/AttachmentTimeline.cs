@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class AttachmentTimeline: Timeline
+    public class AttachmentTimeline : Timeline
     {
         public AttachmentTimeline(int frameCount)
         {

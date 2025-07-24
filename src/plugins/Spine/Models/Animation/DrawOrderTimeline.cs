@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZoDream.Plugin.Spine.Models
+﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class DrawOrderTimeline: Timeline
+    public class DrawOrderTimeline : Timeline
     {
         public DrawOrderTimeline(int frameCount)
         {

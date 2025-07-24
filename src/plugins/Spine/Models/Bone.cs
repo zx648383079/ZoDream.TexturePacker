@@ -1,10 +1,9 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Bone : IReadOnlyStyle
+    public class Bone : IReadOnlyStyle, ISkeletonBone
     {
         public string Name { get; set; } = string.Empty;
 
@@ -23,12 +22,7 @@ namespace ZoDream.Plugin.Spine.Models
         public float ShearY { get; set; }
         public TransformMode Transform { get; set; }
         [JsonIgnore]
-        public BoneRuntime Runtime { get; private set; }
-
-        public Bone()
-        {
-            Runtime = new(this);
-        }
+        public BoneRuntime Runtime { get; internal set; }
 
     }
 }

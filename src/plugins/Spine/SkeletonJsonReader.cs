@@ -7,7 +7,7 @@ using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
 {
-    public partial class SkeletonJsonReader : BaseTextReader<SkeletonSection>, ISkeletonReader
+    public partial class SkeletonJsonReader : BaseTextReader<ISkeleton>, ISkeletonReader
     {
         private readonly JsonSerializerOptions _option = new()
         {
@@ -19,7 +19,7 @@ namespace ZoDream.Plugin.Spine
             return content.Contains("\"skeleton\"") && content.Contains("\"spine\"");
         }
 
-        public override string Serialize(IEnumerable<SkeletonSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISkeleton> data, string fileName)
         {
             throw new NotImplementedException();
         }

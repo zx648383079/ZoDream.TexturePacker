@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum AtlasFormat
+    public enum AtlasFormat
     {
         Alpha,
 		Intensity,

@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class TwoColorTimeline: CurveTimeline
+    public class TwoColorTimeline : CurveTimeline
     {
         public TwoColorTimeline(int frameCount): base(frameCount)
         {

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ZoDream.Shared.Models;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -17,7 +16,7 @@ namespace ZoDream.TexturePacker.ViewModels
         }
 
 
-        private void AddSlot(IEnumerable<SkeletonSlot> items)
+        private void AddSlot(IEnumerable<ISkeletonSlot> items)
         {
             foreach (var item in items)
             {

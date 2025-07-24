@@ -1,9 +1,9 @@
-﻿namespace ZoDream.Plugin.Spine.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ZoDream.Plugin.Spine.Models
 {
-    internal class PhysicsConstraint
+    public class PhysicsConstraint : ConstraintBase
     {
-        public string Name { get; set; }
-        public int Order { get; set; }
         public string Bone { get; internal set; }
         public float X { get; internal set; }
         public float Y { get; internal set; }
@@ -19,5 +19,10 @@
         public float Wind { get; internal set; }
         public float Gravity { get; internal set; }
         public float Mix { get; internal set; }
+
+
+        [JsonIgnore]
+        public PhysicsConstraintRuntime Runtime { get; internal set; }
+
     }
 }

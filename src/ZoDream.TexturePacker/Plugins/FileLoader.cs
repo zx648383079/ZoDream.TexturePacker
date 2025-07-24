@@ -129,7 +129,7 @@ namespace ZoDream.TexturePacker.Plugins
             }
         }
 
-        public async IAsyncEnumerable<SkeletonSection> EnumerateSkeleton()
+        public async IAsyncEnumerable<ISkeleton> EnumerateSkeleton()
         {
             foreach (var item in _skeletonItems)
             {

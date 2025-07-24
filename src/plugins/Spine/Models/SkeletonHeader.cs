@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class SkeletonHeader
+    public class SkeletonHeader
     {
         public string Hash { get; set; }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using ZoDream.Plugin.Spine.Models;
-using ZoDream.Shared.Models;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Plugin.Spine
 {
@@ -12,7 +12,7 @@ namespace ZoDream.Plugin.Spine
     {
         private float Scale = 1;
 
-        public override IEnumerable<SkeletonSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISkeleton>? Deserialize(string content, string fileName)
         {
             using var doc = JsonDocument.Parse(content);
             if (doc == null)
@@ -131,6 +131,11 @@ namespace ZoDream.Plugin.Spine
                         {
                             Name = ReadString(item, "name"),
                         };
+                        skin.Bones = ReadArray(item, "bones", (e, _) => e.GetString());
+                        skin.Ik = ReadArray(item, "ik", (e, _) => e.GetString());
+                        skin.Transform = ReadArray(item, "transform", (e, _) => e.GetString());
+                        skin.Path = ReadArray(item, "path", (e, _) => e.GetString());
+                        skin.Physics = ReadArray(item, "physics", (e, _) => e.GetString());
                         if (item.TryGetProperty("attachments", out var itemValue))
                         {
                             foreach (var item2 in itemValue.EnumerateObject())
@@ -188,7 +193,7 @@ namespace ZoDream.Plugin.Spine
             data.Animations = ReadObject(root, "animations", (e, name) => {
                 return ReadAnimation(e, name, data);
             });
-            return [data.ToSkeleton()];
+            return [new SpineSkeletonController(data)];
         }
 
         private Animation ReadAnimation(JsonElement element, string name, SkeletonRoot data)

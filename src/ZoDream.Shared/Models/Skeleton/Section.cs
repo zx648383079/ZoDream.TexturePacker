@@ -20,6 +20,13 @@ namespace ZoDream.Shared.Models
 
         public IList<SkeletonAnimationSection> Animations { get; set; } = [];
 
+        IEnumerable<ISkeletonBone> ISkeleton.Bones => Bones;
+
+        IEnumerable<ISkeletonSkin> ISkeleton.Skins => Skins;
+
+        IEnumerable<ISkeletonSlot> ISkeleton.Slots => Slots;
+
+        IEnumerable<ISkeletonAnimation> ISkeleton.Animations => Animations;
     }
 
 }

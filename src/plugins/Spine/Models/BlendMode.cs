@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum BlendMode
+    public enum BlendMode
     {
         Normal,
         Additive,

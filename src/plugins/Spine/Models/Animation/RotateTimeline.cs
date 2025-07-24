@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class RotateTimeline: CurveTimeline
+    public class RotateTimeline : CurveTimeline
     {
         public RotateTimeline(int frameCount): base(frameCount)
         {

@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class AtlasRegion
+    public class AtlasRegion
     {
         public string Name { get; set; }
         public int X { get; set; }

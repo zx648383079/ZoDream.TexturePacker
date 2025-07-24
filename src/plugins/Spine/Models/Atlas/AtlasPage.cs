@@ -2,7 +2,7 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class AtlasPage
+    public class AtlasPage
     {
         public string Name { get; set; }
         public AtlasFormat Format { get; set; }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZoDream.Plugin.Spine.Models
+﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum TransformMode
+    public enum TransformMode
     {
         //0000 0 Flip Scale Rotation
         Normal = 0, // 0000

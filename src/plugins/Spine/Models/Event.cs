@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Event
+    public class Event
     {
         public string Name { get; set; }
         public int Int { get; set; }

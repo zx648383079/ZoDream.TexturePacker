@@ -65,7 +65,7 @@ namespace ZoDream.Plugin.Spine
             }).ToArray();
             foreach (var bone in data.Bones)
             {
-                bone.Runtime.UpdateWorldTransform(data);
+                bone.Runtime.UpdateWorldTransform();
                 var b = new SkeletonBone()
                 {
                     Name = bone.Name,
@@ -120,9 +120,6 @@ namespace ZoDream.Plugin.Spine
                 }
                 res.Bones.Add(b);
             }
-            //foreach (var item in data.Animations)
-            //{
-            //}
             return res;
         }
 

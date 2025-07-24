@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum TimelineType
+    public enum TimelineType
     {
         Rotate = 0, X, Y, ScaleX, ScaleY, ShearX, ShearY, Inherit, //
         RGB, Alpha, RGB2, //

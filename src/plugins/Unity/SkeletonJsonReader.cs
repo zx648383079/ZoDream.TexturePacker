@@ -8,7 +8,7 @@ using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Unity
 {
-    public class SkeletonJsonReader : BaseTextReader<SkeletonSection>, ISkeletonReader
+    public class SkeletonJsonReader : BaseTextReader<ISkeleton>, ISkeletonReader
     {
         private readonly JsonSerializerOptions _option = new()
         {
@@ -18,7 +18,7 @@ namespace ZoDream.Plugin.Unity
         {
             return content.Contains("\"armature\"") && content.Contains("\"aabb\"");
         }
-        public override IEnumerable<SkeletonSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISkeleton>? Deserialize(string content, string fileName)
         {
             var data = JsonSerializer.Deserialize<U3D_SkeletonRoot>(content, _option);
             if (data == null) 
@@ -73,7 +73,7 @@ namespace ZoDream.Plugin.Unity
         }
 
 
-        public override string Serialize(IEnumerable<SkeletonSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISkeleton> data, string fileName)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class IkConstraintTimeline: CurveTimeline
+    public class IkConstraintTimeline : CurveTimeline
     {
         public IkConstraintTimeline(int frameCount) : base(frameCount)
         {

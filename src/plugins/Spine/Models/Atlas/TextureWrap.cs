@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum TextureWrap
+    public enum TextureWrap
     {
         MirroredRepeat,
 		ClampToEdge,

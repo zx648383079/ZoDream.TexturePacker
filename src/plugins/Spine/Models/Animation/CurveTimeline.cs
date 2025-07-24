@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal abstract class CurveTimeline: Timeline
+    public abstract class CurveTimeline: Timeline
     {
 
         protected CurveTimeline(int frameCount)

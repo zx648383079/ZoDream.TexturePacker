@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class EventTimeline: Timeline
+    public class EventTimeline : Timeline
     {
         public EventTimeline(int frameCount)
         {

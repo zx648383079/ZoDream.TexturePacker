@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using ZoDream.Shared.Interfaces;
-using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
 {
@@ -12,7 +11,7 @@ namespace ZoDream.Plugin.Spine
     /// </summary>
     public partial class SkeletonReader : ISkeletonReader
     {
-        public Task<IEnumerable<SkeletonSection>?> ReadAsync(string fileName)
+        public Task<IEnumerable<ISkeleton>?> ReadAsync(string fileName)
         {
             return Task.Factory.StartNew(() => {
                 using var fs = File.OpenRead(fileName);
@@ -20,7 +19,7 @@ namespace ZoDream.Plugin.Spine
             });
         }
 
-        public Task WriteAsync(string fileName, IEnumerable<SkeletonSection> data)
+        public Task WriteAsync(string fileName, IEnumerable<ISkeleton> data)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal enum MixPose
+    public enum MixPose
     {
         /// <summary> The timeline value is mixed with the setup pose (the current pose is not used).</summary>
         Setup,

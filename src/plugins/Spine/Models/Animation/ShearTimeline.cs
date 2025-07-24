@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class ShearTimeline: TranslateTimeline
+    public class ShearTimeline : TranslateTimeline
     {
         public ShearTimeline(int frameCount) : base(frameCount)
         {

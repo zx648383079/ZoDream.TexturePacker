@@ -2,8 +2,12 @@
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class BoneRuntime(Bone bone)
+    public class BoneRuntime(SpineSkeletonController controller, Bone bone) : IUpdatableRuntime
     {
+        public bool IsEnabled { get; set; }
+        public bool IsSorted { get; set; }
+        public Bone Parent { get; set; }
+        public Bone[] Children { get; set; } = [];
         public float Rotate { get; set; }
 
         public float X { get; set; }
@@ -32,13 +36,14 @@ namespace ZoDream.Plugin.Spine.Models
             return (float)Math.Atan2(y, x) * 180f / (float)Math.PI;
         }
 
-        public void UpdateWorldTransform(SkeletonRoot skeleton)
+        public void UpdateWorldTransform()
         {
-            UpdateWorldTransform(skeleton, bone.X, bone.Y, bone.Rotate, bone.ScaleX, bone.ScaleY, bone.ShearX, bone.ShearY);
+            UpdateWorldTransform(bone.X, bone.Y, bone.Rotate, bone.ScaleX, bone.ScaleY, bone.ShearX, bone.ShearY);
         }
 
-        public void UpdateWorldTransform(SkeletonRoot skeleton, float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY)
+        public void UpdateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY)
         {
+            var skeleton = controller.Root;
             X = x;
             Y = y;
             Rotate = rotation;
@@ -49,7 +54,7 @@ namespace ZoDream.Plugin.Spine.Models
 
             var degRad = (float)Math.PI / 180;
 
-            var parent = Array.Find(skeleton.Bones, i => i.Name == bone.Parent);
+            var parent = Parent;
             if (parent == null)
             { // Root bone.
                 float sx = skeleton.Runtime.ScaleX, sy = skeleton.Runtime.ScaleY;
@@ -167,8 +172,9 @@ namespace ZoDream.Plugin.Spine.Models
             D *= skeleton.Runtime.ScaleY;
         }
 
-        public void UpdateAppliedTransform(SkeletonRoot skeleton)
+        public void UpdateAppliedTransform()
         {
+            var skeleton = controller.Root;
             var parent = Array.Find(skeleton.Bones, i => i.Name == bone.Parent);
             if (parent == null)
             {
@@ -271,6 +277,69 @@ namespace ZoDream.Plugin.Spine.Models
                 ShearY = 0;
                 Rotate = 90 - Atan2Deg(rd, rb);
             }
+        }
+
+        public void Update(PhysicsMode physics)
+        {
+            UpdateWorldTransform(X, Y, Rotate, ScaleX, ScaleY, ShearX, ShearY);
+        }
+
+        public void WorldToLocal(float worldX, float worldY, out float localX, out float localY)
+        {
+            float a = A, b = B, c = C, d = D;
+            float det = a * d - b * c;
+            float x = worldX - WorldX, y = worldY - WorldY;
+            localX = (x * d - y * b) / det;
+            localY = (y * a - x * c) / det;
+        }
+
+        public void LocalToWorld(float localX, float localY, out float worldX, out float worldY)
+        {
+            worldX = localX * A + localY * B + WorldX;
+            worldY = localX * C + localY * D + WorldY;
+        }
+
+        public void WorldToParent(float worldX, float worldY, out float parentX, out float parentY)
+        {
+            if (Parent == null)
+            {
+                parentX = worldX;
+                parentY = worldY;
+            }
+            else
+            {
+                Parent.Runtime.WorldToLocal(worldX, worldY, out parentX, out parentY);
+            }
+        }
+
+        /// <summary>Transforms a point from the parent bone's coordinates to world coordinates.</summary>
+        public void ParentToWorld(float parentX, float parentY, out float worldX, out float worldY)
+        {
+            if (Parent == null)
+            {
+                worldX = parentX;
+                worldY = parentY;
+            }
+            else
+            {
+                Parent.Runtime.LocalToWorld(parentX, parentY, out worldX, out worldY);
+            }
+        }
+
+        /// <summary>Transforms a world rotation to a local rotation.</summary>
+        public float WorldToLocalRotation(float worldRotation)
+        {
+            worldRotation *= (float)Math.PI / 180;
+            float sin = (float)Math.Sin(worldRotation), cos = (float)Math.Cos(worldRotation);
+            return Atan2Deg(A * sin - C * cos, D * cos - B * sin) + bone.Rotate - bone.ShearX;
+        }
+
+        /// <summary>Transforms a local rotation to a world rotation.</summary>
+        public float LocalToWorldRotation(float localRotation)
+        {
+            localRotation = (localRotation - bone.Rotate - bone.ShearX) * (float)Math.PI / 180;
+            float sin = (float)Math.Sin(localRotation), cos = (float)Math.Cos(localRotation);
+            return Atan2Deg(cos * C + sin * D, cos * A + sin * B);
         }
     }
 }

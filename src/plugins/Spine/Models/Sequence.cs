@@ -1,6 +1,6 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Sequence
+    public class Sequence
     {
         public int Start { get; set; }
         public int Digits { get; set; }
@@ -13,7 +13,7 @@
         }
     }
 
-    internal class TextureRegion
+    public class TextureRegion
     {
         public float Width { get; set; }
         public float Height { get; set; }

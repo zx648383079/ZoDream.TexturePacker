@@ -1,9 +1,10 @@
 ﻿using SkiaSharp;
 using System.Text.Json.Serialization;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    internal class Slot
+    public class Slot : ISkeletonSlot
     {
         public string Attachment { get; set; } = string.Empty;
 
@@ -18,6 +19,7 @@ namespace ZoDream.Plugin.Spine.Models
         public BlendMode BlendMode { get; set; }
 
         [JsonIgnore]
-        public SlotRuntime Runtime { get; private set; } = new();
+        public SlotRuntime Runtime { get; internal set; }
+
     }
 }

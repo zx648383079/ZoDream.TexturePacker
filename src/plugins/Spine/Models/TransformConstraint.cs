@@ -1,10 +1,9 @@
-﻿namespace ZoDream.Plugin.Spine.Models
-{
-    internal class TransformConstraint
-    {
-        public string Name { get; set; }
+﻿using System.Text.Json.Serialization;
 
-        public int Order { get; set; }
+namespace ZoDream.Plugin.Spine.Models
+{
+    public class TransformConstraint : ConstraintBase
+    {
         public string[] Bones { get; set; }
         public string Target { get; set; }
         public float RotateMix { get; set; }
@@ -23,5 +22,9 @@
 
         public bool Relative { get; set; }
         public bool Local { get; set; }
+
+        [JsonIgnore]
+        public TransformConstraintRuntime Runtime { get; internal set; }
+
     }
 }
