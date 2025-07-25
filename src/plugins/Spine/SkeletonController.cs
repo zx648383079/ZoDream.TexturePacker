@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Plugin.Spine.Models;
 using ZoDream.Shared.Interfaces;
+using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
 {
@@ -11,19 +12,19 @@ namespace ZoDream.Plugin.Spine
         public SpineSkeletonController(SkeletonRoot root)
         {
             _root = root;
-            _skin = root.Skins.Length > 0 ? root.Skins[0] : null;
+            root.Runtime.Skin = root.Skins.Length > 0 ? root.Skins[0] : null;
             Initialize();
         }
 
         private readonly SkeletonRoot _root;
         private readonly List<IUpdatableRuntime> _updateItems = [];
-        private Skin? _skin;
 
         internal bool YDown => false;
 
         internal float Time { get; private set; }
 
         internal SkeletonRoot Root => _root;
+        internal Skin Skin => _root.Runtime.Skin;
         public float Width => _root.Skeleton.Width;
 
         public float Height => _root.Skeleton.Height;
@@ -36,7 +37,39 @@ namespace ZoDream.Plugin.Spine
 
         public IEnumerable<ISkeletonAnimation> Animations => _root.Animations;
 
-        public IEnumerable<IReadOnlyStyle> Items => throw new NotImplementedException();
+        public IEnumerable<IReadOnlyStyle> Items {
+            get {
+                var items = new List<IReadOnlyStyle>();
+                float[] vertices;
+                foreach (var item in _root.Slots)
+                {
+                    switch (item.Runtime.Attachment)
+                    {
+                        case RegionAttachment region:
+                            vertices = new float[8];
+                            region.ComputeVertices(item, vertices, 0, 2);
+                            items.Add(new SpriteUvLayer()
+                            {
+                                Name = item.Name,
+                                VertexItems = Extension.ToVector(region.UVs),
+                                PointItems = Extension.ToPoint(vertices, vertices.Length, 0, 0)
+                            });
+                            break;
+                        case MeshAttachment mesh:
+                            vertices = new float[mesh.WorldVerticesLength];
+                            mesh.ComputeVertices(_root, item, 0, vertices.Length, vertices, 0, 2);
+                            items.Add(new SpriteUvLayer()
+                            {
+                                Name = item.Name,
+                                VertexItems = Extension.ToVector(mesh.UVs),
+                                PointItems = Extension.ToPoint(vertices, vertices.Length, 0, 0)
+                            });
+                            break;
+                    }
+                }
+                return items;
+            }
+        }
 
 
         private void Initialize()
@@ -56,11 +89,41 @@ namespace ZoDream.Plugin.Spine
             }
             foreach (var item in _root.Slots)
             {
-                item.Runtime ??= new SlotRuntime(this, item);
-                if (boneItems.TryGetValue(item.Bone, out var res))
+                item.Runtime = new SlotRuntime(this, item)
                 {
-                    item.Runtime.Bone = res;
-                }
+                    Bone = boneItems[item.Bone]
+                };
+            }
+            foreach (var item in _root.IkConstraints)
+            {
+                item.Runtime = new IkConstraintRuntime(this, item)
+                {
+                    Target = boneItems[item.Target],
+                    Bones = item.Bones.Select(i => boneItems[i]).ToArray()
+                };
+            }
+            foreach (var item in _root.TransformConstraints)
+            {
+                item.Runtime = new TransformConstraintRuntime(this, item)
+                {
+                    Target = boneItems[item.Target],
+                    Bones = item.Bones.Select(i => boneItems[i]).ToArray()
+                };
+            }
+            foreach (var item in _root.PathConstraints)
+            {
+                item.Runtime = new PathConstraintRuntime(this, item)
+                {
+                    Target = slotItems[item.Target],
+                    Bones = item.Bones.Select(i => boneItems[i]).ToArray()
+                };
+            }
+            foreach (var item in _root.PhysicsConstraints)
+            {
+                item.Runtime = new PhysicsConstraintRuntime(this, item)
+                {
+                    Bone = boneItems[item.Bone],
+                };
             }
             Reset();
         }
@@ -68,6 +131,14 @@ namespace ZoDream.Plugin.Spine
         private void Reset()
         {
             _updateItems.Clear();
+            foreach (var item in _root.Slots)
+            {
+                if (_root.Runtime.Skin.TryGet<AttachmentBase>(item.Index, 
+                    item.Attachment, out var res))
+                {
+                    item.Runtime.Attachment = res;
+                }
+            }
             var constraintCount = _root.IkConstraints.Length
                 + _root.TransformConstraints.Length
                 + _root.PathConstraints.Length
@@ -76,7 +147,6 @@ namespace ZoDream.Plugin.Spine
             {
                 foreach (var item in _root.IkConstraints)
                 {
-                    item.Runtime ??= new IkConstraintRuntime(this, item);
                     if (item.Order == i)
                     {
                         SortIkConstraint(item);
@@ -85,7 +155,6 @@ namespace ZoDream.Plugin.Spine
                 }
                 foreach (var item in _root.TransformConstraints)
                 {
-                    item.Runtime ??= new TransformConstraintRuntime(this, item);
                     if (item.Order == i)
                     {
                         SortTransformConstraint(item);
@@ -94,7 +163,6 @@ namespace ZoDream.Plugin.Spine
                 }
                 foreach (var item in _root.PathConstraints)
                 {
-                    item.Runtime ??= new PathConstraintRuntime(this, item);
                     if (item.Order == i)
                     {
                         SortPathConstraint(item);
@@ -103,7 +171,6 @@ namespace ZoDream.Plugin.Spine
                 }
                 foreach (var item in _root.PhysicsConstraints)
                 {
-                    item.Runtime ??= new PhysicsConstraintRuntime(this, item);
                     if (item.Order == i)
                     {
                         SortPhysicsConstraint(item);
@@ -157,7 +224,7 @@ namespace ZoDream.Plugin.Spine
         private void SortIkConstraint(IkConstraint constraint)
         {
             constraint.Runtime.IsEnabled = constraint.Runtime.Target.Runtime.IsEnabled
-                && (!constraint.SkinRequired || (_skin != null && _skin.Ik.Contains(constraint.Name)));
+                && (!constraint.SkinRequired || (Skin != null && Skin.Ik.Contains(constraint.Name)));
             if (!constraint.Runtime.IsEnabled)
             {
                 return;
@@ -190,7 +257,7 @@ namespace ZoDream.Plugin.Spine
         private void SortTransformConstraint(TransformConstraint constraint)
         {
             constraint.Runtime.IsEnabled = constraint.Runtime.Target.Runtime.IsEnabled
-                && (!constraint.SkinRequired || (_skin != null && _skin.Transform.Contains(constraint.Name)));
+                && (!constraint.SkinRequired || (Skin != null && Skin.Transform.Contains(constraint.Name)));
             if (!constraint.Runtime.IsEnabled)
             {
                 return;
@@ -232,7 +299,7 @@ namespace ZoDream.Plugin.Spine
         private void SortPathConstraint(PathConstraint constraint)
         {
             constraint.Runtime.IsEnabled = constraint.Runtime.Target.Runtime.Bone.Runtime.IsEnabled
-                && (!constraint.SkinRequired || (_skin != null && _skin.Path.Contains(constraint.Name)));
+                && (!constraint.SkinRequired || (Skin != null && Skin.Path.Contains(constraint.Name)));
             if (!constraint.Runtime.IsEnabled)
             {
                 return;
@@ -241,11 +308,11 @@ namespace ZoDream.Plugin.Spine
             var slot = constraint.Runtime.Target;
             int slotIndex = slot.Index;
             var slotBone = slot.Runtime.Bone;
-            if (_skin != null)
+            if (Skin != null)
             {
-                SortPathConstraintAttachment(_skin, slotIndex, slotBone);
+                SortPathConstraintAttachment(Skin, slotIndex, slotBone);
             }
-            if (_root.Skins.Length > 0 && _root.Skins[0] != _skin)
+            if (_root.Skins.Length > 0 && _root.Skins[0] != Skin)
             {
                 SortPathConstraintAttachment(_root.Skins[0], slotIndex, slotBone);
             }
@@ -316,7 +383,7 @@ namespace ZoDream.Plugin.Spine
         {
             var bone = constraint.Runtime.Bone;
             constraint.Runtime.IsEnabled = bone.Runtime.IsEnabled
-                && (!constraint.SkinRequired || (_skin != null && _skin.Physics.Contains(constraint.Name)));
+                && (!constraint.SkinRequired || (Skin != null && Skin.Physics.Contains(constraint.Name)));
             if (!constraint.Runtime.IsEnabled)
             {
                 return;

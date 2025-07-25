@@ -1,5 +1,4 @@
-﻿using SkiaSharp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ZoDream.Plugin.Live2d.Models;

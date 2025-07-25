@@ -604,6 +604,10 @@ namespace ZoDream.Plugin.Spine
                         Height = ReadSingle(element, "height", 32) * Scale,
                         Color = ReadColor(element, "color"),
                     };
+                    if (element.TryGetProperty("sequence", out var next))
+                    {
+                        region.Sequence = ReadSequence(next);
+                    }
                     return region;
                 case AttachmentType.BoundingBox:
                     var box = new BoundingBoxAttachment()
@@ -622,8 +626,11 @@ namespace ZoDream.Plugin.Spine
                             Color = ReadColor(element, "color"),
                             Width = ReadSingle(element, "width") * Scale,
                             Height = ReadSingle(element, "height") * Scale,
-
                         };
+                        if (element.TryGetProperty("sequence", out var next))
+                        {
+                            mesh.Sequence = ReadSequence(next);
+                        }
                         var parent = ReadString(element, "parent");
                         if (string.IsNullOrEmpty(parent))
                         {
@@ -682,6 +689,16 @@ namespace ZoDream.Plugin.Spine
                     }
             }
             return null;
+        }
+
+        public static Sequence ReadSequence(JsonElement element)
+        {
+            return new Sequence(ReadInt(element, "count"))
+            {
+                Start = ReadInt(element, "start", 1),
+                Digits = ReadInt(element, "digits", 0),
+                SetupIndex = ReadInt(element, "setup", 0)
+            };
         }
 
         private void ReadVertices(JsonElement element, VertexAttachment box, int verticesLength)
@@ -772,13 +789,14 @@ namespace ZoDream.Plugin.Spine
             }
             return def;
         }
-        private static int ReadInt(JsonElement element, string key)
+
+        private static int ReadInt(JsonElement element, string key, int def = 0)
         {
             if (element.TryGetProperty(key, out var res))
             {
                 return res.GetInt32();
             }
-            return 0;
+            return def;
         }
 
         private static bool ReadBoolean(JsonElement element, string key, bool def = false)

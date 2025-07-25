@@ -1,16 +1,10 @@
 ﻿namespace ZoDream.Plugin.Spine.Models
 {
-    public class AtlasRegion
+    public class AtlasRegion : TextureRegion
     {
         public string Name { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public float U { get; set; }
-        public float V { get; set; }
-        public float U2 { get; set; }
-        public float V2 { get; set; }
         public float OffsetX { get; set; }
         public float OffsetY { get; set; }
         public int OriginalWidth { get; set; }
