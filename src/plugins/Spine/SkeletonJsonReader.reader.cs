@@ -591,24 +591,26 @@ namespace ZoDream.Plugin.Spine
             switch (type)
             {
                 case AttachmentType.Region:
-                    var region = new RegionAttachment()
                     {
-                        Name = name,
-                        Path = path,
-                        X = ReadSingle(element, "x") * Scale,
-                        Y = ReadSingle(element, "y") * Scale,
-                        ScaleX = ReadSingle(element, "scaleX", 1),
-                        ScaleY = ReadSingle(element, "scaleY", 1),
-                        Rotation = ReadSingle(element, "rotation"),
-                        Width = ReadSingle(element, "width", 32) * Scale,
-                        Height = ReadSingle(element, "height", 32) * Scale,
-                        Color = ReadColor(element, "color"),
-                    };
-                    if (element.TryGetProperty("sequence", out var next))
-                    {
-                        region.Sequence = ReadSequence(next);
+                        var region = new RegionAttachment()
+                        {
+                            Name = name,
+                            Path = path,
+                            X = ReadSingle(element, "x") * Scale,
+                            Y = ReadSingle(element, "y") * Scale,
+                            ScaleX = ReadSingle(element, "scaleX", 1),
+                            ScaleY = ReadSingle(element, "scaleY", 1),
+                            Rotation = ReadSingle(element, "rotation"),
+                            Width = ReadSingle(element, "width", 32) * Scale,
+                            Height = ReadSingle(element, "height", 32) * Scale,
+                            Color = ReadColor(element, "color"),
+                        };
+                        if (element.TryGetProperty("sequence", out var next))
+                        {
+                            region.Sequence = ReadSequence(next);
+                        }
+                        return region;
                     }
-                    return region;
                 case AttachmentType.BoundingBox:
                     var box = new BoundingBoxAttachment()
                     {
