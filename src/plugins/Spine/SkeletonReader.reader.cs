@@ -2,6 +2,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ZoDream.Plugin.Spine.Models;
@@ -395,7 +396,8 @@ namespace ZoDream.Plugin.Spine
                 return e;
             });
             // Animations.
-            //res.Animations = ReadArray(reader, _ => {
+            res.Animations = []; 
+            //ReadArray(reader, _ => {
             //    return ReadAnimation(reader, res);
             //});
             return [new SpineSkeletonController(res)];
@@ -521,7 +523,7 @@ namespace ZoDream.Plugin.Spine
                     }
                     if (nonessential)
                     {
-                        m.Edges = ReadArray(reader, _ => (int)reader.ReadInt16());
+                        m.Edges = ReadArray(reader, _ => _version.Major < 4 ? reader.ReadUInt16() : ReadInt(reader, true));
                         m.Width = reader.ReadSingle();
                         m.Height = reader.ReadSingle();
                     }
@@ -607,7 +609,12 @@ namespace ZoDream.Plugin.Spine
         private Animation ReadAnimation(BinaryReader reader, SkeletonRoot res)
         {
             var name = ReadString(reader);
-            var timelines = new List<Timeline>();
+            var timelineCount = 32;
+            if (_version.Major >= 4)
+            {
+                timelineCount = ReadInt(reader, true);
+            }
+            var timelines = new List<Timeline>(timelineCount);
             var duration = 0f;
 
             // Slot timelines.
@@ -727,13 +734,21 @@ namespace ZoDream.Plugin.Spine
                     }
                 });
             });
-
             // Bone timelines.
             ReadArray(reader, _ => {
                 var boneIndex = ReadInt(reader, true);
                 ReadArray(reader, _ => {
                     var timelineType = reader.ReadByte();
                     var frameCount = ReadInt(reader, true);
+                    var bezierCount = timelineType switch 
+                    {
+                        BONE_ROTATE => 2,
+                        _ => 3,
+                    };
+                    if (timelineType != BONE_INHERIT && _version.Major >= 4)
+                    {
+                        bezierCount = ReadInt(reader, true);
+                    }
                     switch (timelineType)
                     {
                         case BONE_ROTATE:
@@ -786,7 +801,6 @@ namespace ZoDream.Plugin.Spine
                     }
                 });
             });
-
             // IK timelines.
             ReadArray(reader, _ => {
                 var index = ReadInt(reader, true);
@@ -807,7 +821,6 @@ namespace ZoDream.Plugin.Spine
                 timelines.Add(timeline);
                 duration = Math.Max(duration, timeline.Frames[frameCount - 1]);
             });
-
             // Transform constraint timelines.
             ReadArray(reader, _ => {
                 var index = ReadInt(reader, true);
@@ -830,7 +843,6 @@ namespace ZoDream.Plugin.Spine
                 timelines.Add(timeline);
                 duration = Math.Max(duration, timeline.Frames[frameCount - 1]);
             });
-
             // Path constraint timelines.
             ReadArray(reader, _ => {
                 var index = ReadInt(reader, true);
@@ -896,7 +908,6 @@ namespace ZoDream.Plugin.Spine
                     }
                 });
             });
-
             // Deform timelines.
             ReadArray(reader, _ => {
                 var skinIndex = ReadInt(reader, true);
@@ -951,7 +962,6 @@ namespace ZoDream.Plugin.Spine
                     });
                 });
             });
-
             // Draw order timeline.
             int drawOrderCount = ReadInt(reader, true);
             if (drawOrderCount > 0)
@@ -1092,7 +1102,7 @@ namespace ZoDream.Plugin.Spine
                     return reader.ReadSingle();
                 });
                 m2.Triangles = ReadArray((res.WorldVerticesLength - m2.HullLength - 2) * 3, _ => {
-                    return (int)reader.ReadInt16();
+                    return ReadInt(reader, true);
                 });
             }
         }

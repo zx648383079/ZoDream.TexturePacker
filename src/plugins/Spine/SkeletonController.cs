@@ -12,6 +12,7 @@ namespace ZoDream.Plugin.Spine
         public SpineSkeletonController(SkeletonRoot root)
         {
             _root = root;
+            _root.Runtime ??= new SkeletonRuntime(this, root);
             root.Runtime.Skin = root.Skins.Length > 0 ? root.Skins[0] : null;
             Initialize();
         }
@@ -133,6 +134,7 @@ namespace ZoDream.Plugin.Spine
             _updateItems.Clear();
             foreach (var item in _root.Slots)
             {
+                _root.Runtime.Skin ??= _root.Skins[0];
                 if (_root.Runtime.Skin.TryGet<AttachmentBase>(item.Index, 
                     item.Attachment, out var res))
                 {

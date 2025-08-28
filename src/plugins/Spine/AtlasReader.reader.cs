@@ -35,6 +35,7 @@ namespace ZoDream.Plugin.Spine
                     {
                         Name = line,
                     };
+                    region = null;
                     continue;
                 }
                 if (!line.Contains(':'))
@@ -46,7 +47,7 @@ namespace ZoDream.Plugin.Spine
                     page.Items.Add(region);
                     continue;
                 }
-                var isLayer = line.StartsWith(' ');
+                var isLayer = region is not null && (line.StartsWith(' ') || line.StartsWith('\t'));
                 var args = line.Trim().Split(':', 2);
                 switch (args[0].ToLower())
                 {

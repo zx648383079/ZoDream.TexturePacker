@@ -125,6 +125,10 @@ namespace ZoDream.Plugin.Spine
 
         internal static Vector2[] ToVector(float[] items)
         {
+            if (items is null)
+            {
+                return [];
+            }
             var res = new Vector2[items.Length / 2];
             for (var i = 0; i < res.Length; i ++ )
             {

@@ -2,10 +2,24 @@
 {
     public abstract class CurveTimeline: Timeline
     {
-
+        /// <summary>
+        /// 3.8
+        /// </summary>
+        /// <param name="frameCount"></param>
         protected CurveTimeline(int frameCount)
         {
             Curves = new float[(frameCount - 1) * BEZIER_SIZE];
+        }
+
+        /// <summary>
+        /// 4.0
+        /// </summary>
+        /// <param name="frameCount"></param>
+        /// <param name="bezierCount"></param>
+        protected CurveTimeline(int frameCount, int bezierCount)
+        {
+            Curves = new float[frameCount + bezierCount * BEZIER_SIZE];
+            Curves[frameCount - 1] = STEPPED;
         }
 
         protected const float LINEAR = 0, STEPPED = 1, BEZIER = 2;
@@ -16,11 +30,13 @@
 
         public void SetLinear(int frameIndex)
         {
+            // 3.8
             Curves[frameIndex * BEZIER_SIZE] = LINEAR;
         }
 
         public void SetStepped(int frameIndex)
         {
+            // 3.8
             Curves[frameIndex * BEZIER_SIZE] = STEPPED;
         }
 
