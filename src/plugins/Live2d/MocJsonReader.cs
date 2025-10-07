@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using ZoDream.Plugin.Live2d.Models;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -27,7 +28,7 @@ namespace ZoDream.Plugin.Live2d
             return data.FileReferences.Textures.Select(i => Path.Combine(folder, i)).ToArray();
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var folder = Path.GetDirectoryName(fileName);
             var data = JsonSerializer.Deserialize<JsonModelRoot>(content);
@@ -39,7 +40,7 @@ namespace ZoDream.Plugin.Live2d
                 data.FileReferences.Textures.Select(i => Path.Combine(folder, i)).ToArray());
         }
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             throw new NotImplementedException();
         }

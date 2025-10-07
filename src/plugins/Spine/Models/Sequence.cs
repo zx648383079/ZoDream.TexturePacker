@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 namespace ZoDream.Plugin.Spine.Models
 {
@@ -36,8 +36,8 @@ namespace ZoDream.Plugin.Spine.Models
 
     public class TextureRegion
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
         public Vector2 Uv { get; set; }
         public Vector2 Uv2 { get; set; }
     }

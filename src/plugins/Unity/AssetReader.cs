@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -12,7 +13,7 @@ namespace ZoDream.Plugin.Unity
         {
             return content.Contains("Sprite:") && content.Contains("m_RD:");
         }
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var lines = content.Split('\n').Where(item => !string.IsNullOrWhiteSpace(item));
             var minCount = -1;
@@ -20,7 +21,7 @@ namespace ZoDream.Plugin.Unity
             var res = new SpriteLayerSection()
             {
                 UseCustomName = true,
-                Items = [new()]
+                Items = [new SpriteLayer()]
             };
             foreach (var line in lines)
             {
@@ -83,7 +84,7 @@ namespace ZoDream.Plugin.Unity
         }
 
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             throw new NotImplementedException();
         }

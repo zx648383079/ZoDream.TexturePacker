@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using ZoDream.Shared.Models;
 
 namespace ZoDream.Shared.Interfaces
 {
@@ -18,8 +19,7 @@ namespace ZoDream.Shared.Interfaces
         /// </summary>
         /// <param name="delta"></param>
         public void Update(float delta);
-
-
+        public void Connect(ISpriteSection sprite);
     }
 
     public interface ISkeleton

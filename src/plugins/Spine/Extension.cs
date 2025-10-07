@@ -1,8 +1,9 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Linq;
 using System.Numerics;
 using ZoDream.Plugin.Spine.Models;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Spine
@@ -32,13 +33,13 @@ namespace ZoDream.Plugin.Spine
                         layer.Width = item.Height;
                         layer.Height = item.Width;
                     }
-                    return layer;
+                    return (ISpriteLayer)layer;
                 }).ToList()
             };
             return res;
         }
 
-        private static bool IsRotate90(int deg)
+        private static bool IsRotate90(float deg)
         {
             return Math.Abs(deg) % 180 == 90;
         }

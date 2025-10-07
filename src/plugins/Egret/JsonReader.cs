@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -17,7 +18,7 @@ namespace ZoDream.Plugin.Egret
             return content.Contains("\"frames\"");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var data = JsonSerializer.Deserialize<ER_FrameSheetFile>(content, _option);
             if (data is null)
@@ -50,7 +51,7 @@ namespace ZoDream.Plugin.Egret
         }
 
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             // TODO
             return JsonSerializer.Serialize(data, _option);

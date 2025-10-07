@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Plugin.Spine.Models;
@@ -49,6 +49,10 @@ namespace ZoDream.Plugin.Spine
                         case RegionAttachment region:
                             vertices = new float[8];
                             region.ComputeVertices(item, vertices, 0, 2);
+                            if (!vertices.Where(i => i != 0).Any())
+                            {
+                                break;
+                            }
                             items.Add(new SpriteUvLayer()
                             {
                                 Name = item.Name,
@@ -59,6 +63,10 @@ namespace ZoDream.Plugin.Spine
                         case MeshAttachment mesh:
                             vertices = new float[mesh.WorldVerticesLength];
                             mesh.ComputeVertices(_root, item, 0, vertices.Length, vertices, 0, 2);
+                            if (!vertices.Where(i => i != 0).Any())
+                            {
+                                break;
+                            }
                             items.Add(new SpriteUvLayer()
                             {
                                 Name = item.Name,
@@ -180,6 +188,11 @@ namespace ZoDream.Plugin.Spine
                     }
                 }
             }
+
+            for (int i = 0; i < _root.Bones.Length; i++)
+            {
+                SortBone(_root.Bones[i]);
+            }
         }
 
         public void SetPose(string name)
@@ -220,8 +233,32 @@ namespace ZoDream.Plugin.Spine
         public void Update(float delta)
         {
             Time += delta;
+            UpdateWorldTransform(PhysicsMode.Update);
         }
 
+        public void Connect(ISpriteSection sprite)
+        {
+            if (sprite is not AtlasPage atlas)
+            {
+                return;
+            }
+            var maps = atlas.Items.ToDictionary(i => i.Name);
+            foreach (var item in _root.Skins)
+            {
+                //if (item.Name != atlas.Name)
+                //{
+                //    continue;
+                //}
+                foreach (var atta in item.Attachments)
+                {
+                    if (atta.Value is IHasTextureRegion r && maps.TryGetValue(r.Path, out var a))
+                    {
+                        r.Region = a as AtlasRegion;
+                        r.UpdateRegion();
+                    }
+                }
+            }
+        }
 
         private void SortIkConstraint(IkConstraint constraint)
         {

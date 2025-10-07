@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using ZoDream.Plugin.Spine.Models;
 
 namespace ZoDream.Plugin.Spine
@@ -24,6 +25,7 @@ namespace ZoDream.Plugin.Spine
                 {
                     if (page is not null)
                     {
+                        UpdateRegion(page);
                         yield return page;
                         page = null;
                     }
@@ -47,7 +49,7 @@ namespace ZoDream.Plugin.Spine
                     page.Items.Add(region);
                     continue;
                 }
-                var isLayer = region is not null && (line.StartsWith(' ') || line.StartsWith('\t'));
+                var isLayer = page.Items.Count > 0; // region is not null && (line.StartsWith(' ') || line.StartsWith('\t'));
                 var args = line.Trim().Split(':', 2);
                 switch (args[0].ToLower())
                 {
@@ -170,13 +172,41 @@ namespace ZoDream.Plugin.Spine
                     break;
                 }
             }
+
             if (page is not null)
             {
+                UpdateRegion(page);
                 yield return page;
             }
         }
 
-        
+        private void UpdateRegion(AtlasPage page)
+        {
+            foreach (AtlasRegion region in page.Items)
+            {
+                if (region.OriginalWidth == 0 && region.OriginalHeight == 0)
+                {
+                    region.OriginalWidth = (int)region.Width;
+                    region.OriginalHeight = (int)region.Height;
+                }
+                region.Uv = new Vector2(region.X / page.Width, region.Y / page.Height);
+                if (region.Rotate == 90)
+                {
+                    region.Uv2 = new Vector2((region.X + region.Height) / page.Width, 
+                        (region.Y + region.Width) / page.Height);
+
+                    //int tempSwap = region.PackedWidth;
+                    //region.PackedWidth = region.packedHeight;
+                    //region.packedHeight = tempSwap;
+                }
+                else
+                {
+                    region.Uv2 = new Vector2((region.X + region.Width) / page.Width,
+                        (region.Y + region.Height) / page.Height);
+                }
+            }
+        }
+
         private int TryParseRotate(string text)
         {
             if (text == "true")

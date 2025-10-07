@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -14,7 +15,7 @@ namespace ZoDream.Plugin.Cocos
             return content.Contains("xy:") && content.Contains("format:");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var res = new SpriteLayerSection();
             var last = new SpriteLayer();
@@ -113,7 +114,7 @@ namespace ZoDream.Plugin.Cocos
             return (int.Parse(args[0].Trim()), int.Parse(args[1].Trim()));
         }
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             foreach (var res in data)
             {

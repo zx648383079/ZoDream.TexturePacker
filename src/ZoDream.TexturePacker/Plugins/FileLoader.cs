@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Enumeration;
@@ -29,7 +29,7 @@ namespace ZoDream.TexturePacker.Plugins
 
         private readonly IEnumerable<IStorageItem> _storageItems = [];
         private readonly Dictionary<string, IImageReader> _imageItems = [];
-        private readonly Dictionary<string, IPluginReader> _layerItems = [];
+        private readonly Dictionary<string, ISpriteSection> _layerItems = [];
         private readonly Dictionary<string, ISkeletonReader> _skeletonItems = [];
 
         public IEnumerable<string> ResourceItems => [.. _imageItems.Keys, .. _layerItems.Keys, .. _skeletonItems.Keys];
@@ -45,7 +45,7 @@ namespace ZoDream.TexturePacker.Plugins
         public async Task<bool> LoadAsync(IEnumerable<IStorageItem> items)
         {
             Clear();
-            await EachFileAsync(items, item => {
+            await EachFileAsync(items, async item => {
                 var image = ReaderFactory.GetImageReader(item);
                 if (image != null) 
                 {
@@ -55,7 +55,10 @@ namespace ZoDream.TexturePacker.Plugins
                 var layer = ReaderFactory.GetSpriteReader(item);
                 if (layer != null)
                 {
-                    _layerItems.Add(item.Path, layer);
+                    await foreach (var it in EnumerateLayer(layer, item.Path))
+                    {
+                        _layerItems.Add(item.Path, it);
+                    }
                 }
                 var skeleton = ReaderFactory.GetSkeletonReader(item);
                 if (skeleton != null)
@@ -66,10 +69,10 @@ namespace ZoDream.TexturePacker.Plugins
             return _imageItems.Count > 0 || _layerItems.Count > 0 || _skeletonItems.Count > 0;
         }
 
-        public Task<bool> LoadAsync(IEnumerable<string> items)
+        public async Task<bool> LoadAsync(IEnumerable<string> items)
         {
             Clear();
-            EachFileAsync(items, item => {
+            await EachFileAsync(items, async item => {
                 var image = ReaderFactory.GetImageReader(item);
                 if (image != null)
                 {
@@ -79,7 +82,10 @@ namespace ZoDream.TexturePacker.Plugins
                 var layer = ReaderFactory.GetSpriteReader(item);
                 if (layer != null)
                 {
-                    _layerItems.Add(item, layer);
+                    await foreach (var it in EnumerateLayer(layer, item))
+                    {
+                        _layerItems.Add(item, it);
+                    }
                 }
                 var skeleton = ReaderFactory.GetSkeletonReader(item);
                 if (skeleton != null)
@@ -87,7 +93,7 @@ namespace ZoDream.TexturePacker.Plugins
                     _skeletonItems.Add(item, skeleton);
                 }
             });
-            return Task.FromResult(_imageItems.Count > 0 || _layerItems.Count > 0 || _skeletonItems.Count > 0);
+            return _imageItems.Count > 0 || _layerItems.Count > 0 || _skeletonItems.Count > 0;
         }
 
         public async IAsyncEnumerable<ImageSection> EnumerateImage()
@@ -104,28 +110,33 @@ namespace ZoDream.TexturePacker.Plugins
             }
         }
 
-        public async IAsyncEnumerable<SpriteLayerSection> EnumerateLayer()
+        private async IAsyncEnumerable<ISpriteSection> EnumerateLayer(IPluginReader reader, string filePath)
         {
-            foreach (var item in _layerItems)
+            var res = await reader.ReadAsync(filePath);
+            if (res is null)
             {
-                var res = await item.Value.ReadAsync(item.Key);
-                if (res is null)
+                yield break;
+            }
+            var name = Path.GetFileNameWithoutExtension(filePath);
+            foreach (var it in res)
+            {
+                if (it is null)
                 {
                     continue;
                 }
-                var name = Path.GetFileNameWithoutExtension(item.Key);
-                foreach (var it in res)
+                if ((it is SpriteLayerSection s && s.UseCustomName) || string.IsNullOrEmpty(it.Name))
                 {
-                    if (it is null)
-                    {
-                        continue;
-                    }
-                    if (it.UseCustomName)
-                    {
-                        it.Name = name;
-                    }
-                    yield return it;
+                    it.Name = name;
                 }
+                yield return it;
+            }
+        }
+
+        public async IAsyncEnumerable<ISpriteSection> EnumerateLayer()
+        {
+            foreach (var item in _layerItems)
+            {
+                yield return item.Value;
             }
         }
 
@@ -144,6 +155,13 @@ namespace ZoDream.TexturePacker.Plugins
                     {
                         continue;
                     }
+                    if (it is ISkeletonController ctl)
+                    {
+                        foreach (var layer in _layerItems)
+                        {
+                            ctl.Connect(layer.Value);
+                        }
+                    }
                     yield return it;
                 }
             }
@@ -157,8 +175,8 @@ namespace ZoDream.TexturePacker.Plugins
         }
 
         private static async Task EachFileAsync(
-            IEnumerable<IStorageItem> items, 
-            Action<IStorageFile> cb, CancellationToken token = default)
+            IEnumerable<IStorageItem> items,
+            Func<IStorageFile, Task> cb, CancellationToken token = default)
         {
             foreach (var item in items)
             {
@@ -168,7 +186,7 @@ namespace ZoDream.TexturePacker.Plugins
                 }
                 if (item is IStorageFile file)
                 {
-                    cb(file);
+                    await cb(file);
                     continue;
                 }
                 if (item is IStorageFolder folder)
@@ -178,9 +196,9 @@ namespace ZoDream.TexturePacker.Plugins
             }
         }
 
-        private static void EachFileAsync(
+        private static async Task EachFileAsync(
             IEnumerable<string> items,
-            Action<string> cb, CancellationToken token = default)
+            Func<string, Task> cb, CancellationToken token = default)
         {
             var options = new EnumerationOptions()
             {
@@ -197,7 +215,7 @@ namespace ZoDream.TexturePacker.Plugins
                 }
                 if (File.Exists(item))
                 {
-                    cb(item);
+                    await cb(item);
                     continue;
                 }
                 var res = new FileSystemEnumerable<string>(item, delegate (ref FileSystemEntry entry)
@@ -216,7 +234,7 @@ namespace ZoDream.TexturePacker.Plugins
                     {
                         return;
                     }
-                    cb(it);
+                    await cb(it);
                 }
             }
         }

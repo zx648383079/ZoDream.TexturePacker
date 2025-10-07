@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ZoDream.Shared.Interfaces;
 
@@ -34,6 +34,11 @@ namespace ZoDream.Shared.Stylers
 
         public void Update(float delta)
         {
+        }
+
+        public void Connect(ISpriteSection sprite)
+        {
+
         }
     }
 }

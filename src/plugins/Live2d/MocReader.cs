@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace ZoDream.Plugin.Live2d
 {
     public partial class MocReader : IPluginReader
     {
-        public Task<IEnumerable<SpriteLayerSection>?> ReadAsync(string fileName)
+        public Task<IEnumerable<ISpriteSection>?> ReadAsync(string fileName)
         {
             return Task.Factory.StartNew(() => {
                 var jsonFileName = GetModelJsonFile(fileName);
@@ -40,7 +40,7 @@ namespace ZoDream.Plugin.Live2d
             return File.Exists(fileName) ? fileName : string.Empty;
         }
 
-        public static IEnumerable<SpriteLayerSection>? Read(string fileName, string[] textureItems)
+        public static IEnumerable<ISpriteSection>? Read(string fileName, string[] textureItems)
         {
             if (textureItems.Length == 0 || !File.Exists(fileName))
             {
@@ -50,7 +50,7 @@ namespace ZoDream.Plugin.Live2d
             return Read(fs, textureItems);
         }
 
-        public Task WriteAsync(string fileName, IEnumerable<SpriteLayerSection> data)
+        public Task WriteAsync(string fileName, IEnumerable<ISpriteSection> data)
         {
             throw new NotImplementedException();
         }

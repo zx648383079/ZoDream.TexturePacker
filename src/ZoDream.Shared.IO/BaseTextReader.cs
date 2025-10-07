@@ -1,9 +1,8 @@
-﻿using ZoDream.Shared.Interfaces;
-using ZoDream.Shared.Models;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.IO
 {
-    public abstract class BaseTextReader : BaseTextReader<SpriteLayerSection>, ITextReader, IPluginReader
+    public abstract class BaseTextReader : BaseTextReader<ISpriteSection>, ITextReader, IPluginReader
     {
     }
 }

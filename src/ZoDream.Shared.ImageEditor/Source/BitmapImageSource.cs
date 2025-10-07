@@ -1,7 +1,8 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System.Collections.Generic;
 using System.Linq;
 using ZoDream.Shared.EditorInterface;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Shared.ImageEditor
@@ -23,7 +24,7 @@ namespace ZoDream.Shared.ImageEditor
 
         public SKBitmap Source { get; set; }
 
-        public IList<IImageSource> Split(IEnumerable<SpriteLayer> items)
+        public IList<IImageSource> Split(IEnumerable<ISpriteLayer> items)
         {
             using var paint = new SKPaint();
             return items.Select(item => {
@@ -39,7 +40,7 @@ namespace ZoDream.Shared.ImageEditor
             }).ToArray();
         }
 
-        public BitmapImageSource? Split(SpriteLayer item)
+        public BitmapImageSource? Split(ISpriteLayer item)
         {
             if (item.Y < 0)
             {
@@ -64,7 +65,7 @@ namespace ZoDream.Shared.ImageEditor
 
         public override SKBitmap? CreateThumbnail(SKSizeI size)
         {
-            return Source.CreateThumbnail(size);
+            return Source?.CreateThumbnail(size);
         }
 
         public override void Paint(IImageCanvas canvas, IImageStyle computedStyle)

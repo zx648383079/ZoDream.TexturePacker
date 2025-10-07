@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Plugin.Spine.Models
 {
-    public class AtlasPage
+    public class AtlasPage : ISpriteSection
     {
         public string Name { get; set; }
         public AtlasFormat Format { get; set; }
@@ -10,9 +11,10 @@ namespace ZoDream.Plugin.Spine.Models
         public TextureFilter MagFilter { get; set; }
         public TextureWrap UWrap { get; set; } = TextureWrap.ClampToEdge;
         public TextureWrap VWrap { get; set; } = TextureWrap.ClampToEdge;
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
-        public List<AtlasRegion> Items { get; set; } = new();
+        public IList<ISpriteLayer> Items { get; set; } = [];
+        public string FileName { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -164,7 +164,7 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file.Path);
         }
 
-        public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(IStorageFile file)
+        public static async Task<IEnumerable<ISpriteSection>?> LoadSpriteAsync(IStorageFile file)
         {
             var reader = GetSpriteReader(file);
             if (reader is null)
@@ -174,7 +174,7 @@ namespace ZoDream.TexturePacker.Plugins
             return await reader.ReadAsync(file.Path);
         }
 
-        public static async Task<IEnumerable<SpriteLayerSection>?> LoadSpriteAsync(string fileName)
+        public static async Task<IEnumerable<ISpriteSection>?> LoadSpriteAsync(string fileName)
         {
             var reader = GetSpriteReader(fileName);
             if (reader is null)

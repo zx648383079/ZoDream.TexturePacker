@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,9 +50,10 @@ namespace ZoDream.Plugin.Spine
                 };
                 return bone;
             });
-            data.Slots = ReadArray(root, "slots", (e, _) => {
+            data.Slots = ReadArray(root, "slots", (e, i) => {
                 var slot = new Slot()
                 {
+                    Index = i,
                     Name = ReadString(e, "name"),
                     Bone = ReadString(e, "bone"),
                     Color = ReadColor(e, "color"),
@@ -544,7 +545,7 @@ namespace ZoDream.Plugin.Spine
                     frameIndex++;
                 }
                 timelines.Add(timeline);
-                duration = Math.Max(duration, timeline.Frames[timeline.FrameCount - 1]);
+                duration = Math.Max(duration, timeline.Frames.LastOrDefault());
             }
 
             return new Animation

@@ -1,5 +1,4 @@
-﻿using SkiaSharp;
-using System.Numerics;
+using SkiaSharp;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.Shared.ImageEditor

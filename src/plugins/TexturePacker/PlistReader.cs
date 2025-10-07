@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Xml;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -13,7 +14,7 @@ namespace ZoDream.Plugin.TexturePacker
             return content.Contains("<string>$TexturePacker:SmartUpdate:");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var doc = new XmlDocument();
             doc.LoadXml(content);
@@ -106,7 +107,7 @@ namespace ZoDream.Plugin.TexturePacker
         }
 
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             throw new NotImplementedException();
         }

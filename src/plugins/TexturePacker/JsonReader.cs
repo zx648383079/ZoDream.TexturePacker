@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -17,7 +18,7 @@ namespace ZoDream.Plugin.TexturePacker
             return content.Contains("http://www.codeandweb.com/texturepacker");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var data = JsonSerializer.Deserialize<TP_FrameRoot>(content, _option);
             if (data is null)
@@ -52,7 +53,7 @@ namespace ZoDream.Plugin.TexturePacker
         }
 
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             // TODO
             return JsonSerializer.Serialize(data.First(), _option);

@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -129,9 +129,10 @@ namespace ZoDream.Plugin.Spine
             boneMap.Clear();
 
             // Slots.
-            res.Slots = ReadArray(reader, _ => {
+            res.Slots = ReadArray(reader, i => {
                 var slot = new Slot
                 {
+                    Index = i,
                     Name = ReadString(reader),
                     Bone = res.Bones[ReadInt(reader, true)].Name
                 };

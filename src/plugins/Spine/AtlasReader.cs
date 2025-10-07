@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -19,19 +20,19 @@ namespace ZoDream.Plugin.Spine
             return content.Contains("xy:") && content.Contains("format:");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             using var reader = new StringReader(content);
             foreach (var item in Deserialize(reader))
             {
-                yield return item.ToLayer();
+                yield return item;
             }
         }
 
 
         
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             foreach (var res in data)
             {

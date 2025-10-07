@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -221,7 +221,7 @@ namespace ZoDream.TexturePacker.ViewModels
             IsLoading = false;
         }
 
-        private async Task ImportSpriteAsync(SpriteLayerSection data)
+        private async Task ImportSpriteAsync(ISpriteSection data)
         {
             if (data.Items.Count == 0)
             {

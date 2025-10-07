@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +58,7 @@ namespace ZoDream.Shared.ImageEditor
 
         public void Compute(IImageLayerTree items)
         {
-            
+            _controller.Update(0);
             foreach (var item in _controller.Items)
             {
                 if (item is SpriteUvLayer uv)
@@ -77,15 +77,14 @@ namespace ZoDream.Shared.ImageEditor
                         ScaleY = item.ScaleY,
                         Width = uv.Width,
                         Height = uv.Height,
+                        SourceItems = [..uv.VertexItems],//.Select(i => new SKPoint(i.X * Width, i.Y * Height)).ToArray(),
+                        PointItems = [.. uv.PointItems]
                     };
-                    computed.SourceItems = [..uv.VertexItems];
-                    computed.PointItems = [..uv.PointItems];
                     _cacheItems.Add(computed);
                     continue;
                 }
                 if (item is SpritePathLayer path)
                 {
-
                     continue;
                 }
                 if (item is SpriteLayer sprite)
@@ -126,7 +125,7 @@ namespace ZoDream.Shared.ImageEditor
                 {
                     continue;
                 }
-                layer.Source?.Paint(canvas, item);
+                layer.Parent?.Source?.Paint(canvas, item);
             }
         }
 

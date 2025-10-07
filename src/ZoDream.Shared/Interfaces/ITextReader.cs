@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using ZoDream.Shared.Models;
+using System.Collections.Generic;
 
 namespace ZoDream.Shared.Interfaces
 {
-    public interface ITextReader: ITextReader<IEnumerable<SpriteLayerSection>>
+    public interface ITextReader: ITextReader<IEnumerable<ISpriteSection>>
     {
     }
 }

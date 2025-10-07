@@ -1,9 +1,8 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Emit;
 using ZoDream.Shared.Drawing;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.Interfaces;
@@ -92,11 +91,15 @@ namespace ZoDream.Shared.ImageEditor
             return path;
         }
 
-        public static SKBitmap? Clip(this SKBitmap source, SpriteLayer layer)
+        public static SKBitmap? Clip(this SKBitmap source, ISpriteLayer layer)
         {
             if (layer is SpriteUvLayer uv)
             {
                 return source.Clip(uv);
+            }
+            if (layer.Width == 0 || layer.Height == 0)
+            {
+                return null;
             }
             var bitmap = new SKBitmap((int)layer.Width, (int)layer.Height);
             using var canvas = new SKCanvas(bitmap);

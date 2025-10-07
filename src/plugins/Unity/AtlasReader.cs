@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
@@ -13,7 +14,7 @@ namespace ZoDream.Plugin.Unity
             return content.Contains("bounds:") && content.Contains("offsets:");
         }
 
-        public override IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             var res = new SpriteLayerSection()
             {
@@ -75,7 +76,7 @@ namespace ZoDream.Plugin.Unity
             return (int.Parse(args[0].Trim()), int.Parse(args[1].Trim()));
         }
 
-        public override string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public override string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             foreach (var res in data)
             {

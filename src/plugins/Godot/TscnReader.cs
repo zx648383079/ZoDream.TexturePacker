@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
-using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Godot
 {
@@ -14,24 +13,24 @@ namespace ZoDream.Plugin.Godot
             return content.StartsWith("[gd_scene") && content.Contains("uid=\"");
         }
 
-        public IEnumerable<SpriteLayerSection>? Deserialize(string content, string fileName)
+        public IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task<IEnumerable<SpriteLayerSection>?> ReadAsync(string fileName)
+        public async Task<IEnumerable<ISpriteSection>?> ReadAsync(string fileName)
         {
             var text = await LocationStorage.ReadAsync(fileName);
             return Deserialize(text, fileName);
         }
 
-        public string Serialize(IEnumerable<SpriteLayerSection> data, string fileName)
+        public string Serialize(IEnumerable<ISpriteSection> data, string fileName)
         {
             throw new NotImplementedException();
         }
 
-        public async Task WriteAsync(string fileName, IEnumerable<SpriteLayerSection> data)
+        public async Task WriteAsync(string fileName, IEnumerable<ISpriteSection> data)
         {
             await LocationStorage.WriteAsync(fileName, Serialize(data, fileName));
         }

@@ -1,9 +1,8 @@
-﻿using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.Interfaces;
 
 namespace ZoDream.Shared.Models
 {
-    public class SpriteLayer: IImageBound, IImageStyle, IReadOnlyStyle
+    public class SpriteLayer: ISpriteLayer
     {
         public string Name { get; set; } = string.Empty;
 

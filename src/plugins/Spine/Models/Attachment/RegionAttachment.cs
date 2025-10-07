@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 using System;
 using System.Text.Json.Serialization;
 
@@ -34,12 +34,13 @@ namespace ZoDream.Plugin.Spine.Models
         public float RegionOriginalWidth { get; set; }
         public float RegionOriginalHeight { get; set; }
 
-        public float[] Offset { get; set; }
-       
+        public float[] Offset { get; set; } = new float[8];
+
+
         public Sequence? Sequence { get; internal set; }
 
         [JsonIgnore]
-        public float[] UVs { get; set; }
+        public float[] UVs { get; set; } = new float[8];
         [JsonIgnore]
         public TextureRegion Region { get; set; }
 

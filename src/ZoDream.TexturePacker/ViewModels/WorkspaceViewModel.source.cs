@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media.Imaging;
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
 using System.Linq;
@@ -66,7 +66,7 @@ namespace ZoDream.TexturePacker.ViewModels
 
         public BitmapSource? CreateThumbnail(IImageSource source)
         {
-            return source.CreateThumbnail(_thumbnailSize)?.ToWriteableBitmap();
+            return source?.CreateThumbnail(_thumbnailSize)?.ToWriteableBitmap();
         }
 
         public IImageLayer Create(IImageSource source)
