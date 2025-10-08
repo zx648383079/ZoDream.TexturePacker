@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZoDream.Plugin.TexturePacker
 {
@@ -11,6 +8,20 @@ namespace ZoDream.Plugin.TexturePacker
         public TP_FrameElement[] Frames { get; set; }
 
         public TP_Meta Meta { get; set; }
+    }
+
+    internal class TP_FrameRoot2
+    {
+        public IDictionary<string, TP_FrameElement2> Frames { get; set; }
+
+        public TP_Meta Meta { get; set; }
+    }
+
+    internal class TP_FrameElement2
+    {
+        public TP_Bound Frame { get; set; }
+
+        public TP_Size SourceSize { get; set; }
     }
 
     internal class TP_FrameElement

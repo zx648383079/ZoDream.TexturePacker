@@ -13,6 +13,7 @@ namespace ZoDream.TexturePacker.Plugins
         private readonly ITextReader[] Items = [
             new Plugin.Live2d.MocJsonReader(),
             new Plugin.TexturePacker.JsonReader(),
+            new Plugin.TexturePacker.JsonHashReader(),
             new Plugin.Egret.JsonReader(),
             new Plugin.Unity.JsonReader(),
         ];

@@ -5,9 +5,9 @@ using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
 using ZoDream.Shared.Models;
 
-namespace ZoDream.Plugin.Egret
+namespace ZoDream.Plugin.TexturePacker
 {
-    public class JsonReader : BaseTextReader
+    public class JsonHashReader : BaseTextReader
     {
         private readonly JsonSerializerOptions _option = new()
         {
@@ -15,17 +15,17 @@ namespace ZoDream.Plugin.Egret
         };
         public override bool IsEnabled(string content)
         {
-            return content.Contains("\"frames\"");
+            return content.Contains("\"frames\"") && content.Contains("frame") && content.Contains("sourceSize");
         }
 
         public override IEnumerable<ISpriteSection>? Deserialize(string content, string fileName)
         {
-            var data = JsonSerializer.Deserialize<ER_FrameSheetFile>(content, _option);
+            var data = JsonSerializer.Deserialize<TP_FrameRoot2>(content, _option);
             if (data is null)
             {
                 return null;
             }
-            var name = data.File;
+            var name = data.Meta.Image;
             return [new SpriteLayerSection()
             {
                 Name = name,
@@ -33,10 +33,10 @@ namespace ZoDream.Plugin.Egret
                 Items = data.Frames.Select(item => new SpriteLayer()
                 {
                     Name = FormatFileName(item.Key),
-                    X = item.Value.X,
-                    Y = item.Value.Y,
-                    Width = item.Value.W,
-                    Height = item.Value.H,
+                    X = item.Value.Frame.X,
+                    Y = item.Value.Frame.Y,
+                    Width = item.Value.Frame.W,
+                    Height = item.Value.Frame.H,
                 }).ToArray(),
             }];
         }
@@ -57,6 +57,5 @@ namespace ZoDream.Plugin.Egret
             // TODO
             return JsonSerializer.Serialize(data, _option);
         }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ZoDream.Plugin.Egret
 {
@@ -7,6 +7,7 @@ namespace ZoDream.Plugin.Egret
         public string File { get; set; } = string.Empty;
 
         public IDictionary<string, ER_FrameItem>? Frames { get; set; }
+
     }
 
     internal class ER_FrameItem
