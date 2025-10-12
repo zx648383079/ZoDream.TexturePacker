@@ -6,7 +6,6 @@ using System.Text.Json;
 using ZoDream.Plugin.Live2d.Models;
 using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.IO;
-using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Live2d
 {
@@ -14,7 +13,7 @@ namespace ZoDream.Plugin.Live2d
     {
         public override bool IsEnabled(string content)
         {
-            return content.Contains("\"FileReferences\"");
+            return content.Contains("\"FileReferences\"") && content.Contains("\"Moc\"");
         }
 
         public static string[] LoadTexture(string fileName)

@@ -35,7 +35,7 @@ namespace ZoDream.TexturePacker.Pages
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            ViewModel.Instance?.Dispose();
+            ViewModel.Dispose();
         }
 
     }

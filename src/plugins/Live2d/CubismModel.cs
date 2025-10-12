@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace ZoDream.Plugin.Live2d
@@ -103,17 +104,19 @@ namespace ZoDream.Plugin.Live2d
 
         public CubismModel(byte[] mocBytes)
         {
-            IntPtr alignedBuffer = AllocateAligned(mocBytes.Length, csmAlignofMoc);
+            nint alignedBuffer = AllocateAligned(mocBytes.Length, csmAlignofMoc);
             Marshal.Copy(mocBytes, 0, alignedBuffer, mocBytes.Length);
             _mocPtr = NativeMethods.ReviveMocInPlace(alignedBuffer, mocBytes.Length);
             var modelSize = NativeMethods.GetSizeofModel(_mocPtr);
             var modelMemory = AllocateAligned(modelSize, CsmAlignofModel);
 
             _modelPtr = NativeMethods.InitializeModelInPlace(_mocPtr, modelMemory, modelSize);
+
+
         }
 
-        private readonly IntPtr _mocPtr;
-        private readonly IntPtr _modelPtr;
+        private readonly nint _mocPtr;
+        private readonly nint _modelPtr;
 
 
         #region 方法
@@ -121,6 +124,52 @@ namespace ZoDream.Plugin.Live2d
         {
             NativeMethods.ReadCanvasInfo(_modelPtr, out var tmpSizeInPixels, out _, out var tmpPixelsPerUnit);
             return tmpSizeInPixels / tmpPixelsPerUnit;
+        }
+
+        public unsafe string[] GetParameterIds()
+        {
+            var parameterIds = NativeMethods.GetParameterIds(_modelPtr);
+            var parameterCount = NativeMethods.GetParameterCount(_modelPtr);
+            var res = new string[parameterCount];
+            for (int i = 0; i < res.Length; i++)
+            {
+                res[i] = new string(parameterIds[i]);
+            }
+            return res;
+        }
+
+        public unsafe string[] GetPartIds()
+        {
+            var parameterIds = NativeMethods.GetPartIds(_modelPtr);
+            var parameterCount = NativeMethods.GetPartCount(_modelPtr);
+            var res = new string[parameterCount];
+            for (int i = 0; i < res.Length; i++)
+            {
+                res[i] = new string(parameterIds[i]);
+            }
+            return res;
+        }
+
+        public unsafe string[] GetDrawableIds()
+        {
+            return GetDrawableIds(GetDrawableCount());
+        }
+
+        public unsafe string[] GetDrawableIds(int drawableCount)
+        {
+            var drawableIds = NativeMethods.GetDrawableIds(_modelPtr);
+            var res = new string[drawableCount];
+            for (int i = 0; i < res.Length; i++)
+            {
+                res[i] = new string(drawableIds[i]);
+                // res[i].PartIdIndex = NativeMethods.GetDrawableParentPartIndices(_modelPtr)[i];
+            }
+            return res;
+        }
+
+        public int GetDrawableCount()
+        {
+            return NativeMethods.GetDrawableCount(_modelPtr);
         }
 
         public unsafe int GetDrawableVertexCount(int drawableIndex)
@@ -133,11 +182,31 @@ namespace ZoDream.Plugin.Live2d
             return NativeMethods.GetDrawableVertexPositions(_modelPtr)[drawableIndex];
         }
 
+        public unsafe Vector2[] GetDrawableVertexPositions(int drawableIndex, int vertexCount)
+        {
+            var data = GetDrawableVertexPositions(drawableIndex);
+            var res = new Vector2[vertexCount];
+            for (int i = 0; i < vertexCount; i++)
+            {
+                res[i] = data[i];
+            }
+            return res;
+        }
+
         public unsafe Vector2* GetDrawableVertexUvs(int drawableIndex)
         {
             return NativeMethods.GetDrawableVertexUvs(_modelPtr)[drawableIndex];
         }
-
+        public unsafe Vector2[] GetDrawableVertexUvs(int drawableIndex, int vertexCount)
+        {
+            var data = GetDrawableVertexUvs(drawableIndex);
+            var res = new Vector2[vertexCount];
+            for (int i = 0; i < vertexCount; i++)
+            {
+                res[i] = data[i];
+            }
+            return res;
+        }
 
         public void Update()
         {
@@ -155,15 +224,15 @@ namespace ZoDream.Plugin.Live2d
             return Marshal.AllocHGlobal(size);
         }
 
-        private void Deallocate(IntPtr memory)
+        private void Deallocate(nint memory)
         {
             Marshal.FreeHGlobal(memory);
         }
 
-        private unsafe IntPtr AllocateAligned(int size, int alignment)
+        private unsafe nint AllocateAligned(int size, int alignment)
         {
-            IntPtr offset, shift, alignedAddress;
-            IntPtr allocation;
+            nint offset, shift, alignedAddress;
+            nint allocation;
             void** preamble;
 
             offset = alignment - 1 + sizeof(void*);
@@ -185,11 +254,11 @@ namespace ZoDream.Plugin.Live2d
             return alignedAddress;
         }
 
-        private unsafe void DeallocateAligned(IntPtr alignedMemory)
+        private unsafe void DeallocateAligned(nint alignedMemory)
         {
             var preamble = (void**)alignedMemory;
 
-            Deallocate(new IntPtr(preamble[-1]));
+            Deallocate(new nint(preamble[-1]));
         }
         #endregion
 

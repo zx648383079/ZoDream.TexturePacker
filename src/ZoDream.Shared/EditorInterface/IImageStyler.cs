@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -46,7 +47,7 @@ namespace ZoDream.Shared.EditorInterface
         
     }
 
-    public interface IImageStyleManager: IList<IImageStyler>
+    public interface IImageStyleManager: IList<IImageStyler>, IDisposable
     {
         public bool TryGet(string name, [NotNullWhen(true)] out IImageStyler? styler);
     }

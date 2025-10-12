@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using Windows.Storage;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ViewModel;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
-    public partial class WorkspaceViewModel: BindableBase
+    public partial class WorkspaceViewModel: BindableBase, IDisposable
     {
         public WorkspaceViewModel()
         {
@@ -74,7 +75,6 @@ namespace ZoDream.TexturePacker.ViewModels
             UndoRedo.ReverseUndoStateChanged += UndoRedo_ReverseUndoStateChanged;
 
         }
-
         private void UndoRedo_ReverseUndoStateChanged(bool value)
         {
             RedoEnabled = value;
@@ -83,6 +83,12 @@ namespace ZoDream.TexturePacker.ViewModels
         private void UndoRedo_UndoStateChanged(bool value)
         {
             UndoEnabled = value;
+        }
+
+        public void Dispose()
+        {
+            Instance?.Dispose();
+            _styleManager.Dispose();
         }
     }
 }

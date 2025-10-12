@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using ZoDream.Shared.EditorInterface;
 
@@ -30,6 +31,17 @@ namespace ZoDream.Shared.ImageEditor
             }
             styler = null;
             return false;
+        }
+
+        public void Dispose()
+        {
+            foreach (var item in this)
+            {
+                if (item is IDisposable d)
+                {
+                    d.Dispose();
+                }
+            }
         }
     }
 }

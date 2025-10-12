@@ -9,7 +9,7 @@ using ZoDream.Shared.Stylers;
 
 namespace ZoDream.Shared.ImageEditor
 {
-    public class SkeletonImageStyler : IImageStyler, IImageComputedStyler, IImageSize
+    public class SkeletonImageStyler : IImageStyler, IImageComputedStyler, IImageSize, IDisposable
     {
         public SkeletonImageStyler(SkeletonSection skeleton)
             : this (skeleton.Name, new SkeletonController(skeleton))
@@ -173,6 +173,11 @@ namespace ZoDream.Shared.ImageEditor
         public void Clear()
         {
             _cacheItems.Clear();
+        }
+
+        public void Dispose()
+        {
+            _controller.Dispose();
         }
     }
 }

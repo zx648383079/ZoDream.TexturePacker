@@ -6,7 +6,7 @@ namespace ZoDream.Shared.Stylers
 {
     public class SkeletonController(ISkeleton root) : ISkeletonController
     {
-        public IEnumerable<IReadOnlyStyle> Items => throw new NotImplementedException();
+        public IEnumerable<IReadOnlyStyle> Items => [];
 
         public float Width => root.Width;
 
@@ -39,6 +39,10 @@ namespace ZoDream.Shared.Stylers
         public void Connect(ISpriteSection sprite)
         {
 
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

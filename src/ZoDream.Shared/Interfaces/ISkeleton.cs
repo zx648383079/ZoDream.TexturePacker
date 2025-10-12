@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
-using ZoDream.Shared.Models;
 
 namespace ZoDream.Shared.Interfaces
 {
 
-    public interface ISkeletonController : ISkeleton
+    public interface ISkeletonController : ISkeleton, IDisposable
     {
         /// <summary>
         /// 获取所有图块的摆放位置

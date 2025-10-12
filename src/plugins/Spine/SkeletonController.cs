@@ -466,5 +466,10 @@ namespace ZoDream.Plugin.Spine
                 item.Runtime.IsSorted = false;
             }
         }
+
+        public void Dispose()
+        {
+
+        }
     }
 }

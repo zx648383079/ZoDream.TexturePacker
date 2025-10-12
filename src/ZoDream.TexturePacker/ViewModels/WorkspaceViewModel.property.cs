@@ -1,4 +1,4 @@
-﻿using ZoDream.Shared.UndoRedo;
+using ZoDream.Shared.UndoRedo;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.ViewModels
@@ -47,9 +47,5 @@ namespace ZoDream.TexturePacker.ViewModels
                 OnPropertyChanged(nameof(IsSelectedLayer));
             }
         }
-
-        
-
-        
     }
 }
