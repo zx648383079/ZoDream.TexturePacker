@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.ViewModel;
+using ZoDream.TexturePacker.Plugins;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -18,7 +17,7 @@ namespace ZoDream.TexturePacker.ViewModels
             set => Set(ref sourceItems, value);
         }
 
-        private string[] typeItems = ["PNG", "Unity", "Godot", "Egret", "TexturePacker"];
+        private string[] typeItems = ["PNG", "Unity", "Godot", "Egret", "TexturePacker", "Spine", "MGCB"];
 
         public string[] TypeItems {
             get => typeItems;
@@ -63,12 +62,22 @@ namespace ZoDream.TexturePacker.ViewModels
                     ".jpeg", ".webp", ".bmp"]);
                 picker.FileTypeChoices.Add("KTX", [".ktx"]);
                 picker.FileTypeChoices.Add("Windows ICO", [".ico"]);
+                picker.FileTypeChoices.Add("Unity", [".asset"]);
+                picker.FileTypeChoices.Add("Godot", [".tres"]);
+                picker.FileTypeChoices.Add("Spine", [".atlas"]);
+                picker.FileTypeChoices.Add("TexturePacker", [".plist", ".json"]);
+                picker.FileTypeChoices.Add("MGCB", [".xml"]);
                 App.ViewModel.InitializePicker(picker);
                 return await picker.PickSaveFileAsync();
             }
             var folder = new FolderPicker();
             App.ViewModel.InitializePicker(folder);
             return await folder.PickSingleFolderAsync();
+        }
+
+        public IPluginReader? CreateWriter(IStorageFile filePath)
+        {
+            return ReaderFactory.GetSpriteExtensionReader(filePath.FileType, filePath.Path);
         }
     }
 }

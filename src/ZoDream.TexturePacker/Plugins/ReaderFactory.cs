@@ -6,7 +6,6 @@ using Windows.Storage;
 using ZoDream.Shared.Drawing;
 using ZoDream.Shared.ImageEditor;
 using ZoDream.Shared.Interfaces;
-using ZoDream.Shared.Models;
 
 namespace ZoDream.TexturePacker.Plugins
 {
@@ -18,7 +17,7 @@ namespace ZoDream.TexturePacker.Plugins
             ".bmp", ".pvr", ".ccz"];
 
         private static readonly string[] LayerFilterItems = [".json", ".tres", 
-            ".moc3", ".atlas", ".txt", ".plist", ".asset"];
+            ".moc3", ".atlas", ".txt", ".plist", ".asset", ".xml"];
         public static string[] FileFilterItems = [..ImageFilterItems, ..LayerFilterItems];
 
 
@@ -88,7 +87,7 @@ namespace ZoDream.TexturePacker.Plugins
             return IsImageFile(file) ? new ImageFactoryReader() : null;
         }
 
-        private static IPluginReader? GetSpriteExtensionReader(
+        public static IPluginReader? GetSpriteExtensionReader(
             string extension, string fileName)
         {
             if (fileName.EndsWith(".atlas.txt"))
@@ -102,6 +101,7 @@ namespace ZoDream.TexturePacker.Plugins
                 ".atlas" => new Plugin.Spine.AtlasReader(),
                 ".moc3" => new Plugin.Live2d.MocReader(),
                 ".json" => new JsonFactoryReader(),
+                ".xml" => new Plugin.MonoGame.MGCBReader(),
                 ".asset" => new Plugin.Unity.AssetReader(),
                 _ => null,
             };

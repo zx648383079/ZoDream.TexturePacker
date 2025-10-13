@@ -87,6 +87,7 @@
     <ProjectReference Include="..\plugins\Gimp\Gimp.csproj" />
     <ProjectReference Include="..\plugins\Godot\Godot.csproj" />
     <ProjectReference Include="..\plugins\Live2d\Live2d.csproj" />
+    <ProjectReference Include="..\plugins\MonoGame\MonoGame.csproj" />
     <ProjectReference Include="..\plugins\Spine\Spine.csproj" />
     <ProjectReference Include="..\plugins\TexturePacker\TexturePacker.csproj" />
     <ProjectReference Include="..\plugins\Unity\Unity.csproj" />

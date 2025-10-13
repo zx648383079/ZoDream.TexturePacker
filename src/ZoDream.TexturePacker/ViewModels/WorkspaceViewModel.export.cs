@@ -1,9 +1,9 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using SkiaSharp;
+using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Windows.Storage;
+using ZoDream.Shared.Interfaces;
+using ZoDream.Shared.Models;
 using ZoDream.TexturePacker.Dialogs;
 
 namespace ZoDream.TexturePacker.ViewModels
@@ -31,7 +31,9 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 return;
             }
-            switch (dialog.ViewModel.SourceIndex)
+            var sourceIndex = dialog.ViewModel.SourceIndex;
+            var typeIndex = dialog.ViewModel.TypeIndex;
+            switch (sourceIndex)
             {
                 case 1:
                     ExportEveryLayer(fileName, dialog.ViewModel.LayerFolder);
@@ -43,6 +45,50 @@ namespace ZoDream.TexturePacker.ViewModels
                     ExportWhole(fileName);
                     break;
             }
+            if (sourceIndex > 0 || typeIndex < 1 || fileName is not IStorageFile target)
+            {
+                return;
+            }
+            var writer = dialog.ViewModel.CreateWriter(target);
+            if (writer is null)
+            {
+                return;
+            }
+            await writer.WriteAsync(target.Path, [Serialize(Path.GetFileNameWithoutExtension(fileName.Name) + ".png")]);
+        }
+
+        private ISpriteSection Serialize(string fileName)
+        {
+            var res = new SpriteLayerSection()
+            {
+                FileName = fileName,
+                Width = Instance.ActualWidthI,
+                Height = Instance.ActualHeightI,
+            };
+            foreach (var item in Instance.LayerItems)
+            {
+                if (string.IsNullOrEmpty(res.Name))
+                {
+                    res.Name = item.Name;
+                }
+                foreach (var it in item.Children)
+                {
+                    if (!it.IsVisible)
+                    {
+                        continue;
+                    }
+                    res.Items.Add(new SpriteLayer()
+                    {
+                        Name = it.Name,
+                        X = it.Source.X,
+                        Y = it.Source.Y,
+                        Width = it.Source.Width,
+                        Height = it.Source.Height,
+                        Rotate = it.Source.Rotate,
+                    });
+                }
+            }
+            return res;
         }
 
         private void ExportSelected(IStorageItem file)
@@ -120,6 +166,11 @@ namespace ZoDream.TexturePacker.ViewModels
             if (file is StorageFolder)
             {
                 fileName = Path.Combine(file.Path, "undefined.png");
+            }
+            if (!fileName.EndsWith(".png"))
+            {
+                var i = fileName.LastIndexOf('.');
+                fileName = fileName[..i] + ".png";
             }
             Instance?.SaveAs(fileName);
             App.ViewModel.Toast.Show("导出完成");
