@@ -58,6 +58,11 @@ namespace ZoDream.Plugin.Live2d
         {
         }
 
+        public void SetAnimation(string name)
+        {
+
+        }
+
         public void Update(float delta)
         {
             root.Update();

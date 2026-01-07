@@ -57,9 +57,12 @@ namespace ZoDream.Plugin.Spine
                         var (w, h) = TryParse(args[1]);
                         if (isLayer)
                         {
+                            if (IsRotate90(region.Rotate))
+                            {
+                                (w, h) = (h, w);
+                            }
                             region.Width = w;
                             region.Height = h;
-
                         }
                         else
                         {
@@ -115,6 +118,10 @@ namespace ZoDream.Plugin.Spine
                         if (isLayer)
                         {
                             region.Rotate = TryParseRotate(args[1].Trim());
+                            if (IsRotate90(region.Rotate) && region.Width > 0)
+                            {
+                                (region.Width, region.Height) = (region.Height, region.Width);
+                            }
                         }
                         break;
                     case "format":
@@ -178,6 +185,11 @@ namespace ZoDream.Plugin.Spine
                 UpdateRegion(page);
                 yield return page;
             }
+        }
+
+        private bool IsRotate90(float deg)
+        {
+            return Math.Abs(deg) % 180 == 90;
         }
 
         private void UpdateRegion(AtlasPage page)

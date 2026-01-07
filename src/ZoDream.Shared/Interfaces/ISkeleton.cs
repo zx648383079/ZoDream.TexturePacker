@@ -14,6 +14,7 @@ namespace ZoDream.Shared.Interfaces
         public void SetSkin(string name);
         public void SetSlot(string name);
         public void SetPose(string name);
+        public void SetAnimation(string name);
         /// <summary>
         /// 调用之后通过 Items 获取
         /// </summary>

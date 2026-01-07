@@ -32,6 +32,11 @@ namespace ZoDream.Shared.Stylers
         {
         }
 
+        public void SetAnimation(string name)
+        {
+
+        }
+
         public void Update(float delta)
         {
         }

@@ -211,6 +211,10 @@ namespace ZoDream.Plugin.Spine
 
         }
 
+        public void SetAnimation(string name)
+        {
+
+        }
         public void UpdateWorldTransform(PhysicsMode physics)
         {
             foreach (var bone in _root.Bones)
@@ -394,7 +398,7 @@ namespace ZoDream.Plugin.Spine
 
         private void SortPathConstraintAttachment(AttachmentBase attachment, Bone slotBone)
         {
-            if (!(attachment is PathAttachment))
+            if (attachment is not PathAttachment)
             {
                 return;
             }
