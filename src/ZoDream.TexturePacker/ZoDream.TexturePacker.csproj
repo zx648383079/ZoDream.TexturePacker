@@ -35,6 +35,7 @@
     <None Remove="Dialogs\OpenProjectDialog.xaml" />
     <None Remove="Dialogs\PropertyDialog.xaml" />
     <None Remove="Dialogs\RenameDialog.xaml" />
+    <None Remove="Dialogs\SeparateDialog.xaml" />
     <None Remove="Pages\StartupPage.xaml" />
     <None Remove="Pages\WorkspacePage.xaml" />
     <None Remove="Themes\BaseStyle.xaml" />
@@ -169,6 +170,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Dialogs\CreatePathDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\SeparateDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Themes\Generic.xaml">

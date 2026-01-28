@@ -1,5 +1,6 @@
 using SkiaSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,15 +23,9 @@ namespace ZoDream.TexturePacker.ViewModels
         /// 分离图片
         /// </summary>
         /// <param name="layer"></param>
-        private async void SeparateImage(IImageLayer layer)
+        private async void SeparateImage(IImageLayer layer, IEnumerable<SKPath> items)
         {
-            if (layer is null || layer.Source is not BitmapImageSource image)
-            {
-                return;
-            }
-            IsLoading = true;
-            var trace = new ImageContourTrace(true);
-            var items = await trace.GetContourAsync(image.Source);
+            var image = (BitmapImageSource)layer.Source;
             Instance!.Add(items.Select(path => {
                 var bound = path.Bounds;
                 var kid = image.Source.Clip(path);
@@ -48,22 +43,14 @@ namespace ZoDream.TexturePacker.ViewModels
                 return Create(kidLayer);
             }), layer);
             layer.IsVisible = false;
-            Instance.Invalidate();
-            IsLoading = false;
         }
         /// <summary>
         /// 分离图片对象并重新采样合并到子对象
         /// </summary>
         /// <param name="layer"></param>
-        private async void SeparateImageAndMerge(IImageLayer layer)
+        private async void SeparateImageAndMerge(IImageLayer layer, IEnumerable<SKPath> items)
         {
-            if (layer is null || layer.Source is not BitmapImageSource image)
-            {
-                return;
-            }
-            IsLoading = true;
-            var trace = new ImageContourTrace(true);
-            var items = await trace.GetContourAsync(image.Source);
+            var image = (BitmapImageSource)layer.Source;
             using var paint = new SKPaint();
             foreach (var item in layer.Children)
             {
@@ -86,8 +73,6 @@ namespace ZoDream.TexturePacker.ViewModels
                 canvas.Clear();
                 item.Resample();
             }
-            Instance?.Invalidate();
-            IsLoading = false;
         }
 
         private static SKPath? GetContainPath(IImageBound image, IEnumerable<SKPath> items)

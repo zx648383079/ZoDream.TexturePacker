@@ -94,7 +94,25 @@
                         IsChecked="True"
                         Text="透明背景" />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Command="{Binding SeparateCommand}" Text="自动拆分" />
+                    <MenuFlyoutSubItem Text="拆分">
+                        <MenuFlyoutItem
+                            Command="{Binding SeparateCommand}"
+                            CommandParameter="Auto"
+                            Text="自动拆分" />
+                        <MenuFlyoutItem
+                            Command="{Binding SeparateCommand}"
+                            CommandParameter="Count"
+                            Text="数量拆分" />
+                        <MenuFlyoutItem
+                            Command="{Binding SeparateCommand}"
+                            CommandParameter="Size"
+                            Text="尺寸拆分" />
+                        <MenuFlyoutItem
+                            Command="{Binding SeparateCommand}"
+                            CommandParameter="Rect"
+                            Text="单个拆分" />
+                    </MenuFlyoutSubItem>
+
                     <MenuFlyoutSubItem Text="排列">
                         <MenuFlyoutItem
                             Command="{Binding OrderCommand}"

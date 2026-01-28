@@ -1,8 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using SkiaSharp;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using ZoDream.Shared.Drawing;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ImageEditor;
 using ZoDream.TexturePacker.Dialogs;
@@ -169,13 +171,14 @@ namespace ZoDream.TexturePacker.ViewModels
         /// 自动分离物体对象
         /// </summary>
         /// <param name="_"></param>
-        private async void TapSeparate(IImageLayer? arg)
+        private async void TapSeparate(object? arg)
         {
             if (Instance is null || LayerItems.Count == 0)
             {
                 return;
             }
-            var layer = arg is not null ? arg : SelectedLayer;
+            var cmd = arg is string str ? str : "Auto";
+            var layer = arg is IImageLayer ai ? ai : SelectedLayer;
             if (layer is null)
             {
                 foreach (var item in LayerItems)
@@ -192,22 +195,39 @@ namespace ZoDream.TexturePacker.ViewModels
                     break;
                 }
             }
-            if(layer is null || layer.Source is not BitmapImageSource)
+            if(layer is null || layer.Source is not BitmapImageSource image)
             {
                 return;
             }
-            if (layer.Children.Count == 0)
+            var dialog = new SeparateDialog();
+            var model = dialog.ViewModel;
+            model.SelectedIndex = cmd switch
             {
-                SeparateImage(layer);
+                "Count" => 1,
+                "Size" => 2,
+                "Rect" => 3,
+                _ => 0,
+            };
+            if (!await App.ViewModel.OpenFormAsync(dialog))
+            {
                 return;
             }
-            var res = await App.ViewModel.ConfirmAsync("是否重新采样子图形？");
-            if (!res)
+            IsLoading = true;
+            var partItems = await model.SplitAsync(image.Source);
+            if (partItems.Length == 0)
             {
-                SeparateImage(layer);
+                IsLoading = false;
                 return;
             }
-            SeparateImageAndMerge(layer);
+            if (layer.Children.Count == 0 || !model.IsMerge)
+            {
+                SeparateImage(layer, partItems);
+            } else
+            {
+                SeparateImageAndMerge(layer, partItems);
+            }
+            Instance.Invalidate();
+            IsLoading = false;
         }
 
         private void TapTransparent(object? _)

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="ZoDream.TexturePacker.Dialogs.SeparateDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:ZoDream.TexturePacker.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ZoDream.TexturePacker.ViewModels"
+    Title="拆分"
+    IsPrimaryButtonEnabled="{Binding IsValid}"
+    PrimaryButtonText="确认"
+    SecondaryButtonText="取消"
+    mc:Ignorable="d">
+    <ContentDialog.DataContext>
+        <vm:SeparateDialogViewModel />
+    </ContentDialog.DataContext>
+    <ContentDialog.Resources>
+        <ResourceDictionary Source="ms-appx:///Themes/FormStyle.xaml" />
+    </ContentDialog.Resources>
+    <StackPanel>
+        <ComboBox
+            Header="拆分方式"
+            ItemsSource="{Binding TypeItems}"
+            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" />
+        <StackPanel Orientation="Horizontal" Visibility="{Binding OffsetVisible, Mode=OneWay}">
+            <NumberBox Header="X(px)" Value="{Binding X, Mode=TwoWay}" />
+            <TextBlock Style="{StaticResource LinkTb}" Text="x" />
+            <NumberBox Header="Y(px)" Value="{Binding Y, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <NumberBox Header="{Binding WidthLabel, Mode=OneWay}" Value="{Binding Width, Mode=TwoWay}" />
+            <TextBlock Style="{StaticResource LinkTb}" Text="x" />
+            <NumberBox Header="{Binding HeightLabel, Mode=OneWay}" Value="{Binding Height, Mode=TwoWay}" />
+        </StackPanel>
+        <ToggleSwitch
+            Header="重采样"
+            IsOn="{Binding IsMerge, Mode=TwoWay}"
+            OffContent="创建子图层"
+            OnContent="更新子图层" />
+    </StackPanel>
+</ContentDialog>
