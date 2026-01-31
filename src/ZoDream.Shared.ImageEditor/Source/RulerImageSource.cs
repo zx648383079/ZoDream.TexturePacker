@@ -42,6 +42,11 @@ namespace ZoDream.Shared.ImageEditor
             canvas.DrawSurface(_surface, 0, 0);
         }
 
+        public override void Paint(IImageCanvas canvas, IImageStyle computedStyle)
+        {
+            Paint(canvas);
+        }
+
         private void RenderSurface()
         {
             if (Width == 0 || Height == 0)
@@ -72,5 +77,7 @@ namespace ZoDream.Shared.ImageEditor
         {
             _surface?.Dispose();
         }
+
+
     }
 }
