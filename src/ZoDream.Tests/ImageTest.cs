@@ -18,7 +18,7 @@ namespace ZoDream.Tests
             Assert.AreEqual(h, a);
             Assert.AreEqual(w, b);
             Assert.AreEqual(h, p.X);
-            Assert.AreEqual(w, p.Y);
+            Assert.AreEqual(w, -p.Y);
         }
     }
 }

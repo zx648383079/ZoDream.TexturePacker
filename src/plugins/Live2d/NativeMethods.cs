@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace ZoDream.Plugin.Live2d
 {
-    internal unsafe static partial class NativeMethods
+    internal static partial class NativeMethods
     {
         static NativeMethods()
         {

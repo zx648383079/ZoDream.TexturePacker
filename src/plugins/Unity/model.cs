@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using ZoDream.Shared.Models;
 
 namespace ZoDream.Plugin.Unity
@@ -268,5 +269,35 @@ namespace ZoDream.Plugin.Unity
         public string Parent { get; set; }
 
         public long? DisplayIndex { get; set; }
+    }
+
+    internal class U3D_SheetDocument
+    {
+        [JsonPropertyName("m_Name")]
+        public string Name { get; set; }
+        [JsonPropertyName("m_RD")]
+        public U3D_SheetRD Source { get; set; }
+
+    }
+
+    internal class U3D_SheetRD
+    {
+        [JsonPropertyName("m_TextureRect")]
+        public U3D_SheetRect Rect { get; set; }
+    }
+
+    internal class U3D_SheetRect
+    {
+        [JsonPropertyName("m_X")]
+        public int X { get; set; }
+
+        [JsonPropertyName("m_Y")]
+        public int Y { get; set; }
+
+        [JsonPropertyName("m_Height")]
+        public int Height { get; set; }
+
+        [JsonPropertyName("m_Width")]
+        public int Width { get; set; }
     }
 }
