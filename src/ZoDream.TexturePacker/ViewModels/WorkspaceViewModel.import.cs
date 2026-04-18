@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml.Controls;
 using SkiaSharp;
 using System;
 using System.Collections;
@@ -14,6 +15,7 @@ using ZoDream.Shared.Interfaces;
 using ZoDream.Shared.Models;
 using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.Plugins;
+using ZoDream.TexturePacker.ViewModels.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -105,7 +107,7 @@ namespace ZoDream.TexturePacker.ViewModels
         private async void TapImportFolder(object? _)
         {
             var picker = new FolderPicker();
-            App.ViewModel.InitializePicker(picker);
+            _app.InitializePicker(picker);
             var folder = await picker.PickSingleFolderAsync();
             if (folder != null) 
             {
@@ -121,15 +123,19 @@ namespace ZoDream.TexturePacker.ViewModels
                 picker.FileTypeFilter.Add(ext);
             }
             picker.FileTypeFilter.Add("*");
-            App.ViewModel.InitializePicker(picker);
+            _app.InitializePicker(picker);
             var items = await picker.PickMultipleFilesAsync();
             OnDragImage(new FileLoader(items));
         }
 
         private async void TapImport(object? _)
         {
-            var dialog = new ImportDialog();
-            await App.ViewModel.OpenDialogAsync(dialog);
+            var picker = _app.CreatePickPlugin(PluginMenuItem.ImportName);
+            if (await _app.OpenDialogAsync(picker) != ContentDialogResult.Primary)
+            {
+                return;
+            }
+            TapImportPlugin(picker.SelectedItem, picker.FileName);
         }
 
         private async Task<IImageLayer?> AddImageAsync(string? fileName)
@@ -223,6 +229,11 @@ namespace ZoDream.TexturePacker.ViewModels
             }
             foreach (var kid in data.Items)
             {
+                if (data is SpriteLayerSection s)
+                {
+                    kid.X = s.ComputeX(layerImage, kid.X);
+                    kid.Y = s.ComputeY(layerImage, kid.Y);
+                }
                 var kidLayer = layerImage.Split(kid);
                 if (kidLayer is null)
                 {

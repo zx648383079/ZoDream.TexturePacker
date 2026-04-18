@@ -289,15 +289,15 @@ namespace ZoDream.Plugin.Unity
     internal class U3D_SheetRect
     {
         [JsonPropertyName("m_X")]
-        public int X { get; set; }
+        public float X { get; set; }
 
         [JsonPropertyName("m_Y")]
-        public int Y { get; set; }
+        public float Y { get; set; }
 
         [JsonPropertyName("m_Height")]
-        public int Height { get; set; }
+        public float Height { get; set; }
 
         [JsonPropertyName("m_Width")]
-        public int Width { get; set; }
+        public float Width { get; set; }
     }
 }

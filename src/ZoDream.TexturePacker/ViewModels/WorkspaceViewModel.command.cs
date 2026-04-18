@@ -9,6 +9,7 @@ using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ImageEditor;
 using ZoDream.TexturePacker.Dialogs;
 using ZoDream.TexturePacker.Plugins;
+using ZoDream.TexturePacker.ViewModels.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -81,6 +82,7 @@ namespace ZoDream.TexturePacker.ViewModels
         public ICommand LayerMoveDownCommand { get; private set; }
         public ICommand LayerMoveBottomCommand { get; private set; }
         public ICommand LayerMoveParentCommand { get; private set; }
+        public ICommand PluginCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
         private async void TapAddLayer(string? cmd)
@@ -167,6 +169,9 @@ namespace ZoDream.TexturePacker.ViewModels
                 Instance.Invalidate();
             }
         }
+
+ 
+
         /// <summary>
         /// 自动分离物体对象
         /// </summary>

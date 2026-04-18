@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -29,5 +30,7 @@ namespace ZoDream.TexturePacker.ViewModels
             _menuBar.Visibility = Visibility.Visible;
             _menuBar.DataContext = viewModel;
         }
+
+   
     }
 }

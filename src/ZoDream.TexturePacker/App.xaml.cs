@@ -34,6 +34,7 @@ namespace ZoDream.TexturePacker
         public App()
         {
             this.InitializeComponent();
+            _ = ViewModel.InitializeAsync();
         }
 
         /// <summary>

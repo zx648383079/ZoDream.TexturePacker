@@ -29,7 +29,6 @@
     <None Remove="Dialogs\CreateTextDialog.xaml" />
     <None Remove="Dialogs\ExportDialog.xaml" />
     <None Remove="Dialogs\GroupDialog.xaml" />
-    <None Remove="Dialogs\ImportDialog.xaml" />
     <None Remove="Dialogs\LayerDialog.xaml" />
     <None Remove="Dialogs\LayerPropertyDialog.xaml" />
     <None Remove="Dialogs\OpenProjectDialog.xaml" />
@@ -216,7 +215,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Dialogs\ImportDialog.xaml">
+    <Page Update="Dialogs\PluginDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

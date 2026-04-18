@@ -2,17 +2,13 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Foundation;
 using WinRT.Interop;
-using ZoDream.TexturePacker.Dialogs;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Dispatching;
 using ZoDream.TexturePacker.Pages;
+using System.Threading.Tasks;
+using ZoDream.Plugin.Unity;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -48,6 +44,13 @@ namespace ZoDream.TexturePacker.ViewModels
             _rootFrame = frame;
             _menuBar = menuBar;
             Navigate<StartupPage>();
+        }
+
+        public Task InitializeAsync()
+        {
+            Plugin.AddUnity();
+
+            return Task.CompletedTask;
         }
 
         public double GetDpiScaleFactorFromWindow()

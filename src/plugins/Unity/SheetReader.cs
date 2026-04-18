@@ -11,7 +11,7 @@ namespace ZoDream.Plugin.Unity
     /// <summary>
     /// 单独的区分
     /// </summary>
-    public class SheetReader : IPluginReader<IEnumerable<ISpriteSection>>
+    public class SheetReader : IPluginReader
     {
         public async Task<IEnumerable<ISpriteSection>?> ReadAsync(string fileName)
         {
@@ -28,7 +28,9 @@ namespace ZoDream.Plugin.Unity
             {
                 Name = name,
                 FileName = Path.Combine(folder, $"{name}.png"),
-                UseCustomName = true
+                Origin = OriginPositionType.LeftBottom,
+                Coordinate = CoordinateDirectionType.RightUp,
+                UseCustomName = false
             };
             foreach (var item in Directory.GetFiles(folder, $"{name}_*.json"))
             {

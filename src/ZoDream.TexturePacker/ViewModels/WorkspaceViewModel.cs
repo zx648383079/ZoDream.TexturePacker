@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Windows.Storage;
 using ZoDream.Shared.EditorInterface;
 using ZoDream.Shared.ViewModel;
+using ZoDream.TexturePacker.ViewModels.Models;
 
 namespace ZoDream.TexturePacker.ViewModels
 {
@@ -14,6 +15,7 @@ namespace ZoDream.TexturePacker.ViewModels
             OpenCommand = new RelayCommand(TapOpen);
             SaveAsCommand = new RelayCommand(TapSaveAs);
             SaveCommand = new RelayCommand(TapSave);
+            PluginCommand = new RelayCommand<PluginMenuItem>(TapPlugin);
             ImportCommand = new RelayCommand(TapImport);
             ExportCommand = new RelayCommand(TapExport);
             UndoCommand = new RelayCommand(TapUndo);
@@ -74,6 +76,7 @@ namespace ZoDream.TexturePacker.ViewModels
             UndoRedo.UndoStateChanged += UndoRedo_UndoStateChanged;
             UndoRedo.ReverseUndoStateChanged += UndoRedo_ReverseUndoStateChanged;
 
+            PluginMenuItems = _app.Plugin.Get("import");
         }
         private void UndoRedo_ReverseUndoStateChanged(bool value)
         {

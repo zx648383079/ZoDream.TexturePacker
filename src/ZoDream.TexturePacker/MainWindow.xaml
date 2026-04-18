@@ -283,6 +283,10 @@
                         IsEnabled="{Binding IsSelectedLayer}"
                         Text="逆时针旋转90°" />
                 </MenuBarItem>
+                <ctl:MenuBarItemEx
+                    Title="插件"
+                    Command="{Binding PluginCommand}"
+                    ItemsSource="{Binding PluginMenuItems}" />
                 <MenuBarItem Title="帮助">
                     <MenuFlyoutItem Command="{Binding AboutCommand}" Text="关于">
                         <MenuFlyoutItem.KeyboardAccelerators>

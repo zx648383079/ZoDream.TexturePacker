@@ -1,17 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using WinRT.Interop;
 using ZoDream.TexturePacker.Dialogs;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Dispatching;
 
 namespace ZoDream.TexturePacker.ViewModels
 {

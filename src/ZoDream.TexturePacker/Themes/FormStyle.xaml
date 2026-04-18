@@ -25,4 +25,39 @@
         <Setter Property="ToolTipService.ToolTip" Value="重置属性" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
     </Style>
+    <Style x:Name="HeaderIcon" TargetType="FontIcon">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Name="HeaderStamp" TargetType="FontIcon">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="FontSize" Value="{StaticResource MetaFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource SecondaryTextBrush}" />
+    </Style>
+
+    <Style x:Name="InlineHeaderTb" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{ThemeResource SecondaryTextBrush}" />
+    </Style>
+    <Style x:Name="InlineTextTb" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{ThemeResource BodyTextBrush}" />
+    </Style>
+
+    <Style x:Name="IconBtn" TargetType="Button">
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+    </Style>
+
+    <Style x:Name="MetaLabelStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="FontSize" Value="{StaticResource MetaFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource SecondaryTextBrush}" />
+    </Style>
+    <Style x:Name="HeaderLabelStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="FontWeight" Value="Black" />
+        <Setter Property="Foreground" Value="{ThemeResource BodyTextBrush}" />
+    </Style>
 </ResourceDictionary>

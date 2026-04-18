@@ -110,7 +110,7 @@ namespace ZoDream.TexturePacker.Plugins
             }
         }
 
-        private async IAsyncEnumerable<ISpriteSection> EnumerateLayer(IPluginReader reader, string filePath)
+        public static async IAsyncEnumerable<ISpriteSection> EnumerateLayer(IPluginReader reader, string filePath)
         {
             var res = await reader.ReadAsync(filePath);
             if (res is null)
