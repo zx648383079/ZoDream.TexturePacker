@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using ZoDream.Shared.EditorInterface;
 
 namespace ZoDream.TexturePacker.Plugins
@@ -13,7 +14,7 @@ namespace ZoDream.TexturePacker.Plugins
         /// </summary>
         /// <param name="items"></param>
         /// <returns>整个区域的宽，高</returns>
-        public (float, float) Compute(IList<IImageBound> items)
+        public Vector2 Compute(IEnumerable<IImageBound> items)
         {
             return algorithm switch
             {
@@ -22,7 +23,7 @@ namespace ZoDream.TexturePacker.Plugins
                 CssSpritesAlgorithm.Diagonal => PlaceDiagonal(items),
                 CssSpritesAlgorithm.AltDiagonal => PlaceAltDiagonal(items),
                 CssSpritesAlgorithm.BinaryTree => PlaceBinaryTree(items),
-                _ => (0, 0),
+                _ => Vector2.Zero,
             };
         }
 
@@ -42,7 +43,7 @@ namespace ZoDream.TexturePacker.Plugins
             };
         }
 
-        private (float, float) PlaceTopDown(IList<IImageBound> items)
+        private Vector2 PlaceTopDown(IEnumerable<IImageBound> items)
         {
             var data = items.Order(this);
             var y = 0f;
@@ -57,10 +58,10 @@ namespace ZoDream.TexturePacker.Plugins
                     width = item.Width;
                 }
             }
-            return (width, y);
+            return new(width, y);
         }
 
-        private (float, float) PlaceLeftRight(IList<IImageBound> items)
+        private Vector2 PlaceLeftRight(IEnumerable<IImageBound> items)
         {
             var data = items.Order(this);
             var x = 0f;
@@ -75,10 +76,10 @@ namespace ZoDream.TexturePacker.Plugins
                     height = item.Height;
                 }
             }
-            return (x, height);
+            return new(x, height);
         }
 
-        private (float, float) PlaceDiagonal(IList<IImageBound> items)
+        private Vector2 PlaceDiagonal(IEnumerable<IImageBound> items)
         {
             var data = items.Order(this);
             var x = 0f;
@@ -90,10 +91,10 @@ namespace ZoDream.TexturePacker.Plugins
                 x += item.Width;
                 y += item.Height;
             }
-            return (x, y);
+            return new(x, y);
         }
 
-        private (float, float) PlaceAltDiagonal(IList<IImageBound> items)
+        private Vector2 PlaceAltDiagonal(IEnumerable<IImageBound> items)
         {
             var data = items.Order(this);
             var width = 0f;
@@ -110,17 +111,17 @@ namespace ZoDream.TexturePacker.Plugins
                 item.Y = y;
                 y += item.Height;
             }
-            return (width, y);
+            return new(width, y);
         }
 
         #region BinaryTree
         private BinaryTreeNode? _rootNode;
 
-        private (float, float) PlaceBinaryTree(IList<IImageBound> items)
+        private Vector2 PlaceBinaryTree(IEnumerable<IImageBound> items)
         {
             var data = items.Order(this);
-            var width = items.Count > 0 ? data.First().Width : 0;
-            var height = items.Count > 0 ? data.First().Height : 0;
+            var width = items.Any() ? data.First().Width : 0;
+            var height = items.Any() ? data.First().Height : 0;
             _rootNode = new BinaryTreeNode()
             { 
                 X = 0, 
@@ -152,7 +153,7 @@ namespace ZoDream.TexturePacker.Plugins
                 outerHeight = Math.Max(outerHeight, item.Y + item.Height);
             }
             _rootNode = null;
-            return (outerWidth, outerHeight);
+            return new(outerWidth, outerHeight);
         }
 
         private BinaryTreeNode? TreeFindNode(
