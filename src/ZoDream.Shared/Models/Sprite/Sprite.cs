@@ -25,36 +25,44 @@ namespace ZoDream.Shared.Models
         public IList<ISpriteLayer> Items { get; set; } = [];
         
 
-        public float ComputeX(IImageSize size, float x)
+        public float ComputeX(IImageSize size, IImageBound bound)
         {
-            var scale = Coordinate.HasFlag(CoordinateDirectionType.Left) ? -1 : 1;
+            var x = bound.X;
+            if (Coordinate.HasFlag(CoordinateDirectionType.Left))
+            {
+                x = (x + size.Width) * -1;
+            }
             return Origin switch
             {
-                OriginPositionType.RightTop or OriginPositionType.RightBottom => (x * scale) + size.Width,
-                OriginPositionType.Center => (x * scale) + (size.Width / 2),
+                OriginPositionType.RightTop or OriginPositionType.RightBottom => x + size.Width,
+                OriginPositionType.Center => x + (size.Width / 2),
                 _ => x,
             };
         }
 
-        public float ComputeX(float x)
+        public float ComputeX(IImageBound bound)
         {
-            return ComputeX(this, x);
+            return ComputeX(this, bound);
         }
 
-        public float ComputeY(IImageSize size, float y)
+        public float ComputeY(IImageSize size, IImageBound bound)
         {
-            var scale = Coordinate.HasFlag(CoordinateDirectionType.Up) ? -1 : 1;
+            var y = bound.Y;
+            if (Coordinate.HasFlag(CoordinateDirectionType.Up))
+            {
+                y = (y + size.Height) * -1;
+            }
             return Origin switch
             {
-                OriginPositionType.LeftBottom or OriginPositionType.RightBottom => (y * scale) + size.Height,
-                OriginPositionType.Center => (y * scale) + (size.Height / 2),
+                OriginPositionType.LeftBottom or OriginPositionType.RightBottom => y + size.Height,
+                OriginPositionType.Center => y + (size.Height / 2),
                 _ => y,
             };
         }
 
-        public float ComputeY(float y)
+        public float ComputeY(IImageBound bound)
         {
-            return ComputeY(this, y);
+            return ComputeY(this, bound);
         }
     }
 }

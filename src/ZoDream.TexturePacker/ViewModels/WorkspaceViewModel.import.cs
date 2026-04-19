@@ -231,8 +231,8 @@ namespace ZoDream.TexturePacker.ViewModels
             {
                 if (data is SpriteLayerSection s)
                 {
-                    kid.X = s.ComputeX(layerImage, kid.X);
-                    kid.Y = s.ComputeY(layerImage, kid.Y);
+                    kid.X = s.ComputeX(layerImage, kid);
+                    kid.Y = s.ComputeY(layerImage, kid);
                 }
                 var kidLayer = layerImage.Split(kid);
                 if (kidLayer is null)
